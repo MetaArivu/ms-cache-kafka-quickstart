@@ -1,13 +1,15 @@
-# Microservice Template
+# Microservice Cache / Kafka Template
 
-Microservice Template gives you a 
+Microservice Cache / Kafka Template gives you a 
 
 1. SpringBoot App template with 
 2. Open API 3 Ex, 
 3. Spring Actuator, 
 4. Spring Sleuth and 
-5. POM File with (SpringBoot) Fat and Thin (Maven) jar file creation and 
-6. Dockerfile for containerisation.
+5. Redis Cache Implementation with 
+6. H2 In Memory Database
+7. POM File with (SpringBoot) Fat and Thin (Maven) jar file creation and 
+8. Dockerfile for containerisation.
 
 ## Service Setup
 
