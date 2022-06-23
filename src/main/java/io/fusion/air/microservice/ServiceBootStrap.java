@@ -80,7 +80,7 @@ public class ServiceBootStrap {
 	private static final Logger log = getLogger(lookup().lookupClass());
 
 	private final String title = "<h1>Welcome to MICRO Service<h1/>"
-			+"<h3>Copyright (c) MetaArivu Pvt Ltd, 2021</h3>"
+			+"<h3>Copyright (c) MetaArivu Pvt Ltd, 2022</h3>"
 			+"<h5>Build No: BN :: Build Date: BD :: </h5>";
 
 	private static ConfigurableApplicationContext context;

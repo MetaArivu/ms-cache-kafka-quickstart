@@ -42,7 +42,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * App Controller for the Service
+ * Product Controller for the Service
  * 
  * @author arafkarsh
  * @version 1.0
@@ -51,10 +51,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Configuration
 @RestController
 // "/api/v1/payments"
-@RequestMapping("${service.api.path}")
+@RequestMapping("${service.api.path}/product")
 @RequestScope
-@Tag(name = "Mock Service", description = "Ex. io.f.a.m.adapters.controllers.AppControllerImpl")
-public class AppControllerImpl extends AbstractController {
+@Tag(name = "Product API", description = "Ex. io.f.a.m.adapters.controllers.AppControllerImpl")
+public class ProductControllerImpl extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.
 	private static final Logger log = getLogger(lookup().lookupClass());
@@ -68,32 +68,32 @@ public class AppControllerImpl extends AbstractController {
 	 * 
 	 * @return
 	 */
-    @Operation(summary = "Check the Payment status")
+    @Operation(summary = "Get the Product status")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-            description = "Payment Status Check",
+            description = "Product Status Check",
             content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "404",
-            description = "Invalid Payment Reference No.",
+            description = "Invalid Product Reference No.",
             content = @Content)
     })
 	@GetMapping("/status/{referenceNo}")
 	@ResponseBody
 	public ResponseEntity<Map<String,Object>> getStatus(@PathVariable("referenceNo") String _referenceNo,
 														HttpServletRequest request) throws Exception {
-		log.info("|"+name()+"|Request to Payment Status of Service... ");
+		log.info("|"+name()+"|Request to Product Status of Service... ");
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("Code", 200);
 		status.put("Status", true);
 		status.put("ReferenceNo", _referenceNo);
-		status.put("Message","Payment Status is good!");
+		status.put("Message","Product Status is good!");
 		return ResponseEntity.ok(status);
 	}
 
 	/**
-	 * Process the Payments
+	 * Process the Product
 	 */
-    @Operation(summary = "Process Payments")
+    @Operation(summary = "Process Product")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Process the payment",
@@ -104,7 +104,7 @@ public class AppControllerImpl extends AbstractController {
     })
     @PostMapping("/processPayments")
     public ResponseEntity<PaymentStatus> processPayments(@RequestBody PaymentDetails _payDetails) {
-		log.info("|"+name()+"|Request to process payments... ");
+		log.info("|"+name()+"|Request to process Product... ");
 		PaymentStatus ps = new PaymentStatus(
 				"fb908151-d249-4d30-a6a1-4705729394f4",
 				LocalDateTime.now(),
@@ -116,9 +116,9 @@ public class AppControllerImpl extends AbstractController {
     }
 
 	/**
-	 * Cancel the Payment
+	 * Cancel the Product
 	 */
-	@Operation(summary = "Cancel Payment")
+	@Operation(summary = "Cancel Product")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Payment Cancelled",
@@ -129,7 +129,7 @@ public class AppControllerImpl extends AbstractController {
 	})
 	@DeleteMapping("/cancel/{referenceNo}")
 	public ResponseEntity<HashMap<String,Object>> cancel(@PathVariable("referenceNo") String _referenceNo) {
-		log.info("|"+name()+"|Request to Cancel the payments... ");
+		log.info("|"+name()+"|Request to Cancel the Product... ");
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("Code", 200);
 		status.put("Status", true);
@@ -139,25 +139,25 @@ public class AppControllerImpl extends AbstractController {
 	}
 
 	/**
-	 * Update the Payment
+	 * Update the Product
 	 */
-	@Operation(summary = "Update Payment")
+	@Operation(summary = "Update Product")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
-					description = "Update the Payment",
+					description = "Update the Product",
 					content = {@Content(mediaType = "application/json")}),
 			@ApiResponse(responseCode = "404",
-					description = "Unable to Update the Payment",
+					description = "Unable to Update the Product",
 					content = @Content)
 	})
 	@PutMapping("/update/{referenceNo}")
 	public ResponseEntity<HashMap<String,Object>> updatePayment(@PathVariable("referenceNo") String _referenceNo) {
-		log.info("|"+name()+"|Request to Update Payment... "+_referenceNo);
+		log.info("|"+name()+"|Request to Update Product... "+_referenceNo);
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("Code", 200);
 		status.put("Status", true);
 		status.put("ReferenceNo", _referenceNo);
-		status.put("Message","Payment updated!");
+		status.put("Message","Product updated!");
 		return ResponseEntity.ok(status);
 	}
  }
