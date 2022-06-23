@@ -24,7 +24,7 @@ Microservice Cache / Kafka Template gives you a
 7. Update the SRC_BASE (Your Service Repository Base Directory) in getServiceName shell script
 
 Sample Property File Template
-![Property File](https://raw.githubusercontent.com/MetaArivu/microservice-template/master/diagrams/MS-Property-File.jpg)
+![Property File](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-service/master/diagrams/MS-Property-File.jpg)
 
 When you change the version in POM.xml, update that info in src/main/resources/app.props.tmpl - service.version property also.
 
@@ -80,5 +80,5 @@ Setup the Docker Hub or any other Container Registry
 2. stats (show container stats)
 
 
-(C) Copyright 2021 - MetArivu
+(C) Copyright 2022 - MetaArivu: Apache 2 License
 Author: Araf Karsh Hamid
