@@ -194,7 +194,7 @@ public class ServiceConfiguration implements Serializable {
 	 * @return
 	 */
 	public String apiURL() {
-		return "http://localhost:"+serverPort+"/"+ apiDocPath;
+		return "http://localhost:"+serverPort+""+ apiDocPath;
 	}
 
 	/**

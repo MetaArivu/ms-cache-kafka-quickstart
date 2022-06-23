@@ -29,7 +29,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.ApplicationContext;
@@ -49,10 +51,14 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
+
+// Cache
+import org.springframework.cache.annotation.EnableCaching;
 
 import static io.fusion.air.microservice.server.config.ServiceHelp.VERSION;;
 
@@ -66,6 +72,8 @@ import static io.fusion.air.microservice.server.config.ServiceHelp.VERSION;;
 @ServletComponentScan
 @RestController
 @SpringBootApplication(scanBasePackages = { "io.fusion.air.microservice" })
+@EnableCaching
+@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class ServiceBootStrap {
 
 	// Set Logger -> Lookup will automatically determine the class name.
