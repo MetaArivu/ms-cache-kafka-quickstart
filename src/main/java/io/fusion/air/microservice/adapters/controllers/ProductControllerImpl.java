@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,8 +81,10 @@ public class ProductControllerImpl extends AbstractController {
 	@GetMapping("/status/{referenceNo}")
 	@ResponseBody
 	public ResponseEntity<Map<String,Object>> getStatus(@PathVariable("referenceNo") String _referenceNo,
-														HttpServletRequest request) throws Exception {
+														HttpServletRequest request,
+														HttpServletResponse response) throws Exception {
 		log.info("|"+name()+"|Request to Product Status of Service... ");
+		response.setHeader("Cache-Control", "no-cache");
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("Code", 200);
 		status.put("Status", true);

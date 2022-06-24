@@ -3,4 +3,5 @@
 # @author: Araf Karsh Hamid
 # -------------------------------------------------------------------------------------------
 echo "Starting `getServiceName` Microservice"
+export JDK_JAVA_OPTIONS="--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED"
 mvn spring-boot:run
