@@ -2,7 +2,7 @@
 # -------------------------------------------------------------------------------------------
 # @author: Araf Karsh Hamid
 # -------------------------------------------------------------------------------------------
-# Scan Container for Vulnerabilities
+# Shell Container
 # -------------------------------------------------------------------------------------------
 ORG=$1
 SERVICE=$2
@@ -14,5 +14,5 @@ if test "$#" -lt 1; then
 	SERVICE=`getServiceName 4`
 	cd src/docker
 fi
-echo "Scanning $SERVICE for vulnerabilities"
-docker scan $ORG/$SERVICE
+echo "docker container run -it $ORG/$SERVICE bash"
+docker container run -it $ORG/$SERVICE bash

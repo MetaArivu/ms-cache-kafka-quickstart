@@ -1,6 +1,11 @@
 # Microservice Cache / Kafka Template
 
-Microservice Cache / Kafka Template gives you a 
+## Pre-Requisites 
+
+1. Java 17 (17.0.3.1)
+2. Maven 3.8.6
+
+## Microservice Cache / Kafka Template gives you a 
 
 1. SpringBoot App template with 
 2. Open API 3 Ex, 

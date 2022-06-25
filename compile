@@ -14,9 +14,9 @@
 # -------------------------------------------------------------------------------------------
 SERVICE=`getServiceName`
 CONTAINER=`getServiceName 4`
-
+ORG=`getServiceName 1`
 echo "---------------------------------------------------------------------------------------"
-echo "Compiling $SERVICE Microservice"
+echo "Compiling $ORG/$SERVICE Microservice"
 echo "---------------------------------------------------------------------------------------"
 echo "Clean up the target folder: mvn clean"
 echo "---------------------------------------------------------------------------------------"
@@ -26,7 +26,7 @@ echo "Git Commit Count = "`git rev-list HEAD --count`
 echo "---------------------------------------------------------------------------------------"
 generateBuildNumber $SERVICE
 # -------------------------------------------------------------------------------------------
-echo "Build the $SERVICE Microservice : mvn -e package"
+echo "Build the $ORG/$SERVICE Microservice : mvn -e package"
 echo "---------------------------------------------------------------------------------------"
 mvn -e package
 mvnCompRV=$?
@@ -34,17 +34,17 @@ mvnCompRV=$?
 if [ $mvnCompRV == 0 ] 
 then
 	echo "---------------------------------------------------------------------------------------"
-	echo "Compiling Service > $SERVICE :: SUCCESS"
+	echo "Compiling Service > $ORG/$SERVICE :: SUCCESS"
 	echo "---------------------------------------------------------------------------------------"
 	echo "Copy the Fat and Thin jar files and the libs to the Docker Directory (src/docker)"
 	cp target/*service*-spring-boot.jar src/docker/$CONTAINER-spring-boot.jar
 	cp target/*service*?.?.?.jar src/docker/$CONTAINER-thin.jar
-	cp target/libs/* src/docker/libs/
+	#cp target/libs/* src/docker/libs/
 	echo "Copy the application.properties File to the Docker Directory (src/docker)"
 	cp src/main/resources/application.properties src/docker/
 	cp src/main/resources/application.properties .
 	echo "---------------------------------------------------------------------------------------"
-	echo "Building the Cocntainer for $SERVICE Service ..... "
+	echo "Building the Cocntainer for $ORG/$SERVICE Service ..... "
 	echo "---------------------------------------------------------------------------------------"
 	cd src/docker
 	build
@@ -62,6 +62,6 @@ then
 	echo "---------------------------------------------------------------------------------------"
 else
 	echo "---------------------------------------------------------------------------------------"
-	echo "Compiling Service > $SERVICE :: FAILED!!!"
+	echo "Compiling Service > $ORG/$SERVICE :: FAILED!!!"
 	echo "---------------------------------------------------------------------------------------"
 fi
