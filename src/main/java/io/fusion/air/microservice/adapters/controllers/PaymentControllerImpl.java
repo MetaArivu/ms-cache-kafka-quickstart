@@ -26,8 +26,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
@@ -50,10 +53,10 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Configuration
 @RestController
-// "/api/v1/payments"
+// "/api/v1/ms-cache"
 @RequestMapping("${service.api.path}/payment")
 @RequestScope
-@Tag(name = "Payments API", description = "Ex. io.f.a.m.adapters.controllers.AppControllerImpl")
+@Tag(name = "Payments API", description = "Ex. io.f.a.m.adapters.controllers.PaymentControllerImpl")
 public class PaymentControllerImpl extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.
@@ -82,12 +85,17 @@ public class PaymentControllerImpl extends AbstractController {
 	public ResponseEntity<Map<String,Object>> getStatus(@PathVariable("referenceNo") String _referenceNo,
 														HttpServletRequest request) throws Exception {
 		log.info("|"+name()+"|Request to Payment Status of Service... ");
+		// Response Object
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("Code", 200);
 		status.put("Status", true);
 		status.put("ReferenceNo", _referenceNo);
 		status.put("Message","Payment Status is good!");
-		return ResponseEntity.ok(status);
+		// Additional Headers
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
+		// Return the Response
+		return new ResponseEntity<Map<String,Object>>(status, headers, HttpStatus.OK);
 	}
 
 	/**

@@ -51,10 +51,10 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Configuration
 @RestController
-// "/api/v1/payments"
+// "/api/v1/ms-cache"
 @RequestMapping("${service.api.path}/product")
 @RequestScope
-@Tag(name = "Product API", description = "Ex. io.f.a.m.adapters.controllers.AppControllerImpl")
+@Tag(name = "Product API", description = "Ex. io.f.a.m.adapters.controllers.ProductControllerImpl")
 public class ProductControllerImpl extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.
