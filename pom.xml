@@ -41,6 +41,10 @@
 		<!-- Maven -->
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
+
+		<maven-compiler-plugin>3.8.1</maven-compiler-plugin>
+		<maven-dependency-plugin>3.3.0</maven-dependency-plugin>
+		<maven-jar-plugin>3.2.2</maven-jar-plugin>
 		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
 
 		<!-- Spring Libraries -->
@@ -349,17 +353,8 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>${maven-compiler-plugin}</version>
 				<configuration>
-					<!--Use this only when using Java 9+
-					<release>17</release>
-                    -->
-					<!--
-                    comment this (if you are using Java 9+)
-                    and Uncomment out <release> when using Java 9+
-                    -->
-					<!--
-                    -->
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 				</configuration>
@@ -383,9 +378,11 @@
 				</executions>
 			</plugin>
 			<!-- Maven Jar Pluggin with dependencies in libs folder -->
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${maven-dependency-plugin}</version>
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
@@ -401,9 +398,11 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven-jar-plugin}</version>
 				<configuration>
 					<archive>
 						<manifest>
