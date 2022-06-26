@@ -105,6 +105,9 @@ public class ServiceConfiguration implements Serializable {
 	@Value("${service.url:URL}")
 	private String serviceUrl;
 
+	@Value("${service.license:MIT License}")
+	private String serviceLicense;
+
 	@Value("${springdoc.swagger-ui.path}")
 	private String apiDocPath;
 
@@ -302,39 +305,83 @@ public class ServiceConfiguration implements Serializable {
 		return systemProperties;
 	}
 
+	/**
+	 * Returns API Doc Path
+	 * @return
+	 */
 	public String getApiDocPath() {
 		return apiDocPath;
 	}
 
+	/**
+	 * Returns API Prefix
+	 * @return
+	 */
 	public String getServiceApiPrefix() {
 		return serviceApiPrefix;
 	}
 
+	/**
+	 * Returns Service API Version
+	 * @return
+	 */
 	public String getServiceApiVersion() {
 		return serviceApiVersion;
 	}
 
+	/**
+	 * Returns Service API Name
+	 * @return
+	 */
 	public String getServiceApiName() {
 		return serviceApiName;
 	}
 
+	/**
+	 * Returns API Service Path
+	 * @return
+	 */
 	public String getServiceApiPath() {
 		return serviceApiPath;
 	}
 
+	/**
+	 * Returns Service Repository
+	 * @return
+	 */
 	public String getServiceApiRepository() {
 		return serviceApiRepository;
 	}
 
+	/**
+	 * Returns Service URL
+	 * @return
+	 */
 	public String getServiceUrl() {
 		return serviceUrl;
 	}
 
+	/**
+	 * Returns Organization Name
+	 * @return
+	 */
 	public String getServiceOrg() {
 		return serviceOrg;
 	}
 
+	/**
+	 * Returns the Container Name
+	 * @return
+	 */
 	public String getServiceContainer() {
 		return serviceContainer;
+	}
+
+	/**
+	 * Returns Service License Type
+	 * @return
+	 */
+	public String getServiceLicense() {
+		return serviceLicense;
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2021 Araf Karsh Hamid
+ * (C) Copyright 2022 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,8 +79,9 @@ public class ServiceBootStrap {
 	// Set Logger -> Lookup will automatically determine the class name.
 	private static final Logger log = getLogger(lookup().lookupClass());
 
-	private final String title = "<h1>Welcome to MICRO Service<h1/>"
-			+"<h3>Copyright (c) MetaArivu Pvt Ltd, 2022</h3>"
+	// All CAPS Words will be replaced using data from application.properties
+	private final String title = "<h1>Welcome to MICRO service<h1/>"
+			+"<h3>Copyright (c) COMPANY, 2022</h3>"
 			+"<h5>Build No: BN :: Build Date: BD :: </h5>";
 
 	private static ConfigurableApplicationContext context;
@@ -93,15 +94,13 @@ public class ServiceBootStrap {
 	private String serviceName = "Unknown";
 	
 	/**
-	 * Start the Micro Service
+	 * Start the Microservice
 	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
 		// Start the Server
 		start(args);
-
 		// API URL : http://localhost:9090/api/v1/service/swagger-ui.html
 	}
 
@@ -153,6 +152,7 @@ public class ServiceBootStrap {
 		log.info("Request to Home Page of Service... "+printRequestURI(request));
 		return (serviceConfig == null) ? this.title :
 				this.title.replaceAll("MICRO", serviceConfig.getServiceName())
+						.replaceAll("COMPANY", serviceConfig.getServiceOrg())
 						.replaceAll("BN", "" + serviceConfig.getBuildNumber())
 						.replaceAll("BD", serviceConfig.getBuildDate());
 	}
@@ -163,7 +163,7 @@ public class ServiceBootStrap {
 	 * @param request
 	 * @return
 	 */
-	private String printRequestURI(HttpServletRequest request) {
+	public static String printRequestURI(final HttpServletRequest request) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("URI: ").append(request.getRequestURI());
 		String[] req = request.getRequestURI().split("/");
@@ -176,6 +176,11 @@ public class ServiceBootStrap {
 		return sb.toString();
 	}
 
+	/**
+	 * CommandLineRunner Prints all the Beans defined ...
+	 * @param ctx
+	 * @return
+	 */
 	@Bean
 	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
 		return args -> {
@@ -251,7 +256,7 @@ public class ServiceBootStrap {
 						.title(serviceConfig.getServiceName()+" Service")
 						.description(serviceConfig.getServiceDetails())
 						.version(serviceConfig.getServerVersion())
-						.license(new License().name("License: Apache 2.0")
+						.license(new License().name("License:"+serviceConfig.getServiceLicense())
 								.url(serviceConfig.getServiceUrl()))
 				)
 				.externalDocs(new ExternalDocumentation()
@@ -279,7 +284,6 @@ public class ServiceBootStrap {
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.findAndRegisterModules();
 	}
-
 
 	/**
 	 * All file upload till 512 MB
