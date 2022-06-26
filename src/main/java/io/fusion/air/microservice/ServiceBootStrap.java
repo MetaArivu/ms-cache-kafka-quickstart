@@ -20,8 +20,7 @@ import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.HttpServletRequest;
 
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
-import io.fusion.air.microservice.server.controller.HealthController;
-import io.swagger.v3.oas.models.info.Contact;
+import io.fusion.air.microservice.server.controllers.HealthController;
 import org.slf4j.Logger;
 import org.springdoc.core.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
-import java.time.Duration;
 import java.util.Arrays;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -60,7 +58,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 // Cache
 import org.springframework.cache.annotation.EnableCaching;
 
-import static io.fusion.air.microservice.server.config.ServiceHelp.VERSION;;
+;
 
 /**
  * Micro Service - Spring Boot Application
@@ -256,7 +254,7 @@ public class ServiceBootStrap {
 						.title(serviceConfig.getServiceName()+" Service")
 						.description(serviceConfig.getServiceDetails())
 						.version(serviceConfig.getServerVersion())
-						.license(new License().name("License:"+serviceConfig.getServiceLicense())
+						.license(new License().name("License: "+serviceConfig.getServiceLicense())
 								.url(serviceConfig.getServiceUrl()))
 				)
 				.externalDocs(new ExternalDocumentation()

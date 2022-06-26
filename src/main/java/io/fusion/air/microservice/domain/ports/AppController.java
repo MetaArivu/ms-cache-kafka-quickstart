@@ -1,4 +1,4 @@
-package io.fusion.air.microservice.domain.services;
+package io.fusion.air.microservice.domain.ports;
 
 /**
  * App Controller
