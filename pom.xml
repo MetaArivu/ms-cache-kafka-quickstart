@@ -29,6 +29,7 @@
 		<apache.commons.version>3.12.0</apache.commons.version>
 		<fasterxml.version>2.13.3</fasterxml.version>
 		<javax.bean.validation.version>2.0.1.Final</javax.bean.validation.version>
+		<jwt.api.version>0.11.5</jwt.api.version>
 
 		<google.gson.version>2.9.0</google.gson.version>
 
@@ -310,11 +311,11 @@
 		<!-- Security - Spring Security / JWT -->
 		<!-- ================================================================= -->
 
-		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jwt.api.version}</version>
 		</dependency>
 
 		<!--
