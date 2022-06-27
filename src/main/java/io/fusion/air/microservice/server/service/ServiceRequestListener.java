@@ -20,8 +20,14 @@ import java.util.UUID;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.annotation.WebListener;
+import javax.servlet.http.HttpServletRequest;
 
+import io.fusion.air.microservice.utils.CPU;
+import org.slf4j.Logger;
 import org.slf4j.MDC;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A ServletRequest is defined as coming into scope of a web application 
@@ -30,18 +36,58 @@ import org.slf4j.MDC;
  * the first filter in the chain
  * 
  * Source: https://docs.oracle.com/javaee/7/api/javax/servlet/ServletRequestListener.html
+ *
+ * MDC = Mapped Diagnostic Contexts
+ * A Mapped Diagnostic Context, or MDC in short, is an instrument for distinguishing interleaved
+ * log output from different sources. Log output is typically interleaved when a server handles
+ * multiple clients near-simultaneously.
+ *
+ * MDC is used to stamp each request. It is done by putting the contextual information about the
+ * request into the MDC
+ *
+ * MDC.put("sessionId", "abcd");
+ * MDC.put("userId", "1234");
+ *
+ * Printing the values from MDC in the logs
+ *
+ * <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+ *   <layout>
+ *     <Pattern>%d{DATE} %p %X{sessionId} %X{userId} %c - %m%n</Pattern>
+ *   </layout>
+ * </appender>
  * 
  * @author arafkarsh
  *
  */
 @WebListener
 public class ServiceRequestListener implements ServletRequestListener {
-	
+
+	// Set Logger -> Lookup will automatically determine the class name.
+	private static final Logger log = getLogger(lookup().lookupClass());
+
+	/**
+	 * Add the following values into the log for the request
+	 * Unique Request ID
+	 * Client IP Address
+	 * Client Port Number
+	 *
+	 * @param sre
+	 */
 	@Override
 	public void requestInitialized(ServletRequestEvent sre) {
-		MDC.put("RequestId", UUID.randomUUID().toString());
+		HttpServletRequest httpRequest = (HttpServletRequest) sre.getServletRequest();
+		String reqId =UUID.randomUUID().toString();
+		MDC.put("ReqId", reqId);
+		MDC.put("IP", httpRequest.getRemoteHost());
+		MDC.put("Port", String.valueOf(httpRequest.getRemotePort()));
+		MDC.put("URI", httpRequest.getRequestURI());
+		log.info("URI="+httpRequest.getRequestURI()+ CPU.printCpuStats());
 	}
-	
+
+	/**
+	 * Clear all the values When Request is done.
+	 * @param sre
+	 */
 	@Override
 	public void requestDestroyed(ServletRequestEvent sre) {
 		MDC.clear();

@@ -1,4 +1,4 @@
-package io.fusion.air.microservice.server.aop;
+package io.fusion.air.microservice.adapters.filters;
 
 import io.fusion.air.microservice.domain.exceptions.AbstractServiceException;
 import org.aspectj.lang.JoinPoint;
@@ -15,7 +15,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Log Aspect for the Servers
+ * Log Aspect
  * Log Messages
  * Keep Track of Time
  * Exception Handling
@@ -24,25 +24,25 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Aspect
 @Configuration
-public class ServerLogExceptionAspect {
+public class LogExceptionAspect {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
     /**
-     * Log Message before the Method Call
+     * Log Message before the Log Execution
      * @param joinPoint
      */
-    @Before(value = "execution(* io.fusion.air.microservice.server.controllers.*.*(..))")
+    @Before(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public void logStatementBefore(JoinPoint joinPoint) {
         log.info("API Call >> {}",joinPoint);
     }
 
     /**
-     * Log Message after the method call
+     * Log Message after the Method Execution
      * @param joinPoint
      */
-    @After(value = "execution(* io.fusion.air.microservice.server.controllers.*.*(..))")
+    @After(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public void logStatementAfter(JoinPoint joinPoint) {
         log.info("API Call >> Complete {}",joinPoint);
     }
@@ -53,7 +53,7 @@ public class ServerLogExceptionAspect {
      * @return
      * @throws Throwable
      */
-    @Around(value = "execution(* io.fusion.air.microservice.server.controllers.*.*(..))")
+    @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public Object methodHandler(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             Object method = joinPoint.proceed();
@@ -71,7 +71,7 @@ public class ServerLogExceptionAspect {
      * @return
      * @throws Throwable
      */
-    @Around(value = "execution(* io.fusion.air.microservice.server.controllers.*.*(..))")
+    @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public Object timeTracker(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         try {
@@ -85,5 +85,4 @@ public class ServerLogExceptionAspect {
             throw new ResponseStatusException(e.getHttpStatus(), e.getMessage());
         }
     }
-
 }

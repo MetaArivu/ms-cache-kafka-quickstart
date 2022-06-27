@@ -39,21 +39,21 @@ import org.springframework.stereotype.Service;
 @Service
 public final class JsonWebToken {
 	
-	private static String TOKEN = "sigmaEpsilon6109871597";
+	private static String TOKEN = "(@@sigma??Epsilon##6109871597!!)";
 	
-	public static final long EXPIRE_IN_ONE_HOUR 	= 1000 * 60 * 60 * 1;
-	public static final long EXPIRE_IN_TWO_HOUR 	= 1000 * 60 * 60 * 2;
+	public static final long EXPIRE_IN_ONE_HOUR 		= 1000 * 60 * 60 * 1;
+	public static final long EXPIRE_IN_TWO_HOUR 		= 1000 * 60 * 60 * 2;
 	public static final long EXPIRE_IN_THREE_HOUR 	= 1000 * 60 * 60 * 3;
 	public static final long EXPIRE_IN_FIVE_HOUR 	= 1000 * 60 * 60 * 5;
 	public static final long EXPIRE_IN_EIGHT_HOUR 	= 1000 * 60 * 60 * 8;
 	public static final long EXPIRE_IN_ONE_DAY 		= 1000 * 60 * 60 * 24;
-	public static final long EXPIRE_IN_TWO_DAYS 	= EXPIRE_IN_ONE_DAY * 2;
-	public static final long EXPIRE_IN_ONE_WEEK 	= EXPIRE_IN_ONE_DAY * 7;
+	public static final long EXPIRE_IN_TWO_DAYS 		= EXPIRE_IN_ONE_DAY * 2;
+	public static final long EXPIRE_IN_ONE_WEEK 		= EXPIRE_IN_ONE_DAY * 7;
 	public static final long EXPIRE_IN_TWO_WEEKS 	= EXPIRE_IN_ONE_DAY * 14;
 	public static final long EXPIRE_IN_ONE_MONTH 	= EXPIRE_IN_ONE_DAY * 30;
 	public static final long EXPIRE_IN_THREE_MONTHS	= EXPIRE_IN_ONE_DAY * 90;
 	public static final long EXPIRE_IN_SIX_MONTHS 	= EXPIRE_IN_ONE_DAY * 180;
-	public static final long EXPIRE_IN_ONE_YEAR 	= EXPIRE_IN_ONE_DAY * 365;
+	public static final long EXPIRE_IN_ONE_YEAR 		= EXPIRE_IN_ONE_DAY * 365;
 	public static final long EXPIRE_IN_TWO_YEARS 	= EXPIRE_IN_ONE_YEAR * 2;
 	public static final long EXPIRE_IN_FIVE_YEARS 	= EXPIRE_IN_ONE_YEAR * 5;
 	public static final long EXPIRE_IN_TEN_YEARS 	= EXPIRE_IN_ONE_YEAR * 10;
@@ -303,12 +303,29 @@ public final class JsonWebToken {
      */
     public static void main(String[] args) throws Exception {
 		JsonWebToken jwt = new JsonWebToken();
-		
-		String subject	 = "araf.karsh";
-		long expiry		 = JsonWebToken.EXPIRE_IN_TWO_WEEKS;
-		String token	 = jwt.generateToken(subject, expiry);
-		
+
+		Map<String, Object> claims = new HashMap<>();
+		claims.put("iss", "companyName");
+		claims.put("aud", "microservices");
+		claims.put("jti", UUID.randomUUID().toString());
+		claims.put("did", "device id");
+		String subject	 = "jane.doe";
+		long expiry		 = JsonWebToken.EXPIRE_IN_FIVE_YEARS;
+
+		String token1	 = jwt.generateToken(subject, expiry, SignatureAlgorithm.HS384 ,claims);
 		System.out.println("Expiry Time in Days: "+getDays(expiry));
-		tokenStats(token);
+		tokenStats(token1);
+		if(jwt.validateToken(subject, token1)) {
+			System.out.println(">>> Token is Valid");
+		}
+		/**
+		 * Token Generated from the above data
+		 * ------------------------------------------------------------------------------------------------------
+		 eyJhbGciOiJIUzM4NCJ9
+		 .eyJhdWQiOiJtaWNyb3NlcnZpY2VzIiwic3ViIjoiamFuZS5kb2UiLCJpc3MiOiJjb21wYW55TmFtZSIsImV4cCI6MTgxNDAwOTg4NSwiaWF0IjoxNjU2MzI5ODg1LCJqdGkiOiIxZTk4YjFjYS00ZWE3LTQ3NzQtYmQ5Yi0zMzI2ZTIwNTdkYWUiLCJkaWQiOiJkZXZpY2UgaWQifQ
+		 .MD7fdReCTfAr4V3G-h7ievjcOmAlEyX0aP5Df8sE_Uf_bveVHd51HXvzuDYucE2A
+		 * ------------------------------------------------------------------------------------------------------
+		 eyJhbGciOiJIUzM4NCJ9
+		 */
 	}
 }

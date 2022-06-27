@@ -15,12 +15,17 @@
  */
 package io.fusion.air.microservice.utils;
 
+import org.slf4j.Logger;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Date;
 import java.util.LinkedHashMap;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  *
@@ -29,6 +34,9 @@ import java.util.LinkedHashMap;
  */
 
 public class CPU {
+
+	// Set Logger -> Lookup will automatically determine the class name.
+	private static final Logger log = getLogger(lookup().lookupClass());
 
 	// https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/management/OperatingSystemMXBean.html
 	private static final OperatingSystemMXBean osMXBean
@@ -55,7 +63,8 @@ public class CPU {
 					methodsMap.put(method.getName(), method);
 				}
 			} catch (Exception ex) {
-				System.out.println("Error in CPU.loadMethods() : "+ex.getMessage());
+				// System.out.println("Error in CPU.loadMethods() : "+ex.getMessage());
+				log.info("Error in CPU.loadMethods() : "+ex.getMessage());
 				// ex.printStackTrace();
 			}
 		} // Loop
@@ -68,11 +77,13 @@ public class CPU {
 	 */
 	private static Object invoke(String _methodName, OperatingSystemMXBean _osMXBean) {
 		if(_methodName == null) {
-			System.out.println("Method "+_methodName+"() Invalid!");
+			// System.out.println("Method "+_methodName+"() Invalid!");
+			log.info("Method "+_methodName+"() Invalid!");
 			return "";
 		}
 		if(_osMXBean == null) {
-			System.out.println("OS MXBean "+_osMXBean+"() Invalid!");
+			// System.out.println("OS MXBean "+_osMXBean+"() Invalid!");
+			log.info("OS MXBean "+_osMXBean+"() Invalid!");
 			return "";
 		}
 		Object value = new Long("0");
@@ -81,12 +92,13 @@ public class CPU {
 			try {
 				value = method.invoke(_osMXBean);
 			} catch (Exception e) {
-				System.out.println("Exception in method "+_methodName+".invoke(_osMXBean) "
-						+"ERROR="+e.getMessage());
+				// System.out.println("Exception in method "+_methodName+".invoke(_osMXBean) " +"ERROR="+e.getMessage());
+				log.info("Exception in method "+_methodName+".invoke(_osMXBean) " +"ERROR="+e.getMessage());
 				// e.printStackTrace();
 			}
 		} else {
-			System.out.println("Method "+_methodName+"() Not Found!");
+			// System.out.println("Method "+_methodName+"() Not Found!");
+			log.debug("Method "+_methodName+"() Not Found!");
 		}
 		// System.out.println(method.getName() + " = " + value);
 		return value;
