@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.adapters.controllers;
+package io.fusion.air.microservice.adapters.controllers.secured;
 
+import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.models.PaymentDetails;
 import io.fusion.air.microservice.domain.models.PaymentStatus;
 import io.fusion.air.microservice.domain.models.PaymentType;

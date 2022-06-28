@@ -15,6 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.controllers;
 
+import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.models.PaymentDetails;
 import io.fusion.air.microservice.domain.models.PaymentStatus;
 import io.fusion.air.microservice.domain.models.PaymentType;
@@ -105,7 +106,7 @@ public class ProductControllerImpl extends AbstractController {
             description = "Unable to process the payment",
             content = @Content)
     })
-    @PostMapping("/processPayments")
+    @PostMapping("/processProducts")
     public ResponseEntity<PaymentStatus> processPayments(@RequestBody PaymentDetails _payDetails) {
 		log.info("|"+name()+"|Request to process Product... ");
 		PaymentStatus ps = new PaymentStatus(
@@ -130,6 +131,7 @@ public class ProductControllerImpl extends AbstractController {
 					description = "Unable to Cancel the Payment",
 					content = @Content)
 	})
+	@AuthorizationRequired(role = "Admin")
 	@DeleteMapping("/cancel/{referenceNo}")
 	public ResponseEntity<HashMap<String,Object>> cancel(@PathVariable("referenceNo") String _referenceNo) {
 		log.info("|"+name()+"|Request to Cancel the Product... ");
@@ -153,6 +155,7 @@ public class ProductControllerImpl extends AbstractController {
 					description = "Unable to Update the Product",
 					content = @Content)
 	})
+	@AuthorizationRequired(role = "User")
 	@PutMapping("/update/{referenceNo}")
 	public ResponseEntity<HashMap<String,Object>> updatePayment(@PathVariable("referenceNo") String _referenceNo) {
 		log.info("|"+name()+"|Request to Update Product... "+_referenceNo);

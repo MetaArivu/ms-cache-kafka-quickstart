@@ -81,7 +81,8 @@ public class ServiceRequestListener implements ServletRequestListener {
 		MDC.put("IP", httpRequest.getRemoteHost());
 		MDC.put("Port", String.valueOf(httpRequest.getRemotePort()));
 		MDC.put("URI", httpRequest.getRequestURI());
-		log.info("URI="+httpRequest.getRequestURI()+ CPU.printCpuStats());
+		MDC.put("user", "john.doe");
+
 	}
 
 	/**

@@ -318,6 +318,21 @@
 			<version>${jwt.api.version}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>5.7.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>5.7.2</version>
+		</dependency>
+
+
 		<!--
            This enables a default Auth Page for the Spring Boot App.
            Default loginId: user
@@ -330,8 +345,7 @@
                <artifactId>spring-boot-starter-security</artifactId>
                <version>${spring.boot.version}</version>
            </dependency>
-           -->
-
+		-->
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-tomcat -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
