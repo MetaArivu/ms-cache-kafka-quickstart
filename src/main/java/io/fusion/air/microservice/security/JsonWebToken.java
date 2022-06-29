@@ -363,13 +363,6 @@ public final class JsonWebToken {
 		if(jwt.validateToken(subject, token1)) {
 			System.out.println(">>> Token is Valid");
 		}
-		/**
-		 * Token Generated from the above data
-		 * ------------------------------------------------------------------------------------------------------
-		 eyJhbGciOiJIUzM4NCJ9
-		 .eyJhdWQiOiJtaWNyb3NlcnZpY2VzIiwic3ViIjoiamFuZS5kb2UiLCJpc3MiOiJjb21wYW55TmFtZSIsImV4cCI6MTgxNDAwOTg4NSwiaWF0IjoxNjU2MzI5ODg1LCJqdGkiOiIxZTk4YjFjYS00ZWE3LTQ3NzQtYmQ5Yi0zMzI2ZTIwNTdkYWUiLCJkaWQiOiJkZXZpY2UgaWQifQ
-		 .MD7fdReCTfAr4V3G-h7ievjcOmAlEyX0aP5Df8sE_Uf_bveVHd51HXvzuDYucE2A
-		 * ------------------------------------------------------------------------------------------------------
-		 */
+
 	}
 }
