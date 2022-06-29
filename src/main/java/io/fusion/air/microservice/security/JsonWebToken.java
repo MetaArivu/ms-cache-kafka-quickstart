@@ -28,8 +28,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.security.Key;
+import javax.annotation.PostConstruct;
 
 /**
  * 
@@ -39,7 +43,7 @@ import org.springframework.stereotype.Service;
 @Service
 public final class JsonWebToken {
 	
-	private static String TOKEN = "(@@sigma??Epsilon##6109871597!!)";
+	private static String TOKEN = "(@@sigma@@Epsilon@@6109871597@@)";
 	
 	public static final long EXPIRE_IN_ONE_HOUR 		= 1000 * 60 * 60 * 1;
 	public static final long EXPIRE_IN_TWO_HOUR 		= 1000 * 60 * 60 * 2;
@@ -60,7 +64,35 @@ public final class JsonWebToken {
 
 	@Autowired
 	private ServiceConfiguration serviceConfig;
-	
+
+	private Key key;
+
+	/**
+	 *
+	 */
+	public JsonWebToken() {
+		init();
+	}
+
+	/***
+	 * Create the Key for Signing
+	 */
+	@PostConstruct
+	public void init() {
+		this.key = Keys.hmacShaKeyFor(getTokenKey().getBytes());
+	}
+
+	/**
+	 * Returns the Key
+	 * @return
+	 */
+	public Key getKey() {
+		if(key == null) {
+			this.key = Keys.hmacShaKeyFor(getTokenKey().getBytes());
+		}
+		return key;
+	}
+
 	/**
 	 * Returns Token Key - 
 	 * In SpringBooT Context from ServiceConfiguration
@@ -116,7 +148,8 @@ public final class JsonWebToken {
         		.setSubject(_userId)
         		.setIssuedAt(new Date(currentTime))
                 .setExpiration(new Date(currentTime + _expiryTime))
-                .signWith(_algo, getTokenKey())
+				.signWith(getKey())
+                // .signWith(_algo, HashData.base64Encoder(getTokenKey()))
                 .compact();
     }
 
@@ -260,7 +293,8 @@ public final class JsonWebToken {
     public Claims getAllClaims(String _token) {
         return Jwts
         		.parser()
-        		.setSigningKey(getTokenKey())
+				// .signWith(HashData.base64Encoder(getTokenKey()))
+        		.setSigningKey(getKey())
         		.parseClaimsJws(_token)
         		.getBody();
     }
@@ -323,7 +357,7 @@ public final class JsonWebToken {
 		String subject	 = "jane.doe";
 		long expiry		 = JsonWebToken.EXPIRE_IN_FIVE_YEARS;
 
-		String token1	 = jwt.generateToken(subject, expiry, SignatureAlgorithm.HS384 ,claims);
+		String token1	 = jwt.generateToken(subject, expiry, claims);
 		System.out.println("Expiry Time in Days: "+getDays(expiry));
 		tokenStats(token1);
 		if(jwt.validateToken(subject, token1)) {

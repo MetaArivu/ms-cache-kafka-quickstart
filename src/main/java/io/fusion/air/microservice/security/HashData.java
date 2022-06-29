@@ -25,11 +25,9 @@ import java.util.Base64;
  *
  * Compute the hash for String using Standard Algorithms like MD5, SHA-1, SHA-256, SHA-386, SHA-512
  *
- * HashData algo = HashData.getInstance();
- *
- * String hashValue = algo.createHash("Secret Code", HashAlgorithms.SHA_1);
+ * String hashValue = HashData.createHash("Secret Code", HashAlgorithms.SHA_1);
  * OR
- * String hashValue = algo.createHash("Secret Code", HashAlgorithms.SHA_1, "UTF-16");
+ * String hashValue = HashData.createHash("Secret Code", HashAlgorithms.SHA_1, "UTF-16");
  *
  * The above code will return the computed Hash value of "Secret Code" using SHA-1
  * (Secure Hash Algorithm).
@@ -62,10 +60,7 @@ public final class HashData {
     private int DEFAULT_ALGO 				= 5;
     private int CURRENT_ALGO 	        	= DEFAULT_ALGO;
 */
-    // Singleton Instance
-    private final static HashData hashAlgo	= new HashData();
-
-    private final Algorithms algo = new Algorithms();
+    private final static Algorithms algo = new Algorithms();
 
     /**
      * Private Constructor used to make this as a Singleton instance.
@@ -75,18 +70,10 @@ public final class HashData {
     }
 
     /**
-     * Returns the single instance of HashAlgorithms Object
-     *
-     * @return HashAlgorithms
-     */
-
-    public static HashData getInstance() { 	return hashAlgo;	}
-
-    /**
      * Returns Algorithms Available
      * @return
      */
-    public Algorithms algo() {
+    public static Algorithms algo() {
         return algo;
     }
     /**
@@ -102,7 +89,7 @@ public final class HashData {
      *
      * @return int algo_code
      */
-    public int getDefaultAlgorithm() {
+    public static int getDefaultAlgorithm() {
         return algo.getDefaultMessageDigestAlgorithm();
     }
 
@@ -123,7 +110,7 @@ public final class HashData {
      * @throws Exception
      */
 
-    public final String createHash(final String _message) throws Exception {
+    public final static String createHash(final String _message) throws Exception {
         return createHash(_message, algo.getDefaultMessageDigestAlgorithm(), "UTF-8");
     }
 
@@ -144,7 +131,7 @@ public final class HashData {
      * @throws Exception
      */
 
-    public final String createHash(final String _message, final int _algo) throws Exception {
+    public final static String createHash(final String _message, final int _algo) throws Exception {
         return createHash(_message, _algo, "UTF-8");
     }
 
@@ -166,7 +153,7 @@ public final class HashData {
      * @throws Exception
      */
 
-    public final String createHash(final String _message, final int _algo, final String _encoding) throws Exception {
+    public final static String createHash(final String _message, final int _algo, final String _encoding) throws Exception {
 
         if(_message == null) {							// Check Input Message
             throw new Exception("Invalid message for hashing");
@@ -200,7 +187,7 @@ public final class HashData {
      * @param raw
      * @return String
      */
-    public String base64Encoder(byte raw[]) {
+    public static String base64Encoder(byte raw[]) {
         return Base64.getEncoder().encodeToString(raw);
     }
 
@@ -210,7 +197,7 @@ public final class HashData {
      * @param s
      * @return String
      */
-    public String base64Encoder(String s) {
+    public static String base64Encoder(String s) {
         return Base64.getEncoder().encodeToString(s.getBytes());
     }
 
@@ -221,7 +208,7 @@ public final class HashData {
      * @return String
      */
 
-    public String hexEncoder(byte raw[]) {
+    public static String hexEncoder(byte raw[]) {
         char[] HEX_CHARS = "0123456789ABCDEF".toCharArray();
 
         StringBuilder sb = new StringBuilder(raw.length * 2);
@@ -256,7 +243,7 @@ public final class HashData {
             int xx = 9999999;
             System.out.println("TimeInMillis = "+ll);
             System.out.println("Hex Value    = "+Long.toHexString(ll).toUpperCase());
-            System.out.println("Base64 Value = "+ HashData.getInstance().base64Encoder(""+ll));
+            System.out.println("Base64 Value = "+ HashData.base64Encoder(""+ll));
             System.out.println("Running No.  = "+xx);
             System.out.println("Hex Value    = "+Integer.toHexString(xx).toUpperCase());
 
@@ -276,8 +263,8 @@ public final class HashData {
          */
         String passwordHash = "";
         String password 	= args[0];
-        int algo 			= HashData.getInstance().getDefaultAlgorithm();
-        Algorithms algos    = HashData.getInstance().algo();
+        int algo 			= HashData.getDefaultAlgorithm();
+        Algorithms algos    = HashData.algo();
         try {
             algo = Integer.parseInt(args[1]);
         } catch (Exception ignored) {}
@@ -285,11 +272,11 @@ public final class HashData {
         // Print all the algorithms computed hash value of the input message if the algo code == ZERO
         if (algo == 0) {
             for(int x = 0; x< (algos.totalMessageDigestAlgorithms()-1); x++) {
-                passwordHash = HashData.getInstance().createHash(password, x+1);
+                passwordHash = HashData.createHash(password, x+1);
                 System.out.println(algos.algos(x+1)+"\tPassword = ( "+password+" )"+" { "+passwordHash+" }");
             }
         } else {
-            passwordHash = HashData.getInstance().createHash(password, algo);
+            passwordHash = HashData.createHash(password, algo);
             System.out.println("ALGOS="+algos.algos(algo)+" \tPassword = ( "+password+" )"+" { "+passwordHash+" }");
         }
     }
