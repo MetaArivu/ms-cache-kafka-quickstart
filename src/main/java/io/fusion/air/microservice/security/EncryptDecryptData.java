@@ -181,9 +181,9 @@ public class EncryptDecryptData {
      */
     public static void testEncryption(int _cnt) {
         String rawData  = "My Name is Lincoln Hawk from the Galaxy Andromeda!";
-        String secret   = "SomeValuesWith123??1212??#@!abc-"+_cnt;
+        String secret   = "<([SecretKey!!To??Encrypt##Data@12345%6790])>-"+_cnt;
         String cipher   = Algorithms.AES_ECB_PKCS5Padding;
-        int md_algo     = Algorithms.SHA_1;
+        int md_algo     = Algorithms.SHA_512;
         System.out.println("Secret       : "+secret);
         System.out.println("Cipher       : "+cipher);
         System.out.println("MD Algorithm : "+new Algorithms().algos(md_algo));
