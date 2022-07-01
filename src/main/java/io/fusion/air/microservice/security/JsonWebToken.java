@@ -372,6 +372,7 @@ public final class JsonWebToken {
 		claims.put("aud", "microservices");
 		claims.put("jti", UUID.randomUUID().toString());
 		claims.put("did", "device id");
+		claims.put("rol", "user");
 		String subject	 = "jane.doe";
 		long expiry		 = JsonWebToken.EXPIRE_IN_FIVE_YEARS;
 

@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.exceptions;
+package io.fusion.air.microservice.domain.ports;
 
 /**
- * @author: Araf Karsh Hamid
- * @version:
- * @date:
+ * App Controller
+ *
+ * @author arafkarsh
  */
-public class BusinessServiceException extends AbstractServiceException {
-
-    /**
-     * Business Service Exception
-     * @param _msg
-     * @param _e
-     */
-    public BusinessServiceException(String _msg, Exception _e) {
-        super(_msg, _e);
-    }
+public interface ProductController {
 }

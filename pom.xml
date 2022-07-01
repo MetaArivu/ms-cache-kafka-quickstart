@@ -376,6 +376,22 @@
 		    <artifactId>springdoc-openapi-ui</artifactId>
 			<version>${openapi.version}</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-webflux-ui -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-webflux-ui</artifactId>
+			<version>${openapi.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-data-rest -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-data-rest</artifactId>
+			<version>${openapi.version}</version>
+		</dependency>
+
+		<!-- End of Dependency Definitions -->
 	</dependencies>
 
 	<dependencyManagement>
