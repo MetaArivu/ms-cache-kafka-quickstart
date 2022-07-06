@@ -52,7 +52,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Configuration
 @RestController
-// "/api/v1/ms-cache"
+// "/ms-cache/api/v1"
 @RequestMapping("${service.api.path}/product")
 @RequestScope
 @Tag(name = "Product API", description = "Ex. io.f.a.m.adapters.controllers.ProductControllerImpl")

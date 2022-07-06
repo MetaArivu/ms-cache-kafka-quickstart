@@ -57,12 +57,13 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 // Cache
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-;
 
 /**
  * Micro Service - Spring Boot Application
- * API URL : http://localhost:9090/api/v1/service/swagger-ui.html
+ * API URL : http://localhost:9090/service/api/v1/swagger.html
  *
  * @author arafkarsh
  */
@@ -99,7 +100,7 @@ public class ServiceBootStrap {
 	public static void main(String[] args) {
 		// Start the Server
 		start(args);
-		// API URL : http://localhost:9090/api/v1/service/swagger-ui.html
+		// API URL : http://localhost:9090/service/api/v1/swagger.html
 	}
 
 	/**
@@ -139,6 +140,16 @@ public class ServiceBootStrap {
 	 */
 	@PostConstruct
 	public void configure() {
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**").allowedOrigins("*");
+			}
+		};
 	}
 
 	/**

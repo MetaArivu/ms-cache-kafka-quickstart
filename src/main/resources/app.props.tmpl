@@ -3,13 +3,12 @@
 # =======================================================================
 service.org=metamagic
 service.name=MS-Cache
+service.api.name=ms-cache
 service.api.prefix=api
 service.api.version=v1
-service.api.name=ms-cache
 service.container=ms-cache-service
 #service.api.repository=https://github.com/MetaArivu/${service.container}
 service.api.repository=https://github.com/MetaArivu/ms-cache-kafka-quickstart
-#service.api.path=/${service.api.prefix}/${service.api.version}/${service.api.name}
 service.api.path=/${service.api.name}/${service.api.prefix}/${service.api.version}
 service.url=http://www.metarivu.com/
 service.license=Apache 2 License
@@ -57,8 +56,8 @@ remote.protocol=http
 # For More Info: https://springdoc.org/#Introduction
 # springdoc.api-docs.path=/api-docs
 # =======================================================================
-springdoc.api-docs.path=${service.api.path}/
-springdoc.swagger-ui.path=${service.api.path}/swagger.html
+springdoc.api-docs.path=${service.api.path}
+springdoc.swagger-ui.path=${service.api.path}/swagger-ui.html
 # Disabling the /v3/api-docs enpoint
 springdoc.api-docs.enabled=true
 # Disabling the swagger-ui
