@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.server.config;
+// package io.fusion.air.microservice.server.config;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -119,7 +120,23 @@ public class ServiceConfiguration implements Serializable {
 	
 	@Value("${server.version:0.5.0}")
 	private String serverVersion;
-	
+
+	@Value("${server.host.dev:localhost:9090}")
+	private String serverHostDev;
+	@Value("${server.host.dev.desc:localhost:9090}")
+	private String serverHostDevDesc;
+
+	@Value("${server.host.uat:localhost:9090}")
+	private String serverHostUat;
+	@Value("${server.host.uat.desc:localhost:9090}")
+	private String serverHostUatDesc;
+
+	@Value("${server.host.prod:localhost:9090}")
+	private String serverHostProd;
+	@Value("${server.host.prod.desc:localhost:9090}")
+	private String serverHostProdDesc;
+
+
 	@Value("${server.port:9080}")
 	private int serverPort;
 	
@@ -383,5 +400,29 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public String getServiceLicense() {
 		return serviceLicense;
+	}
+
+	public String getServerHostDev() {
+		return serverHostDev;
+	}
+
+	public String getServerHostDevDesc() {
+		return serverHostDevDesc;
+	}
+
+	public String getServerHostUat() {
+		return serverHostUat;
+	}
+
+	public String getServerHostUatDesc() {
+		return serverHostUatDesc;
+	}
+
+	public String getServerHostProd() {
+		return serverHostProd;
+	}
+
+	public String getServerHostProdDesc() {
+		return serverHostProdDesc;
 	}
 }

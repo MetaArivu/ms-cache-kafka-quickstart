@@ -1,4 +1,9 @@
 # =======================================================================
+# MS-Cache Service Properties
+# =======================================================================
+build.number=22
+build.date=Wed Jul 6 17:11:30 IST 2022
+# =======================================================================
 # Service Name & API Details -  Version, Path
 # =======================================================================
 service.org=metamagic
@@ -16,7 +21,7 @@ service.license=Apache 2 License
 # Microservice Server Properties
 # =======================================================================
 server.port=9090
-server.version=0.2.0
+server.version=0.1.0
 server.restart=true
 server.host.dev=http://localhost:${server.port}
 server.host.dev.desc=Development Server

@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,7 +123,8 @@ public class ProductControllerImpl extends AbstractController {
 	/**
 	 * Cancel the Product
 	 */
-	@Operation(summary = "Cancel Product")
+	@AuthorizationRequired(role = "Admin")
+	@Operation(summary = "Cancel Product", security = { @SecurityRequirement(name = "bearer-key") })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Payment Cancelled",
@@ -131,7 +133,6 @@ public class ProductControllerImpl extends AbstractController {
 					description = "Unable to Cancel the Payment",
 					content = @Content)
 	})
-	@AuthorizationRequired(role = "Admin")
 	@DeleteMapping("/cancel/{referenceNo}")
 	public ResponseEntity<HashMap<String,Object>> cancel(@PathVariable("referenceNo") String _referenceNo) {
 		log.info("|"+name()+"|Request to Cancel the Product... ");
@@ -146,7 +147,8 @@ public class ProductControllerImpl extends AbstractController {
 	/**
 	 * Update the Product
 	 */
-	@Operation(summary = "Update Product")
+	@AuthorizationRequired(role = "User")
+	@Operation(summary = "Update Product", security = { @SecurityRequirement(name = "bearer-key") })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Update the Product",
@@ -155,7 +157,6 @@ public class ProductControllerImpl extends AbstractController {
 					description = "Unable to Update the Product",
 					content = @Content)
 	})
-	@AuthorizationRequired(role = "User")
 	@PutMapping("/update/{referenceNo}")
 	public ResponseEntity<HashMap<String,Object>> updatePayment(@PathVariable("referenceNo") String _referenceNo) {
 		log.info("|"+name()+"|Request to Update Product... "+_referenceNo);

@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 
@@ -72,8 +73,8 @@ public class PaymentControllerImpl extends AbstractController {
 	 * 
 	 * @return
 	 */
-    @Operation(summary = "Check the Payment status")
-    @ApiResponses(value = {
+    @Operation(summary = "Check the Payment status", security = { @SecurityRequirement(name = "bearer-key") })
+	@ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Payment Status Check",
             content = {@Content(mediaType = "application/json")}),
@@ -102,7 +103,7 @@ public class PaymentControllerImpl extends AbstractController {
 	/**
 	 * Process the Payments
 	 */
-    @Operation(summary = "Process Payments")
+    @Operation(summary = "Process Payments", security = { @SecurityRequirement(name = "bearer-key") })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Process the payment",
@@ -127,7 +128,7 @@ public class PaymentControllerImpl extends AbstractController {
 	/**
 	 * Cancel the Payment
 	 */
-	@Operation(summary = "Cancel Payment")
+	@Operation(summary = "Cancel Payment", security = { @SecurityRequirement(name = "bearer-key") })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Payment Cancelled",
@@ -150,7 +151,7 @@ public class PaymentControllerImpl extends AbstractController {
 	/**
 	 * Update the Payment
 	 */
-	@Operation(summary = "Update Payment")
+	@Operation(summary = "Update Payment", security = { @SecurityRequirement(name = "bearer-key") })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Update the Payment",

@@ -21,6 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.HealthController;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.slf4j.Logger;
 import org.springdoc.core.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,20 +53,23 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 // Cache
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 /**
  * Micro Service - Spring Boot Application
- * API URL : http://localhost:9090/service/api/v1/swagger.html
+ * API URL : http://localhost:9090/service/api/v1/swagger-ui.html
  *
  * @author arafkarsh
  */
@@ -100,7 +106,7 @@ public class ServiceBootStrap {
 	public static void main(String[] args) {
 		// Start the Server
 		start(args);
-		// API URL : http://localhost:9090/service/api/v1/swagger.html
+		// API URL : http://localhost:9090/service/api/v1/swagger-ui.html
 	}
 
 	/**
@@ -143,7 +149,8 @@ public class ServiceBootStrap {
 	}
 
 	@Bean
-	public WebMvcConfigurer corsConfigurer() {
+	public WebMvcConfigurer corsConfigurer()
+	{
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
@@ -156,7 +163,7 @@ public class ServiceBootStrap {
 	 * Micro Service - Home Page
 	 * @return
 	 */
-	@GetMapping("/")
+	@GetMapping("/root")
 	public String home(HttpServletRequest request) {
 		log.info("Request to Home Page of Service... "+printRequestURI(request));
 		return (serviceConfig == null) ? this.title :
@@ -216,7 +223,7 @@ public class ServiceBootStrap {
 	}
 
 	/**
-	 * Open API v3 Docs - Micro Service
+	 * Open API v3 Docs - MicroService
 	 * Reference: https://springdoc.org/faq.html
 	 * @return
 	 */
@@ -259,8 +266,9 @@ public class ServiceBootStrap {
 	 * @return
 	 */
 	@Bean
-	public OpenAPI orderOpenAPI() {
+	public OpenAPI buildOpenAPI() {
 		return new OpenAPI()
+				.servers(getServers())
 				.info(new Info()
 						.title(serviceConfig.getServiceName()+" Service")
 						.description(serviceConfig.getServiceDetails())
@@ -270,9 +278,44 @@ public class ServiceBootStrap {
 				)
 				.externalDocs(new ExternalDocumentation()
 						.description(serviceConfig.getServiceName()+" Service Source Code")
-						.url(serviceConfig.getServiceApiRepository()));
+						.url(serviceConfig.getServiceApiRepository())
+				)
+				.components(new Components().addSecuritySchemes("bearer-key",
+						new SecurityScheme()
+								.type(SecurityScheme.Type.HTTP)
+								.scheme("bearer")
+								.bearerFormat("JWT"))
+				);
 	}
 
+	/**
+	 * Get the List of Servers for Open API Docs - Swagger
+	 * @return
+	 */
+	private List<Server> getServers() {
+		List<Server> serverList = new ArrayList<Server>();
+
+		Server dev = new Server();
+		dev.setUrl(serviceConfig.getServerHostDev());
+		dev.setDescription(serviceConfig.getServerHostDevDesc());
+		Server uat = new Server();
+		uat.setUrl(serviceConfig.getServerHostUat());
+		uat.setDescription(serviceConfig.getServerHostUatDesc());
+		Server prod = new Server();
+		prod.setUrl(serviceConfig.getServerHostProd());
+		prod.setDescription(serviceConfig.getServerHostProdDesc());
+
+		serverList.add(dev);
+		serverList.add(uat);
+		serverList.add(prod);
+
+		return serverList;
+	}
+
+	@Bean
+	ForwardedHeaderFilter forwardedHeaderFilter() {
+		return new ForwardedHeaderFilter();
+	}
 	/**
 	 * Returns the REST Template
 	 * @return
