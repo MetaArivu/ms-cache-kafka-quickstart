@@ -16,18 +16,40 @@
 package io.fusion.air.microservice.domain.models;
 
 import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
+@Entity
+@Table(name = "country_m")
 public class Country implements Serializable {
 
-    private String countryId;
-    private String countryName;
-    private String countryOfficialName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @NotNull
+    @Column(name = "countryId")
+    private int countryId;
+
+    @NotNull
+    @Column(name = "countryCode")
     private String countryCode;
+
+    @NotNull
+    @Column(name = "countryName")
+    private String countryName;
+
+    @Column(name = "countryOfficialName")
+    private String countryOfficialName;
+
+    protected Country() {
+    }
 
     /**
      * Create Country
@@ -36,26 +58,65 @@ public class Country implements Serializable {
      * @param _countryOnm
      * @param _countryCd
      */
-    public Country(String _pid, String _countryNm, String _countryOnm, String _countryCd)  {
+    public Country(int _pid, String _countryNm, String _countryOnm, String _countryCd)  {
         countryId   = _pid;
         countryName = _countryNm;
         countryOfficialName = _countryOnm;
         countryCode   = _countryCd;
     }
 
-    public String getCountryId() {
+    /**
+     * Get Country Code
+     * @return
+     */
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    /**
+     * Get Country ID
+     * @return
+     */
+    public int getCountryId() {
         return countryId;
     }
 
+    /**
+     * Get Country Name
+     * @return
+     */
     public String getCountryName() {
         return countryName;
     }
 
+    /**
+     * Get the Country Official Name
+     * @return
+     */
     public String getCountryOfficialName() {
         return countryOfficialName;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    /**
+     * Returns the Hashcode
+     * @return
+     */
+    public int hashCode() {
+        return Objects.hash(countryId, countryName);
+    }
+
+    /**
+     * Checks Equality returns True if Objects are equal
+     * Check Country ID and Country Name
+     * @param o
+     * @return
+     */
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Country country = (Country) o;
+        return countryId == country.countryId && countryName.equals(country.countryName);
     }
 }

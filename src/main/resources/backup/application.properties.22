@@ -2,7 +2,7 @@
 # MS-Cache Service Properties
 # =======================================================================
 build.number=23
-build.date=Fri Jul 8 16:14:52 IST 2022
+build.date=Fri Jul 8 16:08:40 IST 2022
 # =======================================================================
 # Service Name & API Details -  Version, Path
 # =======================================================================
@@ -45,7 +45,7 @@ spring.datasource.username=sa
 spring.datasource.password=password
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 spring.jpa.defer-datasource-initialization=true
-#spring.sql.init.data-locations=data-trans.sql
+spring.sql.init.data-locations=data-trans.sql
 spring.jpa.hibernate.ddl-auto=create-drop
 spring.jpa.show-sql=false
 spring.jpa.properties.hibernate.format_sql=true

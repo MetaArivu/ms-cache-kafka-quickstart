@@ -19,6 +19,7 @@ import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.models.PaymentDetails;
 import io.fusion.air.microservice.domain.models.PaymentStatus;
 import io.fusion.air.microservice.domain.models.PaymentType;
+import io.fusion.air.microservice.domain.ports.CountryService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,11 +47,16 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Product Controller for the Service
+ *
+ * Only Selected Methods will be secured in this packaged - which are Annotated with
+ * @AuthorizationRequired
+ * @Operation(summary = "Cancel Product", security = { @SecurityRequirement(name = "bearer-key") })
  * 
  * @author arafkarsh
  * @version 1.0
  * 
  */
+@CrossOrigin
 @Configuration
 @RestController
 // "/ms-cache/api/v1"
@@ -65,6 +71,9 @@ public class ProductControllerImpl extends AbstractController {
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 	private String serviceName;
+
+	@Autowired
+	CountryService countryServiceImpl;
 
 	/**
 	 * Get Method Call to Check the Health of the App

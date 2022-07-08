@@ -40,15 +40,19 @@ spring.datasource.username=sa
 spring.datasource.password=password
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 spring.jpa.defer-datasource-initialization=true
-spring.sql.init.data-locations=data-trans.sql
+#spring.sql.init.data-locations=data-trans.sql
 spring.jpa.hibernate.ddl-auto=create-drop
 spring.jpa.show-sql=false
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.properties.hibernate.validator.apply_to_ddl=false
 #spring.jpa.properties.hibernate.check_nullability=true
+# =======================================================================
 # Enabling H2 Console
+# =======================================================================
 spring.h2.console.enabled=true
-spring.h2.console.path=/h2
+spring.h2.console.path=/h2-
+spring.h2.console.settings.trace=false
+spring.h2.console.settings.web-allow-others=false
 # =======================================================================
 # External Remote Server Properties 
 # =======================================================================

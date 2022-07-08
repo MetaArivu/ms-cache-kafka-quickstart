@@ -47,12 +47,15 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * App Controller for the Service
+ * Payment Controller (Secured) for the Service
+ *
+ * All the calls in this package will be secured with JWT Token.
  * 
  * @author arafkarsh
  * @version 1.0
  * 
  */
+@CrossOrigin
 @Configuration
 @RestController
 // "/ms-cache/api/v1"
