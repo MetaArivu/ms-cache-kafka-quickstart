@@ -84,10 +84,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ServletComponentScan
 @ComponentScan
 @RestController
-@SpringBootApplication(scanBasePackages = { "io.fusion.air.microservice" })
 @EnableCaching
-// @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = { "io.fusion.air.microservice" })
+// @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class ServiceBootStrap {
 
 	// Set Logger -> Lookup will automatically determine the class name.

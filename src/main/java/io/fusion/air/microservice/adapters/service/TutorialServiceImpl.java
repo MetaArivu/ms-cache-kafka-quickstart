@@ -1,8 +1,11 @@
 package io.fusion.air.microservice.adapters.service;
 
 import io.fusion.air.microservice.domain.models.Country;
+import io.fusion.air.microservice.domain.models.Tutorial;
 import io.fusion.air.microservice.domain.ports.CountryRepository;
 import io.fusion.air.microservice.domain.ports.CountryService;
+import io.fusion.air.microservice.domain.ports.TutorialRepository;
+import io.fusion.air.microservice.domain.ports.TutorialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +17,13 @@ import java.util.List;
  * @date:
  */
 @Component
-public class CountryServiceImpl implements CountryService {
+public class TutorialServiceImpl implements TutorialService {
 
     @Autowired
-    CountryRepository countryRepositoryImpl;
+    TutorialRepository tutorialRepositoryImpl;
 
     @Override
-    public List<Country> getAllCountries() {
-        return (List<Country>) countryRepositoryImpl.findAll();
-        //return null;
+    public List<Tutorial> getAllTutorials() {
+        return tutorialRepositoryImpl.findAll();
     }
 }

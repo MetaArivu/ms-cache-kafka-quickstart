@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
  * @version:
  * @date:
  */
-// @Repository
-// public interface CountryRepository extends JpaRepository<Country, Long> {
-// }
+@Repository
+public interface CountryRepository extends JpaRepository<Country, Long> {
+}

@@ -40,13 +40,20 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(basePackages = { "io.fusion.air.microservice.domain.ports" })
 @EnableTransactionManagement
 public class JpaConfig {
-
+    /**
+     * Create the DataSource
+     * @return
+     */
     @Bean
     public DataSource dataSource() {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
         return builder.setType(EmbeddedDatabaseType.H2).build();
     }
 
+    /**
+     * Create EntityManagerFactory
+     * @return
+     */
     @Bean
     public EntityManagerFactory entityManagerFactory() {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
@@ -54,7 +61,7 @@ public class JpaConfig {
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
-        String[] pkgs = {"o.fusion.air.microservice.domain.models.*"};
+        String[] pkgs = {"io.fusion.air.microservice.domain.*"};
         factory.setPackagesToScan(pkgs);
         factory.setDataSource(dataSource());
         factory.afterPropertiesSet();
@@ -62,6 +69,10 @@ public class JpaConfig {
         return factory.getObject();
     }
 
+    /**
+     * Create PlatformTransactionManager
+     * @return
+     */
     @Bean
     public PlatformTransactionManager transactionManager() {
         JpaTransactionManager txManager = new JpaTransactionManager();
