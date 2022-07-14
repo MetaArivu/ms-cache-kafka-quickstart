@@ -39,7 +39,10 @@ public class SecureData {
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    private static final String DEFAULT_SECRET_KEY = "<([SecretKey!!To??Encrypt##Data@12345%6790])>";
+    private static final String DEFAULT_SECRET_KEY  = "<([SecretKey!!To??Encrypt##Data@12345%6790])>";
+
+    private static final String DEFAULT_ALGORITHM   = Algorithms.DES_CBC_PKCS5Padding;
+    private static final String DEFAULT_MD_ALGO     = Algorithms.SHA_256;
 
     private static SecretKeyData createSecretKeySpec(String _secret, String _mdAlgo) {
         SecretKeySpec secretKey = null;
@@ -64,7 +67,7 @@ public class SecureData {
      * @return
      */
     public static String encrypt(String _data) {
-        return encrypt(_data, DEFAULT_SECRET_KEY, Algorithms.SHA_1);
+        return encrypt(_data, DEFAULT_SECRET_KEY, DEFAULT_MD_ALGO);
     }
 
     /**
@@ -76,7 +79,7 @@ public class SecureData {
      * @return
      */
     public static String encrypt(String _data, String _secret, String _algo) {
-        return   encrypt(_data, Algorithms.AES_ECB_PKCS5Padding, _secret, _algo);
+        return   encrypt(_data, DEFAULT_ALGORITHM, _secret, _algo);
     }
 
     /**
@@ -89,11 +92,14 @@ public class SecureData {
      * @return
      */
     public static String encrypt(String _data, String _cipher, String _secret, String _algo) {
+        if(_data == null) { return ""; }
+        _cipher = (_cipher == null) ? DEFAULT_ALGORITHM: _cipher;
+        _algo = (_algo == null) ? DEFAULT_MD_ALGO : _algo;
         try {
             SecretKeyData secretKeyData = createSecretKeySpec(_secret, _algo);
             if(secretKeyData != null) {
                 Cipher cipher = Cipher.getInstance(_cipher);
-                if(_cipher != null && _cipher.contains("CBC")) {
+                if(_cipher.contains("CBC")) {
                     IvParameterSpec ivSpec = new IvParameterSpec(secretKeyData.getKeyBytes());
                     cipher.init(Cipher.ENCRYPT_MODE, secretKeyData.getSecretKeySpec(),ivSpec);
                 } else {
@@ -109,37 +115,13 @@ public class SecureData {
         return "";
     }
 
-    public static String encryptData(String text, String authKy) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        byte[] keyBytes = new byte[16];
-        byte[] b = authKy.getBytes("UTF-8");
-        // System.out.println(b+","+b.length+","+keyBytes.length);
-        int len = b.length;
-
-        if (len > keyBytes.length) {
-            len = keyBytes.length;
-        }
-
-        System.arraycopy(b, 0, keyBytes, 0, len);
-
-        SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
-        IvParameterSpec ivSpec = new IvParameterSpec(keyBytes);
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-
-        byte[] results = cipher.doFinal(text.getBytes("UTF-8"));
-        //BASE64Encoder encoder = new BASE64Encoder();
-        //  return new String(Base64.encode(results, Base64.DEFAULT));
-        return Base64.getEncoder().encodeToString(cipher.doFinal(text.getBytes("UTF-8")));
-        //return encoder.encode(results);
-    }
-
     /**
      * Decrypt Data using AES/ECB/PKCS5PADDING
      * @param _data
      * @return
      */
     public static String decrypt(String _data) {
-        return decrypt(_data, DEFAULT_SECRET_KEY, Algorithms.SHA_1);
+        return decrypt(_data, DEFAULT_SECRET_KEY, DEFAULT_MD_ALGO);
     }
 
     /**
@@ -150,7 +132,7 @@ public class SecureData {
      * @return
      */
     public static String decrypt(String _data, String _secret, String _algo) {
-        return decrypt(_data, Algorithms.AES_CBC_PKCS5Padding, _secret,_algo);
+        return decrypt(_data, DEFAULT_ALGORITHM, _secret,_algo);
     }
 
     /**
@@ -162,11 +144,14 @@ public class SecureData {
      * @return
      */
     public static String decrypt(String _data, String _cipher, String _secret, String _algo) {
+        if(_data == null) { return ""; }
+        _cipher = (_cipher == null) ? DEFAULT_ALGORITHM : _cipher;
+        _algo = (_algo == null) ? DEFAULT_MD_ALGO : _algo;
         try {
             SecretKeyData secretKeyData = createSecretKeySpec(_secret, _algo);
             if(secretKeyData != null) {
                 Cipher cipher = Cipher.getInstance(_cipher);
-                if(_cipher != null && _cipher.contains("CBC")) {
+                if(_cipher.contains("CBC")) {
                     IvParameterSpec ivSpec = new IvParameterSpec(secretKeyData.getKeyBytes());
                     cipher.init(Cipher.DECRYPT_MODE, secretKeyData.getSecretKeySpec(),ivSpec);
                 } else {
@@ -183,46 +168,6 @@ public class SecureData {
         return null;
     }
 
-    public static String decryptData(String text, String authKy) throws Exception {
-
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        byte[] keyBytes = new byte[16];
-        byte[] b = authKy.getBytes("UTF-8");
-        int len = b.length;
-        if (len > keyBytes.length) {
-            len = keyBytes.length;
-        }
-        System.arraycopy(b, 0, keyBytes, 0, len);
-        SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
-        IvParameterSpec ivSpec = new IvParameterSpec(keyBytes);
-        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-        byte[] results = cipher.doFinal(Base64.getDecoder().decode(text));
-        //BASE64Decoder decoder = new BASE64Decoder();
-        return new String(results, "UTF-8");
-    }
-
-    public static String encryptData2(String text, String authKy, String _mdAlgo) throws Exception {
-        byte[] key = Arrays.copyOf(MessageDigest
-                .getInstance(_mdAlgo).digest(authKy.getBytes("UTF-8")), 16);
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
-        IvParameterSpec ivSpec = new IvParameterSpec(key);
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-        return Base64.getEncoder().encodeToString(cipher.doFinal(text.getBytes("UTF-8")));
-    }
-
-    public static String decryptData2(String text, String authKy, String _mdAlgo) throws Exception {
-        byte[] key = Arrays.copyOf(MessageDigest
-                .getInstance(_mdAlgo).digest(authKy.getBytes("UTF-8")), 16);
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
-        IvParameterSpec ivSpec = new IvParameterSpec(key);
-        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-        byte[] results = cipher.doFinal(Base64.getDecoder().decode(text));
-        //BASE64Decoder decoder = new BASE64Decoder();
-        return new String(results, "UTF-8");
-    }
-
     /**
      * ONLY FOR TESTING PURPOSE
      * Code to Encrypt and Decrypt the Data
@@ -231,40 +176,15 @@ public class SecureData {
     public static void main(String[] args) throws Exception{
         System.out.println("----------------------------------------------------------------------------------------");
 
-        // test();
+        test1();
         test2();
-        test3();
 
-         for(int x=1; x<2; x++) {
+        for(int x=1; x<2; x++) {
             testEncryption(x);
          }
     }
 
-    public static void test2() throws Exception  {
-        String rawData  = "2580";
-        String secret   = "GkO5Z8edREGjiBgC+WODSk/6WStxtwnrNq8XuAALgoI=";
-        String cipher   = "AES/CBC/PKCS5Padding";
-        String mdAlgo   = "SHA-256";
-        System.out.println("Secret       : "+secret);
-        System.out.println("Cipher       : "+cipher);
-        System.out.println("MD Algorithm : "+mdAlgo);
-        System.out.println("----------------------------------------------------------------------------------------");
-
-        System.out.println("Plain String : "+rawData);
-        String rdEncrypt1 = "DG94t+omK+NUgrJIDdXTHw==";
-        String rdDecrypt1 = decryptData("DG94t+omK+NUgrJIDdXTHw==", secret);
-        System.out.println("Encrypted 1  : "+rdEncrypt1);
-        System.out.println("Decrypted 1  : "+rdDecrypt1);
-
-        String rdEncrypt2 = encryptData2(rawData, secret, mdAlgo);
-        String rdDecrypt2 = decryptData2(rdEncrypt2, secret, mdAlgo);
-        System.out.println("Encrypted 2  : "+rdEncrypt2);
-        System.out.println("Decrypted 2  : "+rdDecrypt2);
-
-        System.out.println("----------------------------------------------------------------------------------------");
-    }
-
-    public static void test3() {
+    public static void test1() {
         String rawData  = "2580";
         String secret   = "GkO5Z8edREGjiBgC+WODSk/6WStxtwnrNq8XuAALgoI=";
         String cipher   = Algorithms.AES_CBC_PKCS5Padding;
@@ -281,29 +201,22 @@ public class SecureData {
         System.out.println("----------------------------------------------------------------------------------------");
     }
 
-    public static void test() throws Exception  {
+    public static void test2() {
         String rawData  = "2580";
         String secret   = "GkO5Z8edREGjiBgC+WODSk/6WStxtwnrNq8XuAALgoI=";
-
-        String cipher   = Algorithms.AES_CBC_PKCS5Padding;
+        String cipher   = Algorithms.AES_ECB_NoPadding;
         String md_algo  = Algorithms.SHA_512;
         System.out.println("Secret       : "+secret);
         System.out.println("Cipher       : "+cipher);
         System.out.println("MD Algorithm : "+md_algo);
         System.out.println("----------------------------------------------------------------------------------------");
-        String rdEncrypt1 = encrypt(rawData, cipher, secret, md_algo);
-        String rdDecrypt = decrypt(rdEncrypt1, cipher, secret, md_algo);
+        String rdEncrypt = encrypt(rawData, cipher, secret, md_algo);
+        String rdDecrypt = decrypt(rdEncrypt, cipher, secret, md_algo);
         System.out.println("Plain String : "+rawData);
-        System.out.println("Encrypted 1  : "+rdEncrypt1);
-        System.out.println("Decrypted 1  : "+rdDecrypt);
-        String rdEncrypt2 = encryptData(rawData, secret);
-        String rdDecrypt2 = decryptData(rdEncrypt2, secret);
-        System.out.println("Encrypted 2  : "+rdEncrypt2);
-        System.out.println("Decrypted 2  : "+rdDecrypt2);
-
+        System.out.println("Encrypted 2  : "+rdEncrypt);
+        System.out.println("Decrypted 2  : "+rdDecrypt);
         System.out.println("----------------------------------------------------------------------------------------");
     }
-
 
     /**
      * Test Encryption Decryption
