@@ -48,7 +48,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Configuration
 @RestController
 //  "/api/v1/payments/config"
-@RequestMapping("${service.api.path}"+ServiceConfiguration.CONFIG)
+@RequestMapping("${service.api.path}"+ ServiceConfiguration.CONFIG_PATH)
 @RequestScope
 @Tag(name = "System", description = "Config (Environment, Secrets, ConfigMap.. etc)")
 public class ConfigController extends AbstractController {

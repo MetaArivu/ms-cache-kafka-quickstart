@@ -58,7 +58,7 @@ import java.util.Map;
 @Configuration
 @RestController
 // "/api/v1/payments/service"
-@RequestMapping("${service.api.path}"+ServiceConfiguration.HEALTH)
+@RequestMapping("${service.api.path}"+ ServiceConfiguration.HEALTH_PATH)
 @RequestScope
 @Tag(name = "System", description = "Health (Liveness, Readiness, ReStart.. etc)")
 public class HealthController extends AbstractController {

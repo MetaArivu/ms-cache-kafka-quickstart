@@ -15,6 +15,9 @@
  */
 package io.fusion.air.microservice.server.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,12 +43,36 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(basePackages = { "io.fusion.air.microservice.domain.ports" })
 @EnableTransactionManagement
 public class JpaConfig {
+
+    @Autowired
+    private ServiceConfiguration serviceConfig;
+
     /**
-     * Create the DataSource
+     * Create the DataSource for H2 Database
      * @return
      */
     @Bean
     public DataSource dataSource() {
+        switch(serviceConfig.getDataSourceVendor()) {
+            case ServiceConfiguration.DB_H2:
+                // For H2 Database
+                EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
+                return builder.setType(EmbeddedDatabaseType.H2).build();
+            case ServiceConfiguration.DB_POSTGRESQL:
+                // For PostgreSQL Database
+                HikariConfig config = new HikariConfig();
+
+                config.setDataSourceClassName(serviceConfig.getDataSourceDriverClassName());
+                config.addDataSourceProperty("serverName", serviceConfig.getDataSourceServer());
+                config.addDataSourceProperty("portNumber", ""+serviceConfig.getDataSourcePort());
+                config.addDataSourceProperty("databaseName", serviceConfig.getDataSourceName());
+                config.addDataSourceProperty("user", serviceConfig.getDataSourceUserName());
+                config.addDataSourceProperty("password", serviceConfig.getDataSourcePassword());
+
+                // postgress configuration for Hikari
+                return new HikariDataSource(config);
+        }
+        // Returns H2 Database if Nothing Matches
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
         return builder.setType(EmbeddedDatabaseType.H2).build();
     }
@@ -58,11 +85,14 @@ public class JpaConfig {
     public EntityManagerFactory entityManagerFactory() {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);
+        // vendorAdapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQLDialect");
+        vendorAdapter.setDatabasePlatform(serviceConfig.getDataSourceDialect());
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         String[] pkgs = {"io.fusion.air.microservice.domain.*"};
         factory.setPackagesToScan(pkgs);
+        // Set Database Source
         factory.setDataSource(dataSource());
         factory.afterPropertiesSet();
 

@@ -44,6 +44,17 @@ import org.springframework.stereotype.Component;
 		// value = "classpath:application2.properties,file:./application.properties")
 public class ServiceConfiguration implements Serializable {
 
+	// Config Path
+	public static final String CONFIG_PATH = "/config";
+
+	// Health Path
+	public static final String HEALTH_PATH = "/service";
+
+	public static final String DB_H2 		= "H2";
+	public static final String DB_POSTGRESQL = "PostgreSQL";
+	public static final String DB_MYSQL 		= "MySQL";
+	public static final String DB_ORACLE 	= "Oracle";
+
 	/**
 	 * Return the JSON String
 	 * @return
@@ -73,11 +84,6 @@ public class ServiceConfiguration implements Serializable {
 		sb.append("}");
 		return sb.toString();
 	}
-	// Config Path
-	public static final String CONFIG = "/config";
-
-	// Health Path
-	public static final String HEALTH = "/service";
 
 	@Value("${service.org:OrgNotDefined}")
 	private String serviceOrg;
@@ -152,7 +158,36 @@ public class ServiceConfiguration implements Serializable {
 	
 	@Value("${server.restart:false}")
 	private boolean serverRestart;
-	
+
+	// Database Configurations
+
+	@Value("${db.server:localhost}")
+	private String dataSourceServer;
+
+	@Value("${db.port:5432}")
+	private int dataSourcePort;
+
+	@Value("${db.name:demo}")
+	private String dataSourceName;
+
+	@Value("${db.vendor:H2}")
+	private String dataSourceVendor;
+
+	@Value("${spring.datasource.url:jdbc:h2:mem:demo;DB_CLOSE_ON_EXIT=FALSE}")
+	private String dataSourceURL;
+
+	@Value("${spring.datasource.driverClassName:org.h2.Driver}")
+	private String dataSourceDriverClassName;
+
+	@Value("${spring.datasource.username:sa}")
+	private String dataSourceUserName;
+
+	@Value("${spring.datasource.password:password}")
+	private String dataSourcePassword;
+
+	@Value("${spring.jpa.database-platform:org.hibernate.dialect.H2Dialect}")
+	private String dataSourceDialect;
+
 	// @Value("${logging.level}")
 	// private String loggingLevel;
 	
@@ -319,7 +354,7 @@ public class ServiceConfiguration implements Serializable {
 	 * @return the systemProperties
 	 */
 	public HashMap<String, String> systemProperties() {
-		return systemProperties;
+		return getSystemProperties();
 	}
 
 	/**
@@ -424,5 +459,81 @@ public class ServiceConfiguration implements Serializable {
 
 	public String getServerHostProdDesc() {
 		return serverHostProdDesc;
+	}
+
+	/**
+	 * Returns Database URL
+	 * @return
+	 */
+	public String getDataSourceURL() {
+		return dataSourceURL;
+	}
+
+	/**
+	 * Returns Driver ClassNames
+	 * @return
+	 */
+	public String getDataSourceDriverClassName() {
+		return dataSourceDriverClassName;
+	}
+
+	/**
+	 * Returns Database User Name
+	 * @return
+	 */
+	public String getDataSourceUserName() {
+		return dataSourceUserName;
+	}
+
+	/**
+	 * Returns Database Password
+	 * @return
+	 */
+	public String getDataSourcePassword() {
+		return dataSourcePassword;
+	}
+
+	/***
+	 * Returns Dialect
+	 * @return
+	 */
+	public String getDataSourceDialect() {
+		return dataSourceDialect;
+	}
+
+	/**
+	 * DataSource Server
+	 * @return
+	 */
+	public String getDataSourceServer() {
+		return dataSourceServer;
+	}
+
+	/**
+	 * DataSource Port
+	 * @return
+	 */
+	public int getDataSourcePort() {
+		return dataSourcePort;
+	}
+
+	/**
+	 * DataSource DB Name
+	 * @return
+	 */
+	public String getDataSourceName() {
+		return dataSourceName;
+	}
+
+	/**
+	 * Returns System Properties
+	 * @return
+	 */
+	public HashMap<String, String> getSystemProperties() {
+		return systemProperties;
+	}
+
+	public String getDataSourceVendor() {
+		return dataSourceVendor;
 	}
 }
