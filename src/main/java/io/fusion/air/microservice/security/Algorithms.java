@@ -22,22 +22,17 @@ package io.fusion.air.microservice.security;
  */
 public final class Algorithms {
 
-    // Message Digest Algorithms Definitions
-    public final static int	MD2				= 1;
-    public final static int	MD5				= 2;
-    public final static int	SHA_1			= 3;
-    public final static int	SHA_224			= 4;
-    public final static int	SHA_256			= 5;
-    public final static int	SHA_384			= 6;
-    public final static int	SHA_512			= 7;
-    public final static int	SHA_512_224		= 8;
-    public final static int	SHA_512_256		= 9;
 
-    // Algorithm lookup codes
-    public final static String[] MD_ALGOS     = {"", "MD2", "MD5", "SHA-1", "SHA-224",
-                                                "SHA-256", "SHA-384", "SHA-512",
-                                                "SHA-512/224", "SHA-512/256"
-                                                };
+    // Message Digest Algorithms Definitions
+    public final static String	MD2				= "MD2";
+    public final static String	MD5				= "MD5";
+    public final static String	SHA_1			= "SHA-1";
+    public final static String	SHA_224			= "SHA-224";
+    public final static String	SHA_256			= "SHA-256";
+    public final static String	SHA_384			= "SHA-386";
+    public final static String	SHA_512			= "SHA-512";
+    public final static String	SHA_512_224		= "SHA-512_224";
+    public final static String	SHA_512_256		= "SHA-512_256";
 
     // Cipher Algorithms
     public final static String AES_CBC_NoPadding    = "AES/CBC/NoPadding";
@@ -64,33 +59,16 @@ public final class Algorithms {
     public static final String DiffieHellman = "DiffieHellman";
     public static final String DSA          = "DSA";
 
-    private int DEFAULT_MD_ALGO            = 5;
-    private int CURRENT_MD_ALGO            = DEFAULT_MD_ALGO;
+    private String DEFAULT_MD_ALGO            = SHA_256;
+    private String CURRENT_MD_ALGO            = DEFAULT_MD_ALGO;
 
     /**
      * Create Algorithms
      */
     public Algorithms() {
         try {
-            CURRENT_MD_ALGO = Integer.parseInt(System.getProperty("HASHALGO"));
+            CURRENT_MD_ALGO = (String) System.getProperty("HASHALGO");
         } catch (Exception ignored) {}
-    }
-
-    /**
-     * Returns total Message Digest Algorithms
-     * @return
-     */
-    public int totalMessageDigestAlgorithms() {
-        return MD_ALGOS.length;
-    }
-
-    /**
-     * Returns the Message Digest Algorithm
-     * @param _algoNumber
-     * @return
-     */
-    public String algos(int _algoNumber) {
-        return (_algoNumber > 0 && _algoNumber <= MD_ALGOS.length) ? MD_ALGOS[_algoNumber] : MD_ALGOS[CURRENT_MD_ALGO];
     }
 
     /**
@@ -106,7 +84,7 @@ public final class Algorithms {
      *
      * @return int algo_code
      */
-    public int getDefaultMessageDigestAlgorithm() {
+    public String getDefaultMessageDigestAlgorithm() {
         return CURRENT_MD_ALGO;
     }
 
@@ -115,6 +93,6 @@ public final class Algorithms {
      * @return
      */
     public String toString() {
-        return MD_ALGOS[CURRENT_MD_ALGO];
+        return CURRENT_MD_ALGO;
     }
 }

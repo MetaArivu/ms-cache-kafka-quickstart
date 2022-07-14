@@ -89,7 +89,7 @@ public final class HashData {
      *
      * @return int algo_code
      */
-    public static int getDefaultAlgorithm() {
+    public static String getDefaultAlgorithm() {
         return algo.getDefaultMessageDigestAlgorithm();
     }
 
@@ -131,7 +131,7 @@ public final class HashData {
      * @throws Exception
      */
 
-    public final static String createHash(final String _message, final int _algo) throws Exception {
+    public final static String createHash(final String _message, final String _algo) throws Exception {
         return createHash(_message, _algo, "UTF-8");
     }
 
@@ -153,7 +153,7 @@ public final class HashData {
      * @throws Exception
      */
 
-    public final static String createHash(final String _message, final int _algo, final String _encoding) throws Exception {
+    public final static String createHash(final String _message, final String _algo, final String _encoding) throws Exception {
 
         if(_message == null) {							// Check Input Message
             throw new Exception("Invalid message for hashing");
@@ -167,7 +167,7 @@ public final class HashData {
         // Input validation over -------------------------------------------------------------------------------
         MessageDigest mesgDigest = null;
         try {
-            mesgDigest = MessageDigest.getInstance(algo.algos(_algo)); 	// Load the Algorithm
+            mesgDigest = MessageDigest.getInstance(_algo); 	// Load the Algorithm
         } catch(NoSuchAlgorithmException e) { throw e; }
         try {
             mesgDigest.update(_message.getBytes(encoding)); 				// Updates the digest
@@ -263,13 +263,12 @@ public final class HashData {
          */
         String passwordHash = "";
         String password 	= args[0];
-        int algo 			= HashData.getDefaultAlgorithm();
+        String algo 		= HashData.getDefaultAlgorithm();
         Algorithms algos    = HashData.algo();
-        try {
-            algo = Integer.parseInt(args[1]);
-        } catch (Exception ignored) {}
+        algo = args[1];
 
         // Print all the algorithms computed hash value of the input message if the algo code == ZERO
+        /**
         if (algo == 0) {
             for(int x = 0; x< (algos.totalMessageDigestAlgorithms()-1); x++) {
                 passwordHash = HashData.createHash(password, x+1);
@@ -279,6 +278,7 @@ public final class HashData {
             passwordHash = HashData.createHash(password, algo);
             System.out.println("ALGOS="+algos.algos(algo)+" \tPassword = ( "+password+" )"+" { "+passwordHash+" }");
         }
+         */
     }
 }
 
