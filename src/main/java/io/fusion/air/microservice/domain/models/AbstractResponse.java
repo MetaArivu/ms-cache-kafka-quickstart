@@ -15,6 +15,8 @@
  */
 package io.fusion.air.microservice.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 /**
@@ -24,10 +26,14 @@ import java.io.Serializable;
  */
 public abstract class AbstractResponse implements Serializable {
 
+    @JsonProperty("rs")
     private boolean success = false;
+    @JsonProperty("rc")
     private String code = "ERROR";
+    @JsonProperty("rd")
     private String description = "Default Error Message!";
 
+    @JsonProperty("payload")
     private Object payload;
 
     /**
