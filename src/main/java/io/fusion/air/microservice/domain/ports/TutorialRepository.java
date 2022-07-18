@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.domain.ports;
 
-import io.fusion.air.microservice.domain.models.Tutorial;
+import io.fusion.air.microservice.domain.entities.Tutorial;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

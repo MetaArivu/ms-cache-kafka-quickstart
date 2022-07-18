@@ -1,6 +1,6 @@
 package io.fusion.air.microservice.domain.ports;
 
-import io.fusion.air.microservice.domain.models.Country;
+import io.fusion.air.microservice.domain.entities.Country;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

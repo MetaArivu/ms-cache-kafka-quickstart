@@ -1,6 +1,6 @@
 package io.fusion.air.microservice.adapters.service;
 
-import io.fusion.air.microservice.domain.models.Country;
+import io.fusion.air.microservice.domain.entities.Country;
 import io.fusion.air.microservice.domain.ports.CountryRepository;
 import io.fusion.air.microservice.domain.ports.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;

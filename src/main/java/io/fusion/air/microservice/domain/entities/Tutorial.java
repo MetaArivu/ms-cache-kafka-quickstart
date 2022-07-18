@@ -1,4 +1,4 @@
-package io.fusion.air.microservice.domain.models;
+package io.fusion.air.microservice.domain.entities;
 
 import javax.persistence.Id;
 import javax.persistence.Entity;
