@@ -88,20 +88,21 @@ public class PaymentControllerImpl extends AbstractController {
     })
 	@GetMapping("/status/{referenceNo}")
 	@ResponseBody
-	public ResponseEntity<Map<String,Object>> getStatus(@PathVariable("referenceNo") String _referenceNo,
+	public ResponseEntity<StandardResponse> getStatus(@PathVariable("referenceNo") String _referenceNo,
 														HttpServletRequest request) throws Exception {
 		log.info("|"+name()+"|Request to Payment Status of Service... ");
+		StandardResponse stdResponse = new StandardResponse();
+		stdResponse.init(true, "200", "Processing Success!");
 		// Response Object
 		HashMap<String,Object> status = new HashMap<String,Object>();
-		status.put("Code", 200);
-		status.put("Status", true);
 		status.put("ReferenceNo", _referenceNo);
 		status.put("Message","Payment Status is good!");
+		stdResponse.setPayload(status);
 		// Additional Headers
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
 		// Return the Response
-		return new ResponseEntity<Map<String,Object>>(status, headers, HttpStatus.OK);
+		return new ResponseEntity<StandardResponse>(stdResponse, headers, HttpStatus.OK);
 	}
 
 	/**

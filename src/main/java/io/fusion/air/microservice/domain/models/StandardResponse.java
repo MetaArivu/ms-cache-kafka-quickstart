@@ -21,4 +21,24 @@ package io.fusion.air.microservice.domain.models;
  * @date:
  */
 public class StandardResponse extends AbstractResponse {
+
+    /**
+     * Return Standard Response with OK Status.
+     * @return
+     */
+    public static StandardResponse OK() {
+        StandardResponse sr = new StandardResponse();
+        sr.init(true, "200", "Request Completed!");
+        return sr;
+    }
+
+    /**
+     * Returns Standard Response with ERROR Status
+     * @return
+     */
+    public static StandardResponse ERROR() {
+        StandardResponse sr = new StandardResponse();
+        sr.init(false, "400", "Request NOT Completed!");
+        return sr;
+    }
 }
