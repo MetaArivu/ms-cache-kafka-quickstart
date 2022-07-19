@@ -39,6 +39,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -104,6 +105,38 @@ public class ProductControllerImpl extends AbstractController {
 		status.put("ReferenceNo", _referenceNo);
 		status.put("Message","Product Status is good!");
 		stdResponse.setPayload(status);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Get Method Call to Check the Health of the App
+	 *
+	 * @return
+	 */
+	@Operation(summary = "Get All the Products")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "List All the Product",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Invalid Product Reference No.",
+					content = @Content)
+	})
+	@GetMapping("/all/")
+	@ResponseBody
+	public ResponseEntity<StandardResponse> getAllProducts(HttpServletRequest request,
+													  HttpServletResponse response) throws Exception {
+		log.info("|"+name()+"|Request to Product Status of Service... ");
+		response.setHeader("Cache-Control", "no-cache");
+
+		StandardResponse stdResponse = new StandardResponse();
+		stdResponse.init(true, "200", "Data Fetch Success!");
+
+		ArrayList<String> products = new ArrayList<String>();
+		products.add("iPhone 11");
+		products.add("iPhone 12");
+		products.add("iPhone 13");
+		stdResponse.setPayload(products);
 		return ResponseEntity.ok(stdResponse);
 	}
 

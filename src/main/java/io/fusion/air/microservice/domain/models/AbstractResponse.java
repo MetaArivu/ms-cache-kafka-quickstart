@@ -15,15 +15,20 @@
  */
 package io.fusion.air.microservice.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
+@JsonPropertyOrder({ "rs", "rc" , "rd", "payload"})
 public abstract class AbstractResponse implements Serializable {
 
     @JsonProperty("rs")
@@ -33,8 +38,8 @@ public abstract class AbstractResponse implements Serializable {
     @JsonProperty("rd")
     private String description = "Default Error Message!";
 
-    @JsonProperty("payload")
-    private Object payload;
+   @JsonProperty("payload")
+    private Object payload = null;
 
     /**
      * Set the Response Status, Code and Description
@@ -50,10 +55,10 @@ public abstract class AbstractResponse implements Serializable {
 
     /**
      * Set the Payload
-     * @param payload
+     * @param _payload
      */
-    public void setPayload(Object payload) {
-        this.payload = payload;
+    public void setPayload(Object _payload) {
+        this.payload = _payload;
     }
 
     /**
