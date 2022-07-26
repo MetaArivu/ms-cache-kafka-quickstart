@@ -199,12 +199,13 @@ public class SecureData {
         System.out.println("Encrypted 3  : "+rdEncrypt);
         System.out.println("Decrypted 3  : "+rdDecrypt);
         System.out.println("----------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------");
     }
 
     public static void test2() {
         String rawData  = "2580";
         String secret   = "GkO5Z8edREGjiBgC+WODSk/6WStxtwnrNq8XuAALgoI=";
-        String cipher   = Algorithms.AES_ECB_NoPadding;
+        String cipher   = Algorithms.AES_ECB_PKCS5Padding;
         String md_algo  = Algorithms.SHA_512;
         System.out.println("Secret       : "+secret);
         System.out.println("Cipher       : "+cipher);
@@ -215,6 +216,7 @@ public class SecureData {
         System.out.println("Plain String : "+rawData);
         System.out.println("Encrypted 2  : "+rdEncrypt);
         System.out.println("Decrypted 2  : "+rdDecrypt);
+        System.out.println("----------------------------------------------------------------------------------------");
         System.out.println("----------------------------------------------------------------------------------------");
     }
 
@@ -236,6 +238,7 @@ public class SecureData {
         System.out.println("Plain String : "+rawData);
         System.out.println("Encrypted    : "+rdEncrypt);
         System.out.println("Decrypted    : "+rdDecrypt);
+        System.out.println("----------------------------------------------------------------------------------------");
         System.out.println("----------------------------------------------------------------------------------------");
 
     }
