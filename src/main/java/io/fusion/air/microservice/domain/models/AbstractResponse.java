@@ -19,8 +19,11 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.fusion.air.microservice.utils.DateJsonSerializer;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 /**
@@ -28,8 +31,12 @@ import java.util.Collection;
  * @version:
  * @date:
  */
-@JsonPropertyOrder({ "rs", "rc" , "rd", "payload"})
+@JsonPropertyOrder({  "rt", "rs", "rc" , "rd", "payload"})
 public abstract class AbstractResponse implements Serializable {
+
+    @JsonProperty("rt")
+    @JsonSerialize(using = DateJsonSerializer.class)
+    private LocalDateTime requestTime = LocalDateTime.now();
 
     @JsonProperty("rs")
     private boolean success = false;
@@ -59,6 +66,14 @@ public abstract class AbstractResponse implements Serializable {
      */
     public void setPayload(Object _payload) {
         this.payload = _payload;
+    }
+
+    /**
+     * Request Time
+     * @return
+     */
+    public LocalDateTime getRequestTime() {
+        return requestTime;
     }
 
     /**

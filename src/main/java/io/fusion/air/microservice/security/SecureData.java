@@ -25,6 +25,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Arrays;
+import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -203,12 +204,12 @@ public class SecureData {
 
         for(int x=1; x<2; x++) {
             testEncryption(x);
-         }
+        }
     }
 
     public static void test0() {
-        String rawData  = "2580";
-        String secret   = "GkO5Z8edREGjiBgC+WODSk/6WStxtwnrNq8XuAALgoI=";
+        String rawData  = "1234";
+        String secret   = "eHEZ92vvd7jMqit6lkWa1sp7z6FpdVHRfRX8gZlslkw=";
 
         String rdEncrypt = SecureData.encrypt(rawData, secret);
         String rdDecrypt = SecureData.decrypt(rdEncrypt, secret);
@@ -280,8 +281,10 @@ public class SecureData {
      */
     public static void printResult(int testNo, String rawData, String secret, String cipher, String md_algo,
                                    String rdEncrypt, String rdDecrypt) {
-        System.out.println("Secret       : "+secret);
-        System.out.println("Cipher       : "+cipher);
+        String uuid = UUID.randomUUID().toString();
+        System.out.println("UUID         : "+uuid+" | Length = "+uuid.length());
+        System.out.println("Secret Key   : "+secret);
+        System.out.println("Cipher Suite : "+cipher);
         System.out.println("MD Algorithm : "+md_algo);
         System.out.println("----------------------------------------------------------------------------------------");
         System.out.println("Plain String : "+rawData);

@@ -15,6 +15,14 @@
  */
 package io.fusion.air.microservice.domain.models;
 
+
+import io.fusion.air.microservice.utils.Utils;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Pattern.Flag;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -24,10 +32,28 @@ import java.io.Serializable;
  */
 public class Product implements Serializable {
 
+    @NotBlank(message = "The Product ID is  required.")
     private String productId;
+
+    @NotBlank(message = "The Product Name is  required.")
+    @Size(min = 3, max = 32, message = "The length of Product Name must be between 3 and 32 characters.")
     private String productName;
+
+    @Size(min = 0, max = 128, message = "The length of Product Details must be between 0 and 128 characters.")
     private String productDetails;
+
+    @NotNull(message = "The Price is required.")
     private String productPrice;
+
+    @NotBlank(message = "The Product Location Zip code is required.")
+    @Pattern(regexp = "^\\d{1,5}$", flags = { Flag.CASE_INSENSITIVE, Flag.MULTILINE }, message = "The Zip code is invalid.")
+    private String productLocationZipCode;
+
+    /**
+     * Create Empty Product
+     */
+    public Product()  {
+    }
 
     /**
      * Create Product
@@ -43,19 +69,50 @@ public class Product implements Serializable {
         productPrice   = _prodPr;
     }
 
+    /**
+     * Get Product ID
+     * @return
+     */
     public String getProductId() {
         return productId;
     }
 
+    /**
+     * Get Product Name
+     * @return
+     */
     public String getProductName() {
         return productName;
     }
 
+    /**
+     * Get Product Details
+     * @return
+     */
     public String getProductDetails() {
         return productDetails;
     }
 
+    /**
+     * Get Product Price
+     */
     public String getProductPrice() {
         return productPrice;
+    }
+
+    /**
+     * Get Product Location Zip Code
+     * @return
+     */
+    public String getProductLocationZipCode() {
+        return productLocationZipCode;
+    }
+
+    /**
+     * Creates a JSON String
+     * @return
+     */
+    public String toString() {
+        return Utils.toJsonString(this);
     }
 }

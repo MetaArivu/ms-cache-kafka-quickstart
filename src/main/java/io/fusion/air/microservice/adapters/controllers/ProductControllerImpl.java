@@ -16,10 +16,7 @@
 package io.fusion.air.microservice.adapters.controllers;
 
 import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
-import io.fusion.air.microservice.domain.models.PaymentDetails;
-import io.fusion.air.microservice.domain.models.PaymentStatus;
-import io.fusion.air.microservice.domain.models.PaymentType;
-import io.fusion.air.microservice.domain.models.StandardResponse;
+import io.fusion.air.microservice.domain.models.*;
 import io.fusion.air.microservice.domain.ports.CountryService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
@@ -33,11 +30,13 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +57,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @version 1.0
  * 
  */
+@Validated
 @CrossOrigin
 @Configuration
 @RestController
@@ -154,7 +154,7 @@ public class ProductControllerImpl extends AbstractController {
     })
     @PostMapping("/processProducts")
     public ResponseEntity<StandardResponse> processPayments(@RequestBody PaymentDetails _payDetails) {
-		log.info("|"+name()+"|Request to process Product... ");
+		log.info("|"+name()+"|Request to process Product... "+_payDetails);
 		StandardResponse stdResponse = new StandardResponse();
 		stdResponse.init(true, "200", "Processing Success!");
 		PaymentStatus ps = new PaymentStatus(
@@ -167,6 +167,27 @@ public class ProductControllerImpl extends AbstractController {
 		stdResponse.setPayload(ps);
 		return ResponseEntity.ok(stdResponse);
     }
+
+	/**
+	 * Create the Product
+	 */
+	@Operation(summary = "Create Product")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Create the Product",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Unable to Create the Product",
+					content = @Content)
+	})
+	@PostMapping("/create")
+	public ResponseEntity<StandardResponse> createProduct(@Valid @RequestBody Product _product) {
+		log.info("|"+name()+"|Request to Create Product... "+_product);
+		StandardResponse stdResponse = new StandardResponse();
+		stdResponse.init(true, "200", "Product Created");
+		stdResponse.setPayload(_product);
+		return ResponseEntity.ok(stdResponse);
+	}
 
 	/**
 	 * Cancel the Product
