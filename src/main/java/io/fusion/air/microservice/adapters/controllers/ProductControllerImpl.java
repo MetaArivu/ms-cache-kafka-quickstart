@@ -60,7 +60,6 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @version 1.0
  * 
  */
-@Validated
 @CrossOrigin
 @Configuration
 @RestController
