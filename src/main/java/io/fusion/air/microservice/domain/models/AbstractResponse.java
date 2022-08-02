@@ -49,23 +49,43 @@ public abstract class AbstractResponse implements Serializable {
     private Object payload = null;
 
     /**
+     * Initialize for Failure Response
+     * @param _code
+     * @param _desc
+     */
+    public AbstractResponse initFailure( String _code, String _desc) {
+        return this.init(false, _code, _desc);
+    }
+
+    /**
+     * Initialize for Success Response
+     * @param _code
+     * @param _desc
+     */
+    public AbstractResponse initSuccess(String _code, String _desc) {
+        return this.init(true, _code, _desc);
+    }
+
+    /**
      * Set the Response Status, Code and Description
      * @param _status
      * @param _code
      * @param _desc
      */
-    public void init(boolean _status, String _code, String _desc) {
+    public AbstractResponse init(boolean _status, String _code, String _desc) {
         success = _status;
         code = _code;
         description = _desc;
+        return this;
     }
 
     /**
      * Set the Payload
      * @param _payload
      */
-    public void setPayload(Object _payload) {
+    public AbstractResponse setPayload(Object _payload) {
         this.payload = _payload;
+        return this;
     }
 
     /**

@@ -15,6 +15,8 @@
  */
 package io.fusion.air.microservice.domain.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -23,11 +25,20 @@ package io.fusion.air.microservice.domain.exceptions;
 public class DataNotFoundException extends DatabaseException {
 
     /**
-     * Database Exception
+     * DataNotFound Exception
+     * @param _msg
+     * @param _e
+     */
+    public DataNotFoundException(String _msg) {
+        super(_msg, HttpStatus.NOT_FOUND, null);
+    }
+
+    /**
+     * DataNotFound Exception
      * @param _msg
      * @param _e
      */
     public DataNotFoundException(String _msg, Exception _e) {
-        super(_msg, _e);
+        super(_msg, HttpStatus.NOT_FOUND, _e);
     }
 }

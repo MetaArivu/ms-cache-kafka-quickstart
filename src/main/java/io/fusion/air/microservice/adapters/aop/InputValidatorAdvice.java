@@ -15,10 +15,13 @@
  */
 package io.fusion.air.microservice.adapters.aop;
 
+import io.fusion.air.microservice.domain.exceptions.AbstractServiceException;
+import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.exceptions.ResourceNotFoundException;
 import io.fusion.air.microservice.domain.models.StandardResponse;
 import javax.validation.ConstraintViolationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +41,7 @@ import java.util.stream.Collectors;
  * @date:
  */
 @ControllerAdvice
+@Order(1)
 public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
 
     /**
@@ -63,35 +67,5 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
         Collections.sort(errors);
         stdResponse.setPayload(errors);
         return new ResponseEntity<>(stdResponse, _headers, HttpStatus.BAD_REQUEST);
-    }
-
-    /**v
-     * Exception if the Request IS NOT FOUND!
-     * @param _rnfEx
-     * @param _request
-     * @return
-     */
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> resourceNotFoundException(ResourceNotFoundException _rnfEx, WebRequest _request) {
-        StandardResponse stdResponse = new StandardResponse();
-        stdResponse.init(false, "404", _rnfEx.getMessage());
-        return new ResponseEntity<>(stdResponse, HttpStatus.NOT_FOUND);
-    }
-
-    /**
-     * Constraints Violation Exceptions
-     * @param _cvEx
-     * @param _request
-     * @return
-     */
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<?> constraintViolationException(ConstraintViolationException _cvEx, WebRequest _request) {
-
-        StandardResponse stdResponse = new StandardResponse();
-        stdResponse.init(false, "400", "Input Errors");
-        List<String> errors = new ArrayList<>();
-        _cvEx.getConstraintViolations().forEach(cv -> errors.add(cv.getMessage()));
-        stdResponse.setPayload(errors);
-        return new ResponseEntity<>(stdResponse, HttpStatus.BAD_REQUEST);
     }
 }

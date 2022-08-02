@@ -15,6 +15,8 @@
  */
 package io.fusion.air.microservice.domain.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -22,12 +24,21 @@ package io.fusion.air.microservice.domain.exceptions;
  */
 public class DuplicateDataException extends DatabaseException {
 
+
     /**
-     * Database Exception
+     * DuplicateData Exception
+     * @param _msg
+     */
+    public DuplicateDataException(String _msg) {
+        super(_msg);
+    }
+
+    /**
+     * DuplicateData Exception
      * @param _msg
      * @param _e
      */
     public DuplicateDataException(String _msg, Exception _e) {
-        super(_msg, _e);
+        super(_msg, HttpStatus.BAD_REQUEST, _e);
     }
 }

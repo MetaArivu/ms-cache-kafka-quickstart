@@ -27,9 +27,7 @@ public class StandardResponse extends AbstractResponse {
      * @return
      */
     public static StandardResponse OK() {
-        StandardResponse sr = new StandardResponse();
-        sr.init(true, "200", "Request Completed!");
-        return sr;
+        return (StandardResponse) new StandardResponse().initSuccess( "200", "Request Completed!");
     }
 
     /**
@@ -37,8 +35,6 @@ public class StandardResponse extends AbstractResponse {
      * @return
      */
     public static StandardResponse ERROR() {
-        StandardResponse sr = new StandardResponse();
-        sr.init(false, "400", "Request NOT Completed!");
-        return sr;
+        return (StandardResponse) new StandardResponse().initFailure( "400", "Request Failed!");
     }
 }

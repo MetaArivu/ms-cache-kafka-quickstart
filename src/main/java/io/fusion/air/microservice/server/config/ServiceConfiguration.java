@@ -127,6 +127,9 @@ public class ServiceConfiguration implements Serializable {
 	@Value("${server.version:0.5.0}")
 	private String serverVersion;
 
+	@Value("${server.host:localhost}")
+	private String serverHost;
+
 	@Value("${server.host.dev:localhost:9090}")
 	private String serverHostDev;
 	@Value("${server.host.dev.desc:localhost:9090}")
@@ -437,6 +440,18 @@ public class ServiceConfiguration implements Serializable {
 		return serviceLicense;
 	}
 
+	/**
+	 * Returns Server Host name
+	 * @return
+	 */
+	public String getServerHost() {
+		return serverHost;
+	}
+
+	/**
+	 * Returns Dev Host Name
+	 * @return
+	 */
 	public String getServerHostDev() {
 		return serverHostDev;
 	}

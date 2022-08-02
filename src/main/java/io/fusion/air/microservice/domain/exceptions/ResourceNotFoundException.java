@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResourceNotFoundException extends AbstractServiceException {
 
     /**
-     * Database Exception
+     * ResourceNotFound Exception
      * @param _msg
      * @param _e
      */
     public ResourceNotFoundException(String _msg, Exception _e) {
-        super(_msg, _e);
+        super(_msg, HttpStatus.NOT_FOUND, _e);
     }
 }

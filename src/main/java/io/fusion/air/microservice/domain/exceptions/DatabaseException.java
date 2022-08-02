@@ -15,6 +15,8 @@
  */
 package io.fusion.air.microservice.domain.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -23,11 +25,29 @@ package io.fusion.air.microservice.domain.exceptions;
 public class DatabaseException extends AbstractServiceException {
 
     /**
-     * Database Exception
+     * Database Exception - Bad Request
+     * @param _msg
+     */
+    public DatabaseException(String _msg) {
+        super(_msg);
+    }
+
+    /**
+     * Database Exception - Bad Request
      * @param _msg
      * @param _e
      */
     public DatabaseException(String _msg, Exception _e) {
         super(_msg, _e);
+    }
+
+    /**
+     * Database Exception
+     * @param _msg
+     * @param badRequest
+     * @param _e
+     */
+    public DatabaseException(String _msg, HttpStatus badRequest, Exception _e) {
+        super(_msg, badRequest, _e);
     }
 }

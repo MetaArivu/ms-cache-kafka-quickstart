@@ -15,6 +15,8 @@
  */
 package io.fusion.air.microservice.domain.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -22,12 +24,31 @@ package io.fusion.air.microservice.domain.exceptions;
  */
 public class BusinessServiceException extends AbstractServiceException {
 
+
     /**
-     * Business Service Exception
+     * Business Service Exception Bad Request
+     * @param _msg
+     */
+    public BusinessServiceException(String _msg) {
+        super(_msg);
+    }
+
+    /**
+     * Business Service Exception Bad Request
      * @param _msg
      * @param _e
      */
     public BusinessServiceException(String _msg, Exception _e) {
-        super(_msg, _e);
+        super(_msg,  _e);
+    }
+
+    /**
+     * Business Service Exception
+     * @param _msg
+     * @param badRequest
+     * @param _e
+     */
+    public BusinessServiceException(String _msg, HttpStatus badRequest, Exception _e) {
+        super(_msg, badRequest, _e);
     }
 }

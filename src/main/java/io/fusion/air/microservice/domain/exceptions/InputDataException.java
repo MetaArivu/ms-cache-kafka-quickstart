@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.domain.exceptions;
 
-import org.hibernate.service.spi.ServiceException;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author: Araf Karsh Hamid
@@ -25,11 +25,18 @@ import org.hibernate.service.spi.ServiceException;
 public class InputDataException extends BusinessServiceException {
 
     /**
-     * Business Service Exception
+     * Input Data Exception
+     */
+    public InputDataException(String _msg) {
+        super(_msg);
+    }
+
+    /**
+     * Input Data Exception
      * @param _msg
      * @param _e
      */
     public InputDataException(String _msg, Exception _e) {
-        super(_msg, _e);
+        super(_msg, HttpStatus.BAD_REQUEST, _e);
     }
 }

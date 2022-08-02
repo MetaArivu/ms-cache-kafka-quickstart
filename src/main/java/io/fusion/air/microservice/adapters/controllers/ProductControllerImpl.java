@@ -16,6 +16,8 @@
 package io.fusion.air.microservice.adapters.controllers;
 
 import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
+import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
+import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.models.*;
 import io.fusion.air.microservice.domain.ports.CountryService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
@@ -29,6 +31,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +81,7 @@ public class ProductControllerImpl extends AbstractController {
 	CountryService countryServiceImpl;
 
 	/**
-	 * Get Method Call to Check the Health of the App
+	 * GET Method Call to Check the Product Status
 	 * 
 	 * @return
 	 */
@@ -109,7 +112,7 @@ public class ProductControllerImpl extends AbstractController {
 	}
 
 	/**
-	 * Get Method Call to Check the Health of the App
+	 * GET Method Call to Get All the Products
 	 *
 	 * @return
 	 */
@@ -131,7 +134,6 @@ public class ProductControllerImpl extends AbstractController {
 
 		StandardResponse stdResponse = new StandardResponse();
 		stdResponse.init(true, "200", "Data Fetch Success!");
-
 		ArrayList<String> products = new ArrayList<String>();
 		products.add("iPhone 11");
 		products.add("iPhone 12");
@@ -148,24 +150,29 @@ public class ProductControllerImpl extends AbstractController {
             @ApiResponse(responseCode = "200",
             description = "Process the payment",
             content = {@Content(mediaType = "application/json")}),
-            @ApiResponse(responseCode = "404",
-            description = "Unable to process the payment",
+            @ApiResponse(responseCode = "400",
+            description = "Unable to process the Product",
             content = @Content)
     })
-    @PostMapping("/processProducts")
-    public ResponseEntity<StandardResponse> processPayments(@RequestBody PaymentDetails _payDetails) {
+	@ExceptionHandler({InputDataException.class})
+	@PostMapping("/processProducts")
+    public ResponseEntity<StandardResponse> processProduct(@RequestBody PaymentDetails _payDetails) {
 		log.info("|"+name()+"|Request to process Product... "+_payDetails);
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Processing Success!");
-		PaymentStatus ps = new PaymentStatus(
-				"fb908151-d249-4d30-a6a1-4705729394f4",
-				LocalDateTime.now(),
-				"Accepted",
-				UUID.randomUUID().toString(),
-				LocalDateTime.now(),
-				PaymentType.CREDIT_CARD);
-		stdResponse.setPayload(ps);
-		return ResponseEntity.ok(stdResponse);
+		if(_payDetails != null && _payDetails.getOrderValue() > 0) {
+			StandardResponse stdResponse = new StandardResponse();
+			stdResponse.init(true, "200", "Processing Success!");
+			PaymentStatus ps = new PaymentStatus(
+					"fb908151-d249-4d30-a6a1-4705729394f4",
+					LocalDateTime.now(),
+					"Accepted",
+					UUID.randomUUID().toString(),
+					LocalDateTime.now(),
+					PaymentType.CREDIT_CARD);
+			stdResponse.setPayload(ps);
+			return ResponseEntity.ok(stdResponse);
+		} else {
+			throw new InputDataException("Invalid Order Value");
+		}
     }
 
 	/**

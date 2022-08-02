@@ -32,11 +32,22 @@ public abstract class AbstractServiceException extends  RuntimeException {
      * Abstract Service Exception
      * @param _e
      */
+    public AbstractServiceException(String _e) {
+        super(_e);
+        errorMessage = (_e != null) ? _e : "No-Info Available" ;
+        serviceException = this;
+        httpStatus = HttpStatus.BAD_REQUEST;
+    }
+
+    /**
+     * Abstract Service Exception
+     * @param _e
+     */
     public AbstractServiceException(Exception _e) {
         super(_e);
         errorMessage = (_e != null) ? _e.getMessage() : "No-Info Available" ;
         serviceException = _e;
-        httpStatus = HttpStatus.NOT_FOUND;
+        httpStatus = HttpStatus.BAD_REQUEST;
     }
 
     /**
@@ -48,7 +59,7 @@ public abstract class AbstractServiceException extends  RuntimeException {
         super(_msg, _e);
         errorMessage = (_msg != null) ? _msg : "No-Info Available" ;
         serviceException = _e;
-        httpStatus = HttpStatus.NOT_FOUND;
+        httpStatus = HttpStatus.BAD_REQUEST;
     }
 
     /**
