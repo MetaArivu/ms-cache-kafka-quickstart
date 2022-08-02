@@ -23,6 +23,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 
  * @author arafkarsh
@@ -89,6 +92,26 @@ public final class Utils {
 	    public static boolean isOdd(int number) {
 	        return number % 2 != 0;
 	    }
+	}
+
+	public static Cookie createCookie(HttpServletRequest request, String _key, String _value) {
+		Cookie c = new Cookie(_key, _value);
+		// c.setDomain(serviceConfig.getServerHost());
+		c.setSecure(true);
+		c.setHttpOnly(true);
+		// c.setMaxAge((int)JsonWebToken.EXPIRE_IN_EIGHT_HOUR);
+		// c.setPath(request.getRequestURI());
+		return c;
+	}
+
+	public static Cookie createCookie(HttpServletRequest request, String _key, String _value, int _age) {
+		Cookie c = new Cookie(_key, _value);
+		// c.setDomain(serviceConfig.getServerHost());
+		c.setSecure(true);
+		c.setHttpOnly(true);
+		c.setMaxAge(_age);
+		// c.setPath(request.getRequestURI());
+		return c;
 	}
 
 	public static void main(String[] args) throws Exception {

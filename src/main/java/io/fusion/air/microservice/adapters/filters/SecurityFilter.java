@@ -15,14 +15,20 @@
  */
 package io.fusion.air.microservice.adapters.filters;
 
+import io.fusion.air.microservice.security.JsonWebToken;
+import io.fusion.air.microservice.server.config.ServiceConfiguration;
+import io.fusion.air.microservice.utils.Utils;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -34,10 +40,13 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Component
 @Order(2)
-public class CustomFilter implements Filter {
+public class SecurityFilter implements Filter {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
+
+    @Autowired
+    private ServiceConfiguration serviceConfig;
 
     @Override
     public void doFilter(ServletRequest _servletRequest, ServletResponse _servletResponse, FilterChain _filterChain)
@@ -45,9 +54,10 @@ public class CustomFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) _servletRequest;
         HttpServletResponse response = (HttpServletResponse) _servletResponse;
-        log.info("2|Custom Filter Check... {}", request.getRequestURI());
+
+        response.addCookie(Utils.createCookie(request, "SameSite", "Strict"));
+        response.addCookie(Utils.createCookie(request, "JSESSIONID", UUID.randomUUID().toString()));
 
         _filterChain.doFilter(request, response);
-
     }
 }

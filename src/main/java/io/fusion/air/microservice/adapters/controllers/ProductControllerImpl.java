@@ -37,6 +37,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -100,6 +101,8 @@ public class ProductControllerImpl extends AbstractController {
 														HttpServletResponse response) throws Exception {
 		log.info("|"+name()+"|Request to Product Status of Service... ");
 		response.setHeader("Cache-Control", "no-cache");
+
+		// response.addCookie(new Cookie("SameSite", "Strict"));
 
 		StandardResponse stdResponse = new StandardResponse();
 		stdResponse.init(true, "200", "Data Fetch Success!");

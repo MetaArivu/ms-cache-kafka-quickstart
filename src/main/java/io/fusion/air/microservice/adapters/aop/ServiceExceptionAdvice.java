@@ -23,6 +23,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -52,8 +53,8 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception _ex, Object _body, HttpHeaders _headers,
-                                                             HttpStatus _status, WebRequest _request) {
+    public ResponseEntity<Object> handleExceptionInternal(Exception _ex, Object _body, HttpHeaders _headers,
+                                                          HttpStatus _status, WebRequest _request) {
         return createErrorResponse(_ex, _status, _request);
     }
 
@@ -101,7 +102,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @param _request
      * @return
      */
-    @ExceptionHandler({InputDataException.class})
+    @ExceptionHandler(value = InputDataException.class)
     public ResponseEntity<Object> standardException(InputDataException _ase, WebRequest _request) {
         return createErrorResponse(_ase, "410", _request);
     }
@@ -112,9 +113,20 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @param _request
      * @return
      */
-    @ExceptionHandler({ResourceNotFoundException.class})
+    @ExceptionHandler(value = ResourceNotFoundException.class)
     public ResponseEntity<Object> resourceNotFoundException(ResourceNotFoundException _rnfEx, WebRequest _request) {
         return createErrorResponse(_rnfEx, "404", _request);
+    }
+
+    /**
+     * Access Denied Exception
+     * @param _adEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity<Object> accessDeniedException(AccessDeniedException _adEx, WebRequest _request) {
+        return createErrorResponse(_adEx, _adEx.getMessage(), "403", HttpStatus.FORBIDDEN, _request);
     }
 
     /**
@@ -123,7 +135,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @param _request
      * @return
      */
-    @ExceptionHandler({ConstraintViolationException.class})
+    @ExceptionHandler(value = ConstraintViolationException.class)
     public ResponseEntity<Object> constraintViolationException(ConstraintViolationException _cvEx, WebRequest _request) {
 
         StandardResponse stdResponse = new StandardResponse();

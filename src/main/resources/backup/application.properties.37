@@ -1,4 +1,9 @@
 # =======================================================================
+# MS-Cache Service Properties
+# =======================================================================
+build.number=38
+build.date=Tue Aug 2 23:34:22 IST 2022
+# =======================================================================
 # Service Name & API Details -  Version, Path
 # =======================================================================
 service.org=metamagic
@@ -21,9 +26,9 @@ server.restart=true
 server.host=localhost
 server.host.dev=http://localhost:${server.port}
 server.host.dev.desc=Development Server
-server.host.uat=https://uat.${service.org}.com
+server.host.uat=http://uat.${service.org}.com
 server.host.uat.desc=UAT Server
-server.host.prod=https://prod.${service.org}.com
+server.host.prod=http://prod.${service.org}.com
 server.host.prod.desc=Production Server
 #logging.level=INFO
 spring.codec.max-in-memory-size=3MB
