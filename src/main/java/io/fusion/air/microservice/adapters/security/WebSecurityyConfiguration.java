@@ -38,7 +38,7 @@ class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         // Forces All Request to be Secured
         // http.requiresChannel().anyRequest().requiresSecure();
         String apiPath = serviceConfig.getApiDocPath();
-        http.authorizeRequests().antMatchers(apiPath + "/**").permitAll();
+        http.authorizeRequests().antMatchers(apiPath + "/**").permitAll().and().exceptionHandling();
         // Enable CRPF Protection
         // http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         // Disable for Local Testing

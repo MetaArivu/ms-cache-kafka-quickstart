@@ -114,7 +114,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = ResourceNotFoundException.class)
-    public ResponseEntity<Object> resourceNotFoundException(ResourceNotFoundException _rnfEx, WebRequest _request) {
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException _rnfEx, WebRequest _request) {
         return createErrorResponse(_rnfEx, "404", _request);
     }
 
@@ -125,7 +125,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = MessagingException.class)
-    public ResponseEntity<Object> messagingException(MessagingException _msgEx, WebRequest _request) {
+    public ResponseEntity<Object> handleMessagingException(MessagingException _msgEx, WebRequest _request) {
         return createErrorResponse(_msgEx, "430", _request);
     }
 
@@ -136,7 +136,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = DatabaseException.class)
-    public ResponseEntity<Object> databaseException(DatabaseException _dbEx, WebRequest _request) {
+    public ResponseEntity<Object> handleDatabaseException(DatabaseException _dbEx, WebRequest _request) {
         return createErrorResponse(_dbEx, "440", _request);
     }
 
@@ -147,7 +147,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = DataNotFoundException.class)
-    public ResponseEntity<Object> dataNotFoundException(DataNotFoundException _dnfEx, WebRequest _request) {
+    public ResponseEntity<Object> handleDataNotFoundException(DataNotFoundException _dnfEx, WebRequest _request) {
         return createErrorResponse(_dnfEx, "441", _request);
     }
 
@@ -158,7 +158,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = DuplicateDataException.class)
-    public ResponseEntity<Object> duplicateDataException(DuplicateDataException _ddEx, WebRequest _request) {
+    public ResponseEntity<Object> handleDuplicateDataException(DuplicateDataException _ddEx, WebRequest _request) {
         return createErrorResponse(_ddEx, "442", _request);
     }
 
@@ -169,7 +169,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = UnableToSaveException.class)
-    public ResponseEntity<Object> unableToSaveException(UnableToSaveException _utEx, WebRequest _request) {
+    public ResponseEntity<Object> handleUnableToSaveException(UnableToSaveException _utEx, WebRequest _request) {
         return createErrorResponse(_utEx, "443", _request);
     }
 
@@ -180,7 +180,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = BusinessServiceException.class)
-    public ResponseEntity<Object> businessServiceException(BusinessServiceException _buEx, WebRequest _request) {
+    public ResponseEntity<Object> handleBusinessServiceException(BusinessServiceException _buEx, WebRequest _request) {
         return createErrorResponse(_buEx, "460", _request);
     }
 
@@ -191,7 +191,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = InputDataException.class)
-    public ResponseEntity<Object> inputDataException(InputDataException _idEx, WebRequest _request) {
+    public ResponseEntity<Object> handleInputDataException(InputDataException _idEx, WebRequest _request) {
         return createErrorResponse(_idEx, "461", _request);
     }
 
@@ -202,7 +202,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = MandatoryDataRequiredException.class)
-    public ResponseEntity<Object> inputDataException(MandatoryDataRequiredException _mdrEx, WebRequest _request) {
+    public ResponseEntity<Object> handleMandatoryDataRequiredException(MandatoryDataRequiredException _mdrEx, WebRequest _request) {
         return createErrorResponse(_mdrEx, "462", _request);
     }
 
@@ -214,7 +214,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = ControllerException.class)
-    public ResponseEntity<Object> inputDataException(ControllerException _coEx, WebRequest _request) {
+    public ResponseEntity<Object> handleControllerException(ControllerException _coEx, WebRequest _request) {
         return createErrorResponse(_coEx, "490", _request);
     }
 
@@ -225,7 +225,7 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = ConstraintViolationException.class)
-    public ResponseEntity<Object> constraintViolationException(ConstraintViolationException _cvEx, WebRequest _request) {
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException _cvEx, WebRequest _request) {
 
         StandardResponse stdResponse = new StandardResponse();
         stdResponse.initFailure( "401", "Input Errors");

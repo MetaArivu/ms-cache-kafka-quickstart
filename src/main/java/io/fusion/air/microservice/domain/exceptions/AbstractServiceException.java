@@ -17,6 +17,9 @@ package io.fusion.air.microservice.domain.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -46,7 +49,7 @@ public abstract class AbstractServiceException extends  RuntimeException {
     public AbstractServiceException(Exception _e) {
         super(_e);
         errorMessage = (_e != null) ? _e.getMessage() : "No-Info Available" ;
-        serviceException = _e;
+        serviceException = (_e  != null) ? _e : this;
         httpStatus = HttpStatus.BAD_REQUEST;
     }
 
@@ -58,7 +61,7 @@ public abstract class AbstractServiceException extends  RuntimeException {
     public AbstractServiceException(String _msg, Exception _e) {
         super(_msg, _e);
         errorMessage = (_msg != null) ? _msg : "No-Info Available" ;
-        serviceException = _e;
+        serviceException = (_e  != null) ? _e : this;
         httpStatus = HttpStatus.BAD_REQUEST;
     }
 
@@ -71,8 +74,18 @@ public abstract class AbstractServiceException extends  RuntimeException {
     public AbstractServiceException(String _msg, HttpStatus _status, Exception _e) {
         super(_msg, _e);
         errorMessage = (_msg != null) ? _msg : "No-Info Available" ;
-        serviceException = _e;
+        serviceException = (_e  != null) ? _e : this;
         httpStatus = _status;
+    }
+
+    /**
+     * Returns Exception Stack Trace as a String
+     * @return
+     */
+    public String getStackTraceAsString() {
+        StringWriter stringWriter = new StringWriter();
+        serviceException.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
     }
 
     /**
