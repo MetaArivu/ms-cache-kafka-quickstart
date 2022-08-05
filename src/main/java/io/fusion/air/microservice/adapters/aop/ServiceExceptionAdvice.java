@@ -15,9 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.aop;
 
-import io.fusion.air.microservice.domain.exceptions.AbstractServiceException;
-import io.fusion.air.microservice.domain.exceptions.InputDataException;
-import io.fusion.air.microservice.domain.exceptions.ResourceNotFoundException;
+import io.fusion.air.microservice.domain.exceptions.*;
 import io.fusion.air.microservice.domain.models.StandardResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -41,7 +39,7 @@ import java.util.List;
  */
 // @ControllerAdvice(basePackages="io.fusion.air.microservice.domain.exceptions")
 // @ControllerAdvice(basePackages="io.fusion.air.microservice.*")
-@RestControllerAdvice
+@ControllerAdvice
 @Order(2)
 public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
 
@@ -99,14 +97,14 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * InputDataException
-     * @param _ase
+     * Access Denied Exception
+     * @param _adEx
      * @param _request
      * @return
      */
-    @ExceptionHandler(value = InputDataException.class)
-    public ResponseEntity<Object> standardException(InputDataException _ase, WebRequest _request) {
-        return createErrorResponse(_ase, "410", _request);
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity<Object> accessDeniedException(AccessDeniedException _adEx, WebRequest _request) {
+        return createErrorResponse(_adEx, _adEx.getMessage(), "403", HttpStatus.FORBIDDEN, _request);
     }
 
     /**v
@@ -120,15 +118,83 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_rnfEx, "404", _request);
     }
 
+
     /**
-     * Access Denied Exception
-     * @param _adEx
+     * Database Exception
+     * @param _dbEx
      * @param _request
      * @return
      */
-    @ExceptionHandler(value = AccessDeniedException.class)
-    public ResponseEntity<Object> accessDeniedException(AccessDeniedException _adEx, WebRequest _request) {
-        return createErrorResponse(_adEx, _adEx.getMessage(), "403", HttpStatus.FORBIDDEN, _request);
+    @ExceptionHandler(value = DatabaseException.class)
+    public ResponseEntity<Object> databaseException(DatabaseException _dbEx, WebRequest _request) {
+        return createErrorResponse(_dbEx, "440", _request);
+    }
+
+    /**
+     * Data Not Found Exception
+     * @param _dnfEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = DataNotFoundException.class)
+    public ResponseEntity<Object> dataNotFoundException(DataNotFoundException _dnfEx, WebRequest _request) {
+        return createErrorResponse(_dnfEx, "441", _request);
+    }
+
+    /**
+     * Duplicate Data Exception
+     * @param _ddEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = DuplicateDataException.class)
+    public ResponseEntity<Object> duplicateDataException(DuplicateDataException _ddEx, WebRequest _request) {
+        return createErrorResponse(_ddEx, "442", _request);
+    }
+
+    /**
+     * Business Exception
+     * @param _buEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = BusinessServiceException.class)
+    public ResponseEntity<Object> businessServiceException(BusinessServiceException _buEx, WebRequest _request) {
+        return createErrorResponse(_buEx, "460", _request);
+    }
+
+    /**
+     * InputDataException
+     * @param _idEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = InputDataException.class)
+    public ResponseEntity<Object> inputDataException(InputDataException _idEx, WebRequest _request) {
+        return createErrorResponse(_idEx, "461", _request);
+    }
+
+    /**
+     * Mandatory Data Required Exception
+     * @param _mdrEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = MandatoryDataRequiredException.class)
+    public ResponseEntity<Object> inputDataException(MandatoryDataRequiredException _mdrEx, WebRequest _request) {
+        return createErrorResponse(_mdrEx, "462", _request);
+    }
+
+
+    /**
+     * Controller Exception
+     * @param _coEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = ControllerException.class)
+    public ResponseEntity<Object> inputDataException(ControllerException _coEx, WebRequest _request) {
+        return createErrorResponse(_coEx, "490", _request);
     }
 
     /**

@@ -71,6 +71,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
@@ -83,6 +84,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableScheduling
 @ServletComponentScan
 @ComponentScan(basePackages="io.fusion.air.microservice")
+@EnableWebMvc
 @RestController
 @EnableCaching
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
