@@ -118,6 +118,16 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_rnfEx, "404", _request);
     }
 
+    /**
+     * Messaging Exception
+     * @param _msgEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = MessagingException.class)
+    public ResponseEntity<Object> messagingException(MessagingException _msgEx, WebRequest _request) {
+        return createErrorResponse(_msgEx, "430", _request);
+    }
 
     /**
      * Database Exception
@@ -150,6 +160,17 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = DuplicateDataException.class)
     public ResponseEntity<Object> duplicateDataException(DuplicateDataException _ddEx, WebRequest _request) {
         return createErrorResponse(_ddEx, "442", _request);
+    }
+
+    /**
+     * Unable to Save Exception
+     * @param _utEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = UnableToSaveException.class)
+    public ResponseEntity<Object> unableToSaveException(UnableToSaveException _utEx, WebRequest _request) {
+        return createErrorResponse(_utEx, "443", _request);
     }
 
     /**
