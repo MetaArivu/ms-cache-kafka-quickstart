@@ -17,6 +17,8 @@ package io.fusion.air.microservice.adapters.controllers;
 
 import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
+import io.fusion.air.microservice.domain.exceptions.ControllerException;
+import io.fusion.air.microservice.domain.exceptions.DuplicateDataException;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.models.*;
 import io.fusion.air.microservice.domain.ports.CountryService;
@@ -28,6 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.hibernate.exception.DataException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -156,7 +159,6 @@ public class ProductControllerImpl extends AbstractController {
             description = "Unable to process the Product",
             content = @Content)
     })
-	@ExceptionHandler({InputDataException.class})
 	@PostMapping("/processProducts")
     public ResponseEntity<StandardResponse> processProduct(@RequestBody PaymentDetails _payDetails) {
 		log.info("|"+name()+"|Request to process Product... "+_payDetails);
@@ -173,7 +175,12 @@ public class ProductControllerImpl extends AbstractController {
 			stdResponse.setPayload(ps);
 			return ResponseEntity.ok(stdResponse);
 		} else {
-			throw new InputDataException("Invalid Order Value");
+			throw new DuplicateDataException("Invalid Order Value");
+			// throw new InputDataException("Invalid Order Value");
+			// throw new BusinessServiceException("Invalid Order Value");
+			// throw new ControllerException("Invalid Order Value");
+			// throw new RuntimeException("Invalid Order Value");
+
 		}
     }
 

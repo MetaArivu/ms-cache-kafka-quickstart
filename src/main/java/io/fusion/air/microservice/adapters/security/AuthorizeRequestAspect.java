@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.security;
 
-import io.fusion.air.microservice.domain.exceptions.AbstractServiceException;
+import io.fusion.air.microservice.domain.exceptions.AuthorizationException;
 import io.fusion.air.microservice.security.JsonWebToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -100,9 +100,7 @@ public class AuthorizeRequestAspect {
         /**
          * Extract the Token fromm the Authorization Header
          * ------------------------------------------------------------------------------------------------------
-         Authorization: Bearer eyJhbGciOiJIUzM4NCJ9
-         .eyJhdWQiOiJtaWNyb3NlcnZpY2VzIiwic3ViIjoiamFuZS5kb2UiLCJpc3MiOiJjb21wYW55TmFtZSIsImV4cCI6MTgxNDAwOTg4NSwiaWF0IjoxNjU2MzI5ODg1LCJqdGkiOiIxZTk4YjFjYS00ZWE3LTQ3NzQtYmQ5Yi0zMzI2ZTIwNTdkYWUiLCJkaWQiOiJkZXZpY2UgaWQifQ
-         .MD7fdReCTfAr4V3G-h7ievjcOmAlEyX0aP5Df8sE_Uf_bveVHd51HXvzuDYucE2A
+         Authorization: Bearer AAA.BBB.CCC
          * ------------------------------------------------------------------------------------------------------
          */
         if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
@@ -119,7 +117,7 @@ public class AuthorizeRequestAspect {
         } else {
             log.warn("|JwtAspect|JWT Token does not begin with Bearer String");
             log.error("|JwtAspect|Unauthorized Access to > {}", request.getRequestURI());
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Access Not authorized: No Token Available!");
+            throw new AuthorizationException("Access Not authorized: No Token Available!");
         }
         // Validate the Token when User is NOT Null and Security Context = NULL
         if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -134,11 +132,11 @@ public class AuthorizeRequestAspect {
                 // If the User Role is Public then Skip the Role Check
                 if (!role.trim().equalsIgnoreCase(UserRole.Public.toString()) && !annotation.role().equals(role)) {
                     log.warn("|JwtAspect|Role check failed! User role:{} - Allowed role {}", role, annotation.role());
-                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Access Not authorized: Invalid Role!");
+                    throw new AuthorizationException("Access Not authorized: Invalid Role!");
                 }
             } else {
                 log.error("|JwtAspect|Unauthorized Access to > {}", request.getRequestURI());
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Access Not authorized: Invalid Token!");
+                throw new AuthorizationException("Access Not authorized: Invalid Token!");
             }
             UsernamePasswordAuthenticationToken authorizeToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());

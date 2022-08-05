@@ -58,10 +58,10 @@ public class ServerLogExceptionAspect {
         try {
             Object method = joinPoint.proceed();
             return method;
-        }catch(AbstractServiceException e) {
-            log.info("ServiceException StatusCode {}",e.getHttpStatus().value());
+        }catch(Throwable e) {
+            //  log.info("ServiceException StatusCode {}",e.getHttpStatus().value());
             log.info("ServiceException Message {}",e.getMessage());
-            throw new ResponseStatusException(e.getHttpStatus(), e.getMessage());
+            throw e;
         }
     }
 
@@ -79,10 +79,10 @@ public class ServerLogExceptionAspect {
             long timeTaken=System.currentTimeMillis() - startTime;
             log.info("Api Call >> Time taken by {} is {}",joinPoint,timeTaken);
             return method;
-        }catch(AbstractServiceException e) {
-            log.info("ServiceException StatusCode {}",e.getHttpStatus().value());
+        }catch(Throwable e) {
+            // log.info("ServiceException StatusCode {}",e.getHttpStatus().value());
             log.info("ServiceException Message {}",e.getMessage());
-            throw new ResponseStatusException(e.getHttpStatus(), e.getMessage());
+            throw e;
         }
     }
 

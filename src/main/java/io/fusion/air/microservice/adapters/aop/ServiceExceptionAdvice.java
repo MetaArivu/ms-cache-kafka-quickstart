@@ -17,10 +17,12 @@ package io.fusion.air.microservice.adapters.aop;
 
 import io.fusion.air.microservice.domain.exceptions.*;
 import io.fusion.air.microservice.domain.models.StandardResponse;
+import org.slf4j.Logger;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,7 +32,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * @author: Araf Karsh Hamid
@@ -41,30 +48,37 @@ import java.util.List;
 // @ControllerAdvice(basePackages="io.fusion.air.microservice.*")
 @ControllerAdvice
 @Order(2)
-public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
+public class ServiceExceptionAdvice  extends ResponseEntityExceptionHandler {
+
+    // Set Logger -> Lookup will automatically determine the class name.
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     /**
      * Handle All Exceptions
-     * @param _ex
-     * @param _body
-     * @param _headers
-     * @param _status
-     * @param _request
+     * @param ex
+     * @param body
+     * @param headers
+     * @param status
+     * @param request
      * @return
      */
     @Override
-    public ResponseEntity<Object> handleExceptionInternal(Exception _ex, Object _body, HttpHeaders _headers,
-                                                          HttpStatus _status, WebRequest _request) {
-        return createErrorResponse(_ex, _status, _request);
+    protected ResponseEntity<Object> handleExceptionInternal(
+                Exception ex, @Nullable Object body,
+                HttpHeaders headers, HttpStatus status, WebRequest request) {
+        if (HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) {
+            request.setAttribute("javax.servlet.error.exception", ex, 0);
+        }
+        return createErrorResponse(ex, status, request);
     }
 
-    /**
-     * Build Error Response Entity
-     * @param _ex
-     * @param _status
-     * @param _request
-     * @return
-     */
+        /**
+         * Build Error Response Entity
+         * @param _ex
+         * @param _status
+         * @param _request
+         * @return
+         */
     private ResponseEntity<Object> createErrorResponse(Exception _ex, HttpStatus _status, WebRequest _request) {
         return createErrorResponse(_ex, _ex.getMessage(), "599",_status, _request);
     }
@@ -88,12 +102,39 @@ public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
      * @param _request
      * @return
      */
-    private ResponseEntity<Object> createErrorResponse(Exception _exception, String _message, String _errorCode,
+    private ResponseEntity<Object> createErrorResponse(Throwable _exception, String _message, String _errorCode,
                                                        HttpStatus _httpStatus, WebRequest _request) {
         StandardResponse stdResponse = new StandardResponse();
         stdResponse.initFailure(_errorCode, _message);
-        stdResponse.setPayload(_request.getContextPath());
+        LinkedHashMap<String,Object> payload = new LinkedHashMap<String,Object>();
+        payload.put("path", _request.getContextPath());
+        payload.put("httpCode", _httpStatus.value());
+        payload.put("httpMesg", _httpStatus.name());
+
+        stdResponse.setPayload(payload);
         return new ResponseEntity<>(stdResponse, _httpStatus);
+    }
+
+    /**
+     * Handle Runtime Exception
+     * @param _runEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = RuntimeException.class)
+    public ResponseEntity<Object> runtimeException(RuntimeException _runEx, WebRequest _request) {
+        return createErrorResponse(_runEx, _runEx.getMessage(), "590", HttpStatus.INTERNAL_SERVER_ERROR, _request);
+    }
+
+    /**
+     * Handle Any Exception
+     * @param _runEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = Throwable.class)
+    public ResponseEntity<Object> throwable(Throwable _runEx, WebRequest _request) {
+        return createErrorResponse(_runEx, _runEx.getMessage(), "599", HttpStatus.INTERNAL_SERVER_ERROR, _request);
     }
 
     /**
