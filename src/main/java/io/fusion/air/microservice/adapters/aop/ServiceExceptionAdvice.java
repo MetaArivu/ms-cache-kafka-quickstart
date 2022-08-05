@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -39,7 +40,8 @@ import java.util.List;
  * @date:
  */
 // @ControllerAdvice(basePackages="io.fusion.air.microservice.domain.exceptions")
-@ControllerAdvice()
+// @ControllerAdvice(basePackages="io.fusion.air.microservice.*")
+@RestControllerAdvice
 @Order(2)
 public class ServiceExceptionAdvice extends ResponseEntityExceptionHandler {
 

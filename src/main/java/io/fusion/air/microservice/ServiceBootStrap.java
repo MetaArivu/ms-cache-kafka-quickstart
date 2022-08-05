@@ -82,7 +82,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @EnableScheduling
 @ServletComponentScan
-@ComponentScan
+@ComponentScan(basePackages="io.fusion.air.microservice")
 @RestController
 @EnableCaching
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
