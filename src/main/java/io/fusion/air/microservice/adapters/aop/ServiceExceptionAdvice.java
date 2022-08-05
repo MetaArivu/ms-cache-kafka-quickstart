@@ -17,7 +17,9 @@ package io.fusion.air.microservice.adapters.aop;
 
 import io.fusion.air.microservice.domain.exceptions.*;
 import io.fusion.air.microservice.domain.models.StandardResponse;
+import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -52,6 +53,10 @@ public class ServiceExceptionAdvice  extends ResponseEntityExceptionHandler {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
+
+    // ServiceConfiguration
+    @Autowired
+    private ServiceConfiguration serviceConfig;
 
     /**
      * Handle All Exceptions
@@ -105,13 +110,15 @@ public class ServiceExceptionAdvice  extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> createErrorResponse(Throwable _exception, String _message, String _errorCode,
                                                        HttpStatus _httpStatus, WebRequest _request) {
         StandardResponse stdResponse = new StandardResponse();
-        stdResponse.initFailure(_errorCode, _message);
+        String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
+        stdResponse.initFailure(errorPrefix + _errorCode, _message);
+
         LinkedHashMap<String,Object> payload = new LinkedHashMap<String,Object>();
         payload.put("path", _request.getContextPath());
         payload.put("httpCode", _httpStatus.value());
         payload.put("httpMesg", _httpStatus.name());
-
         stdResponse.setPayload(payload);
+
         return new ResponseEntity<>(stdResponse, _httpStatus);
     }
 
@@ -269,7 +276,8 @@ public class ServiceExceptionAdvice  extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException _cvEx, WebRequest _request) {
 
         StandardResponse stdResponse = new StandardResponse();
-        stdResponse.initFailure( "401", "Input Errors");
+        String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
+        stdResponse.initFailure( errorPrefix + "401", "Input Errors");
         List<String> errors = new ArrayList<>();
         _cvEx.getConstraintViolations().forEach(cv -> errors.add(cv.getMessage()));
         stdResponse.setPayload(errors);

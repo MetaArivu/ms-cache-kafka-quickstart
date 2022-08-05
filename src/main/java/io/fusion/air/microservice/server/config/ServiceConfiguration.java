@@ -103,6 +103,9 @@ public class ServiceConfiguration implements Serializable {
 	@Value("${service.api.path:PATH}")
 	private String serviceApiPath;
 
+	@Value("${service.api.error.prefix:99}")
+	private String serviceApiErrorPrefix;
+
 	@Value("${service.container:ContainerName}")
 	private String serviceContainer;
 
@@ -398,6 +401,14 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public String getServiceApiPath() {
 		return serviceApiPath;
+	}
+
+	/**
+	 * Retuurns Service API Error Prefix
+	 * @return
+	 */
+	public String getServiceAPIErrorPrefix() {
+		return serviceApiErrorPrefix;
 	}
 
 	/**

@@ -15,7 +15,6 @@
  */
 package io.fusion.air.microservice.adapters.aop;
 
-import io.fusion.air.microservice.domain.exceptions.AbstractServiceException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -24,8 +23,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.server.ResponseStatusException;
-
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 

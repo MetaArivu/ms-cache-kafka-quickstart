@@ -1,8 +1,8 @@
 # =======================================================================
 # MS-Cache Service Properties
 # =======================================================================
-build.number=44
-build.date=Sat Aug 6 01:56:30 IST 2022
+build.number=43
+build.date=Fri Aug 5 22:34:42 IST 2022
 # =======================================================================
 # Service Name & API Details -  Version, Path
 # =======================================================================
@@ -11,7 +11,6 @@ service.name=MS-Cache
 service.api.name=ms-cache
 service.api.prefix=api
 service.api.version=v1
-service.api.error.prefix=99
 service.container=ms-cache-service
 #service.api.repository=https://github.com/MetaArivu/${service.container}
 service.api.repository=https://github.com/MetaArivu/ms-cache-kafka-quickstart

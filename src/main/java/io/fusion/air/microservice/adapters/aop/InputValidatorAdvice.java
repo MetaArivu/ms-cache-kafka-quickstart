@@ -15,12 +15,9 @@
  */
 package io.fusion.air.microservice.adapters.aop;
 
-import io.fusion.air.microservice.domain.exceptions.AbstractServiceException;
-import io.fusion.air.microservice.domain.exceptions.InputDataException;
-import io.fusion.air.microservice.domain.exceptions.ResourceNotFoundException;
 import io.fusion.air.microservice.domain.models.StandardResponse;
-import javax.validation.ConstraintViolationException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import io.fusion.air.microservice.server.config.ServiceConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -44,6 +40,10 @@ import java.util.stream.Collectors;
 @Order(1)
 public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
 
+    // ServiceConfiguration
+    @Autowired
+    private ServiceConfiguration serviceConfig;
+
     /**
      * Handling Invalid Input in Requests
      * @param _manvEx
@@ -57,7 +57,9 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
                                       HttpHeaders _headers, HttpStatus _status, WebRequest _request) {
 
         StandardResponse stdResponse = new StandardResponse();
-        stdResponse.init(false, "400", "Input Errors");
+        String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
+
+        stdResponse.init(false, errorPrefix  + "400", "Input Errors");
         List<String> errors = new ArrayList<String>();
         _manvEx.getBindingResult().getAllErrors().forEach((error) -> {
             try {
