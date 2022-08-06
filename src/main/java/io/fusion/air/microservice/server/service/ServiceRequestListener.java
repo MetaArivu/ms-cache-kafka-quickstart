@@ -22,9 +22,10 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServletRequest;
 
-import io.fusion.air.microservice.utils.CPU;
+import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -65,6 +66,9 @@ public class ServiceRequestListener implements ServletRequestListener {
 	// Set Logger -> Lookup will automatically determine the class name.
 	private static final Logger log = getLogger(lookup().lookupClass());
 
+	@Autowired
+	private ServiceConfiguration serviceConfig;
+
 	/**
 	 * Add the following values into the log for the request
 	 * Unique Request ID
@@ -81,8 +85,11 @@ public class ServiceRequestListener implements ServletRequestListener {
 		MDC.put("IP", httpRequest.getRemoteHost());
 		MDC.put("Port", String.valueOf(httpRequest.getRemotePort()));
 		MDC.put("URI", httpRequest.getRequestURI());
+		MDC.put("Protocol", httpRequest.getMethod());
 		MDC.put("user", "john.doe");
 
+		String name= (serviceConfig != null) ? serviceConfig.getServiceName(): "NotDefined";
+		MDC.put("Service", name);
 	}
 
 	/**

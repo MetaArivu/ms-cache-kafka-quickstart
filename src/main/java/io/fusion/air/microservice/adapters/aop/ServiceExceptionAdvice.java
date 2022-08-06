@@ -33,9 +33,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import org.slf4j.MDC;
+
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -114,9 +115,12 @@ public class ServiceExceptionAdvice  extends ResponseEntityExceptionHandler {
         stdResponse.initFailure(errorPrefix + _errorCode, _message);
 
         LinkedHashMap<String,Object> payload = new LinkedHashMap<String,Object>();
-        payload.put("path", _request.getContextPath());
-        payload.put("httpCode", _httpStatus.value());
-        payload.put("httpMesg", _httpStatus.name());
+        payload.put("code", _httpStatus.value());
+        payload.put("mesg", _httpStatus.name());
+        payload.put("srv", MDC.get("Service"));
+        payload.put("reqId", MDC.get("ReqId"));
+        payload.put("http", MDC.get("Protocol"));
+        payload.put("path", MDC.get("URI"));
         stdResponse.setPayload(payload);
 
         return new ResponseEntity<>(stdResponse, _httpStatus);

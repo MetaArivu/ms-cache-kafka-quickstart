@@ -18,6 +18,7 @@ package io.fusion.air.microservice.server.service;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
 
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
@@ -66,6 +67,7 @@ public class ServiceEventListener {
 			version = serviceConfig.getServerVersion();
 			name =serviceConfig.getServiceName();
 		}
+		MDC.put("Service", name);
 		String logo =ServiceHelp.LOGO.replaceAll("SIGMA", name).replaceAll("VERSION", version);
 		log.info(name+" Service is ready! ... .."
 				+ logo

@@ -47,7 +47,7 @@ public class LogExceptionAspect {
      */
     @Before(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public void logStatementBefore(JoinPoint joinPoint) {
-        log.info("API Call >> {}",joinPoint);
+        log.debug("START={}",joinPoint);
     }
 
     /**
@@ -56,25 +56,7 @@ public class LogExceptionAspect {
      */
     @After(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public void logStatementAfter(JoinPoint joinPoint) {
-        log.info("API Call >> Complete {}",joinPoint);
-    }
-
-    /**
-     * Handle Exceptions
-     * @param joinPoint
-     * @return
-     * @throws Throwable
-     */
-    @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
-    public Object methodHandler(ProceedingJoinPoint joinPoint) throws Throwable {
-        try {
-            Object method = joinPoint.proceed();
-            return method;
-        }catch(Throwable e) {
-            //  log.info("ServiceException StatusCode {}",e.getHttpStatus().value());
-            log.info("ServiceException Message {}",e.getMessage());
-            throw e;
-        }
+        log.debug("END={}",joinPoint);
     }
 
     /**
@@ -89,11 +71,11 @@ public class LogExceptionAspect {
         try {
             Object method = joinPoint.proceed();
             long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("TT={}|Class={}",timeTaken, joinPoint);
+            log.info("TIME={} ms|SUCCESS=true|CLASS={}",timeTaken,joinPoint);
             return method;
         }catch(Throwable e) {
-            // log.info("ServiceException StatusCode {}",e.getHttpStatus().value());
-            log.info("ServiceException Message {}",e.getMessage());
+            long timeTaken=System.currentTimeMillis() - startTime;
+            log.info("TIME={} ms|ERROR={}|CLASS={}",timeTaken, e.getMessage(),joinPoint);
             throw e;
         }
     }

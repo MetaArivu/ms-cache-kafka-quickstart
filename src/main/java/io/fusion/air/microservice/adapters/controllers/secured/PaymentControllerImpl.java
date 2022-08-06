@@ -15,7 +15,6 @@
  */
 package io.fusion.air.microservice.adapters.controllers.secured;
 
-import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.models.PaymentDetails;
 import io.fusion.air.microservice.domain.models.PaymentStatus;
 import io.fusion.air.microservice.domain.models.PaymentType;
@@ -41,7 +40,6 @@ import org.springframework.web.context.annotation.RequestScope;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -90,7 +88,7 @@ public class PaymentControllerImpl extends AbstractController {
 	@ResponseBody
 	public ResponseEntity<StandardResponse> getStatus(@PathVariable("referenceNo") String _referenceNo,
 														HttpServletRequest request) throws Exception {
-		log.info("|"+name()+"|Request to Payment Status of Service... ");
+		log.debug("|"+name()+"|Request to Payment Status of Service... ");
 		StandardResponse stdResponse = new StandardResponse();
 		stdResponse.init(true, "200", "Processing Success!");
 		// Response Object
@@ -119,7 +117,7 @@ public class PaymentControllerImpl extends AbstractController {
     })
     @PostMapping("/processPayments")
     public ResponseEntity<StandardResponse> processPayments(@RequestBody PaymentDetails _payDetails) {
-		log.info("|"+name()+"|Request to process payments... ");
+		log.debug("|"+name()+"|Request to process payments... ");
 		StandardResponse stdResponse = new StandardResponse();
 		stdResponse.init(true, "200", "Processing Success!");
 		PaymentStatus ps = new PaymentStatus(
@@ -147,7 +145,7 @@ public class PaymentControllerImpl extends AbstractController {
 	})
 	@DeleteMapping("/cancel/{referenceNo}")
 	public ResponseEntity<StandardResponse> cancel(@PathVariable("referenceNo") String _referenceNo) {
-		log.info("|"+name()+"|Request to Cancel the payments... ");
+		log.debug("|"+name()+"|Request to Cancel the payments... ");
 		StandardResponse stdResponse = new StandardResponse();
 		stdResponse.init(true, "200", "Cancelled!");
 		HashMap<String,Object> status = new HashMap<String,Object>();
@@ -171,7 +169,7 @@ public class PaymentControllerImpl extends AbstractController {
 	})
 	@PutMapping("/update/{referenceNo}")
 	public ResponseEntity<StandardResponse> updatePayment(@PathVariable("referenceNo") String _referenceNo) {
-		log.info("|"+name()+"|Request to Update Payment... "+_referenceNo);
+		log.debug("|"+name()+"|Request to Update Payment... "+_referenceNo);
 		StandardResponse stdResponse = new StandardResponse();
 		stdResponse.init(true, "200", "Updated!");
 		HashMap<String,Object> status = new HashMap<String,Object>();

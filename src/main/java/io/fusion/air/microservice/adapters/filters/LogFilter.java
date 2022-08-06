@@ -15,8 +15,11 @@
  */
 package io.fusion.air.microservice.adapters.filters;
 
+import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.utils.CPU;
 import org.slf4j.Logger;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -41,14 +44,19 @@ public class LogFilter implements Filter {
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
+    @Autowired
+    private ServiceConfiguration serviceConfig;
+
     @Override
     public void doFilter(ServletRequest _servletRequest, ServletResponse _servletResponse, FilterChain _filterChain)
             throws IOException, ServletException {
+        String name= (serviceConfig != null) ? serviceConfig.getServiceName(): "NotDefined";
+        MDC.put("Service", name);
 
         HttpServletRequest request = (HttpServletRequest) _servletRequest;
         HttpServletResponse response = (HttpServletResponse) _servletResponse;
 
-        log.info("1|HTTP={}|URI={}{}", request.getMethod(), request.getRequestURI(), CPU.printCpuStats());
+        log.info("|HTTP={}|URI={}{}", request.getMethod(), request.getRequestURI(), CPU.printCpuStats());
 
         _filterChain.doFilter(request, response);
 
