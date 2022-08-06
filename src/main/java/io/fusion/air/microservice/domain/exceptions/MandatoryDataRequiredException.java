@@ -24,8 +24,17 @@ import org.springframework.http.HttpStatus;
  */
 public class MandatoryDataRequiredException extends BusinessServiceException {
 
+
     /**
-     * Business Service Exception
+     * MandatoryDataRequired Service Exception
+     * @param _msg
+     */
+    public MandatoryDataRequiredException(String _msg) {
+        super(_msg);
+    }
+
+    /**
+     * MandatoryDataRequired Service Exception
      * @param _msg
      * @param _e
      */

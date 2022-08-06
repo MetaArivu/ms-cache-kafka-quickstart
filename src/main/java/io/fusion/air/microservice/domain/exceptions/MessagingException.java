@@ -22,6 +22,15 @@ package io.fusion.air.microservice.domain.exceptions;
  */
 public class MessagingException extends AbstractServiceException {
 
+
+    /**
+     * Messaging Exception
+     * @param _msg
+     */
+    public MessagingException(String _msg) {
+        super(_msg);
+    }
+
     /**
      * Messaging Exception
      * @param _msg
