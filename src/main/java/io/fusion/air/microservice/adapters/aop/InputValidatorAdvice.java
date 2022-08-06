@@ -17,6 +17,7 @@ package io.fusion.air.microservice.adapters.aop;
 
 import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -60,6 +61,7 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
         String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
 
         stdResponse.init(false, errorPrefix  + "400", "Input Errors");
+        LinkedHashMap<String, Object> payload = new LinkedHashMap<String,Object>();
         List<String> errors = new ArrayList<String>();
         _manvEx.getBindingResult().getAllErrors().forEach((error) -> {
             try {
@@ -67,7 +69,18 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
             } catch (Exception ignored) {}
         });
         Collections.sort(errors);
-        stdResponse.setPayload(errors);
+        payload.put("input", errors);
+
+        LinkedHashMap<String,Object> errorData = new LinkedHashMap<String,Object>();
+        errorData.put("code", _status.value());
+        errorData.put("mesg", _status.name());
+        errorData.put("srv", MDC.get("Service"));
+        errorData.put("reqId", MDC.get("ReqId"));
+        errorData.put("http", MDC.get("Protocol"));
+        errorData.put("path", MDC.get("URI"));
+        payload.put("errors", errorData);
+
+        stdResponse.setPayload(payload);
         return new ResponseEntity<>(stdResponse, _headers, HttpStatus.BAD_REQUEST);
     }
 }

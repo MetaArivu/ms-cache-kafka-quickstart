@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.HttpServletRequest;
 
-import io.fusion.air.microservice.adapters.aop.ServiceExceptionAdvice;
+import io.fusion.air.microservice.adapters.aop.ExceptionHandlerAdvice;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.HealthController;
 
@@ -71,7 +71,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
@@ -361,7 +360,7 @@ public class ServiceBootStrap {
 
 	@Primary
 	@Bean
-	public ServiceExceptionAdvice serviceExceptionAdvisor(){
-		return new ServiceExceptionAdvice();
+	public ExceptionHandlerAdvice serviceExceptionAdvisor(){
+		return new ExceptionHandlerAdvice();
 	}
 }

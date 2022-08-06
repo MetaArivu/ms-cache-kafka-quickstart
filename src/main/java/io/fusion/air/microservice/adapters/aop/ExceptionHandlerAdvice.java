@@ -33,6 +33,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.slf4j.MDC;
@@ -50,7 +51,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 // @ControllerAdvice(basePackages="io.fusion.air.microservice.*")
 @ControllerAdvice
 @Order(2)
-public class ServiceExceptionAdvice  extends ResponseEntityExceptionHandler {
+public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
@@ -114,13 +115,15 @@ public class ServiceExceptionAdvice  extends ResponseEntityExceptionHandler {
         String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
         stdResponse.initFailure(errorPrefix + _errorCode, _message);
 
-        LinkedHashMap<String,Object> payload = new LinkedHashMap<String,Object>();
-        payload.put("code", _httpStatus.value());
-        payload.put("mesg", _httpStatus.name());
-        payload.put("srv", MDC.get("Service"));
-        payload.put("reqId", MDC.get("ReqId"));
-        payload.put("http", MDC.get("Protocol"));
-        payload.put("path", MDC.get("URI"));
+        LinkedHashMap<String, LinkedHashMap> payload = new LinkedHashMap<String,LinkedHashMap>();
+        LinkedHashMap<String,Object> errorData = new LinkedHashMap<String,Object>();
+        errorData.put("code", _httpStatus.value());
+        errorData.put("mesg", _httpStatus.name());
+        errorData.put("srv", MDC.get("Service"));
+        errorData.put("reqId", MDC.get("ReqId"));
+        errorData.put("http", MDC.get("Protocol"));
+        errorData.put("path", MDC.get("URI"));
+        payload.put("errors", errorData);
         stdResponse.setPayload(payload);
 
         return new ResponseEntity<>(stdResponse, _httpStatus);
