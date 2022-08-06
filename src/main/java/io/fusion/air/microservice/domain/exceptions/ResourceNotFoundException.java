@@ -29,6 +29,15 @@ public class ResourceNotFoundException extends AbstractServiceException {
     /**
      * ResourceNotFound Exception
      * @param _msg
+     */
+    public ResourceNotFoundException(String _msg) {
+        super(_msg);
+    }
+
+
+    /**
+     * ResourceNotFound Exception
+     * @param _msg
      * @param _e
      */
     public ResourceNotFoundException(String _msg, Exception _e) {

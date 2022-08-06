@@ -20,6 +20,7 @@ import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.exceptions.ControllerException;
 import io.fusion.air.microservice.domain.exceptions.DuplicateDataException;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
+import io.fusion.air.microservice.domain.exceptions.ResourceNotFoundException;
 import io.fusion.air.microservice.domain.models.*;
 import io.fusion.air.microservice.domain.ports.CountryService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
@@ -175,10 +176,11 @@ public class ProductControllerImpl extends AbstractController {
 			stdResponse.setPayload(ps);
 			return ResponseEntity.ok(stdResponse);
 		} else {
-			throw new DuplicateDataException("Invalid Order Value");
-			// throw new InputDataException("Invalid Order Value");
+			// throw new DuplicateDataException("Invalid Order Value");
+			throw new InputDataException("Invalid Order Value");
 			// throw new BusinessServiceException("Invalid Order Value");
 			// throw new ControllerException("Invalid Order Value");
+			// throw new ResourceNotFoundException("Invalid Order Value");
 			// throw new RuntimeException("Invalid Order Value");
 
 		}
