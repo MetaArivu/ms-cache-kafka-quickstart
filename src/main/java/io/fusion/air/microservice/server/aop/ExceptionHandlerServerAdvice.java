@@ -1,4 +1,4 @@
-package io.fusion.air.microservice.server.filters;
+package io.fusion.air.microservice.server.aop;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -21,7 +21,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Aspect
 @Configuration
-public class ServerLogExceptionAspect {
+public class ExceptionHandlerServerAdvice {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
