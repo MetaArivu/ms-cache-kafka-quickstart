@@ -27,12 +27,18 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Log Aspect
+ * Time Tracker Aspect
  * Log Messages
- * Keep Track of Time
- * Exception Handling
+ * Keep Track of Time for Every Category Function Calls like:
+ *  1. WS = Rest Controller (Pkg = com....adapters.controllers.*)
+ *  2. BS = Business Services (Pkg = com....adapters.services.*)
+ *  3. DS = Database Services (SQL / NoSQL) (Pkg = com....adapters.repository.*)
+ *  4. ES = External Services (External Calls like REST, GRPC, SOAP etc) (Pkg = com....adapters.external.*)
+ * Throw Exceptions (Throwable) for the Exception Handler Advice to Handle
  *
- * @author arafkarsh
+ * @author  Araf Karsh Hamid
+ * @version:
+ * @date:
  */
 @Aspect
 @Configuration
@@ -47,7 +53,7 @@ public class TimeTrackerAspect {
      */
     @Before(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public void logStatementBefore(JoinPoint joinPoint) {
-        log.debug("START={}",joinPoint);
+        log.debug("1|TA|TIME=|STATUS=START|CLASS={}",joinPoint);
     }
 
     /**
@@ -56,7 +62,7 @@ public class TimeTrackerAspect {
      */
     @After(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public void logStatementAfter(JoinPoint joinPoint) {
-        log.debug("END={}",joinPoint);
+        log.debug("9|TA|TIME=|STATUS=END|CLASS={}",joinPoint);
     }
 
     /**
@@ -67,17 +73,7 @@ public class TimeTrackerAspect {
      */
     @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public Object timeTrackerRest(ProceedingJoinPoint joinPoint) throws Throwable {
-        long startTime = System.currentTimeMillis();
-        try {
-            Object method = joinPoint.proceed();
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("WS|TIME={} ms|SUCCESS=true|CLASS={}",timeTaken,joinPoint);
-            return method;
-        }catch(Throwable e) {
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("WS|TIME={} ms|ERROR={}|CLASS={}",timeTaken, e.getMessage(),joinPoint);
-            throw e;
-        }
+        return trackTime("WS", joinPoint);
     }
 
     /**
@@ -88,17 +84,7 @@ public class TimeTrackerAspect {
      */
     @Around(value = "execution(* io.fusion.air.microservice.adapters.service.*.*(..))")
     public Object timeTrackerBusinessService(ProceedingJoinPoint joinPoint) throws Throwable {
-        long startTime = System.currentTimeMillis();
-        try {
-            Object method = joinPoint.proceed();
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("BS|TIME={} ms|SUCCESS=true|CLASS={}",timeTaken,joinPoint);
-            return method;
-        }catch(Throwable e) {
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("BS|TIME={} ms|ERROR={}|CLASS={}",timeTaken, e.getMessage(),joinPoint);
-            throw e;
-        }
+        return trackTime("BS", joinPoint);
     }
 
     /**
@@ -109,17 +95,7 @@ public class TimeTrackerAspect {
      */
     @Around(value = "execution(* io.fusion.air.microservice.adapters.repository.*.*(..))")
     public Object timeTrackerRepository(ProceedingJoinPoint joinPoint) throws Throwable {
-        long startTime = System.currentTimeMillis();
-        try {
-            Object method = joinPoint.proceed();
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("DS|TIME={} ms|SUCCESS=true|CLASS={}",timeTaken,joinPoint);
-            return method;
-        }catch(Throwable e) {
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("DS|TIME={} ms|ERROR={}|CLASS={}",timeTaken, e.getMessage(),joinPoint);
-            throw e;
-        }
+        return trackTime("DS", joinPoint);
     }
 
     /**
@@ -130,17 +106,38 @@ public class TimeTrackerAspect {
      */
     @Around(value = "execution(* io.fusion.air.microservice.adapters.external.*.*(..))")
     public Object timeTrackerExternal(ProceedingJoinPoint joinPoint) throws Throwable {
+        return trackTime("ES", joinPoint);
+    }
+
+    /**
+     * Track Time
+     * @param _method
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    private Object trackTime(String _method, ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
+        String status = "STATUS=SUCCESS";
         try {
-            Object method = joinPoint.proceed();
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("ES|TIME={} ms|SUCCESS=true|CLASS={}",timeTaken,joinPoint);
-            return method;
+            return joinPoint.proceed();
         }catch(Throwable e) {
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("ES|TIME={} ms|ERROR={}|CLASS={}",timeTaken, e.getMessage(),joinPoint);
+            status = "STATUS=ERROR: "+e.getMessage();
             throw e;
+        } finally {
+            logTime(_method, startTime, status, joinPoint);
         }
+    }
+
+    /**
+     * Log Time Taken to Execute the Function
+     * @param _startTime
+     * @param _status
+     * @param joinPoint
+     */
+    private void logTime(String _method, long _startTime, String _status, ProceedingJoinPoint joinPoint) {
+        long timeTaken=System.currentTimeMillis() - _startTime;
+        log.info("2|{}|TIME={} ms|{}|CLASS={}|",_method, timeTaken, _status,joinPoint);
     }
 }
 

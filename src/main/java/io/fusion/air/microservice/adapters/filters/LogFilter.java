@@ -56,7 +56,7 @@ public class LogFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) _servletRequest;
         HttpServletResponse response = (HttpServletResponse) _servletResponse;
 
-        log.info("|HTTP={}|URI={}{}", request.getMethod(), request.getRequestURI(), CPU.printCpuStats());
+        log.info("1|LF|TIME=|STATUS=INIT|CLASS={}", CPU.printCpuStats());
 
         _filterChain.doFilter(request, response);
 

@@ -88,6 +88,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> createErrorResponse(Exception _ex, HttpStatus _status, WebRequest _request) {
         return createErrorResponse(_ex, _ex.getMessage(), "599",null, _status, _request);
     }
+
     /**
      * Build Error Response Entity
      * @param _ex
@@ -108,14 +109,29 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @param _request
      * @return
      */
-    private ResponseEntity<Object> createErrorResponse(AbstractServiceException _ase, HttpHeaders _headers,
+    private ResponseEntity<Object> createErrorResponse(AbstractServiceException _ase,
                                                        String _errorCode, WebRequest _request) {
+        return createErrorResponse(_ase, _ase.getMessage(), _errorCode, null, _ase.getHttpStatus(), _request);
+    }
+    /**
+     * Build Error Response Entity
+     * @param _ase
+     * @param _errorCode
+     * @param _headers
+     * @param _request
+     * @return
+     */
+    private ResponseEntity<Object> createErrorResponse(AbstractServiceException _ase, String _errorCode,
+                                                       HttpHeaders _headers, WebRequest _request) {
         return createErrorResponse(_ase, _ase.getMessage(), _errorCode, _headers, _ase.getHttpStatus(), _request);
     }
+
     /**
      * Build Standard Error Response
      * @param _exception
      * @param _message
+     * @param _errorCode
+     * @param _headers
      * @param _httpStatus
      * @param _request
      * @return
@@ -124,23 +140,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                                                        HttpHeaders _headers, HttpStatus _httpStatus, WebRequest _request) {
 
         String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
-        /**
-        StandardResponse stdResponse = new StandardResponse();
-        stdResponse.initFailure(errorPrefix + _errorCode, _message);
 
-        LinkedHashMap<String, LinkedHashMap> payload = new LinkedHashMap<String,LinkedHashMap>();
-        LinkedHashMap<String,Object> errorData = new LinkedHashMap<String,Object>();
-        errorData.put("code", _httpStatus.value());
-        errorData.put("mesg", _httpStatus.name());
-        errorData.put("srv", MDC.get("Service"));
-        errorData.put("reqId", MDC.get("ReqId"));
-        errorData.put("http", MDC.get("Protocol"));
-        errorData.put("path", MDC.get("URI"));
-        payload.put("errors", errorData);
-        stdResponse.setPayload(payload);
-        */
         StandardResponse stdResponse = Utils.createErrorResponse(
-                null, errorPrefix, _httpStatus, "400", _message);
+                null, errorPrefix, "400", _httpStatus,  _message);
         if(_headers != null) {
             return new ResponseEntity<>(stdResponse, _headers, _httpStatus);
         }
@@ -154,8 +156,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = RuntimeException.class)
-    public ResponseEntity<Object> runtimeException(RuntimeException _runEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_runEx, _runEx.getMessage(), "590", _headers, HttpStatus.INTERNAL_SERVER_ERROR, _request);
+    public ResponseEntity<Object> runtimeException(RuntimeException _runEx, WebRequest _request) {
+        return createErrorResponse(_runEx, _runEx.getMessage(), "590", null, HttpStatus.INTERNAL_SERVER_ERROR, _request);
     }
 
     /**
@@ -165,8 +167,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = Throwable.class)
-    public ResponseEntity<Object> throwable(Throwable _runEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_runEx, _runEx.getMessage(), "599", _headers, HttpStatus.INTERNAL_SERVER_ERROR, _request);
+    public ResponseEntity<Object> throwable(Throwable _runEx, WebRequest _request) {
+        return createErrorResponse(_runEx, _runEx.getMessage(), "599", null, HttpStatus.INTERNAL_SERVER_ERROR, _request);
     }
 
     /**
@@ -176,8 +178,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = AccessDeniedException.class)
-    public ResponseEntity<Object> accessDeniedException(AccessDeniedException _adEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_adEx, _adEx.getMessage(), "403", _headers, HttpStatus.FORBIDDEN, _request);
+    public ResponseEntity<Object> accessDeniedException(AccessDeniedException _adEx,  WebRequest _request) {
+        return createErrorResponse(_adEx, _adEx.getMessage(), "403", null, HttpStatus.FORBIDDEN, _request);
     }
 
     /**v
@@ -187,8 +189,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException _rnfEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_rnfEx, _headers, "404", _request);
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException _rnfEx,  WebRequest _request) {
+        return createErrorResponse(_rnfEx,  "404", _request);
     }
 
     /**
@@ -198,8 +200,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = MessagingException.class)
-    public ResponseEntity<Object> handleMessagingException(MessagingException _msgEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_msgEx, _headers, "430", _request);
+    public ResponseEntity<Object> handleMessagingException(MessagingException _msgEx,  WebRequest _request) {
+        return createErrorResponse(_msgEx,  "430", _request);
     }
 
     /**
@@ -209,8 +211,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = DatabaseException.class)
-    public ResponseEntity<Object> handleDatabaseException(DatabaseException _dbEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_dbEx, _headers, "440", _request);
+    public ResponseEntity<Object> handleDatabaseException(DatabaseException _dbEx,  WebRequest _request) {
+        return createErrorResponse(_dbEx,  "440", _request);
     }
 
     /**
@@ -220,8 +222,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = DataNotFoundException.class)
-    public ResponseEntity<Object> handleDataNotFoundException(DataNotFoundException _dnfEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_dnfEx, _headers, "441", _request);
+    public ResponseEntity<Object> handleDataNotFoundException(DataNotFoundException _dnfEx,  WebRequest _request) {
+        return createErrorResponse(_dnfEx,  "441", _request);
     }
 
     /**
@@ -231,8 +233,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = DuplicateDataException.class)
-    public ResponseEntity<Object> handleDuplicateDataException(DuplicateDataException _ddEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_ddEx, _headers, "442", _request);
+    public ResponseEntity<Object> handleDuplicateDataException(DuplicateDataException _ddEx,  WebRequest _request) {
+        return createErrorResponse(_ddEx,  "442", _request);
     }
 
     /**
@@ -242,8 +244,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = UnableToSaveException.class)
-    public ResponseEntity<Object> handleUnableToSaveException(UnableToSaveException _utEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_utEx, _headers, "443", _request);
+    public ResponseEntity<Object> handleUnableToSaveException(UnableToSaveException _utEx,  WebRequest _request) {
+        return createErrorResponse(_utEx,  "443", _request);
     }
 
     /**
@@ -253,8 +255,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = BusinessServiceException.class)
-    public ResponseEntity<Object> handleBusinessServiceException(BusinessServiceException _buEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_buEx, _headers, "460", _request);
+    public ResponseEntity<Object> handleBusinessServiceException(BusinessServiceException _buEx, WebRequest _request) {
+        return createErrorResponse(_buEx,  "460", _request);
     }
 
     /**
@@ -265,7 +267,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = InputDataException.class)
     public ResponseEntity<Object> handleInputDataException(InputDataException _idEx,  WebRequest _request) {
-        return createErrorResponse(_idEx, null,"461", _request);
+        return createErrorResponse(_idEx, "461", _request);
     }
 
     /**
@@ -275,8 +277,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = MandatoryDataRequiredException.class)
-    public ResponseEntity<Object> handleMandatoryDataRequiredException(MandatoryDataRequiredException _mdrEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_mdrEx, _headers, "462", _request);
+    public ResponseEntity<Object> handleMandatoryDataRequiredException(MandatoryDataRequiredException _mdrEx,  WebRequest _request) {
+        return createErrorResponse(_mdrEx,  "462", _request);
     }
 
 
@@ -287,25 +289,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = ControllerException.class)
-    public ResponseEntity<Object> handleControllerException(ControllerException _coEx, HttpHeaders _headers, WebRequest _request) {
-        return createErrorResponse(_coEx, _headers, "490", _request);
+    public ResponseEntity<Object> handleControllerException(ControllerException _coEx,  WebRequest _request) {
+        return createErrorResponse(_coEx,  "490", _request);
     }
 
-    /**
-     * Constraints Violation Exceptions
-     * @param _cvEx
-     * @param _request
-     * @return
-     */
-    @ExceptionHandler(value = ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException _cvEx, HttpHeaders _headers, WebRequest _request) {
-
-        String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
-        List<String> errors = new ArrayList<>();
-        _cvEx.getConstraintViolations().forEach(cv -> errors.add(cv.getMessage()));
-
-        StandardResponse stdResponse = Utils.createErrorResponse(
-                errors, errorPrefix, HttpStatus.BAD_REQUEST, "401", "Input Errors");
-        return new ResponseEntity<>(stdResponse, _headers, HttpStatus.BAD_REQUEST);
-    }
 }

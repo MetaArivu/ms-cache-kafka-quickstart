@@ -27,9 +27,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,11 +61,7 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
                                       HttpHeaders _headers, HttpStatus _status, WebRequest _request) {
 
         String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
-        /**
-        StandardResponse stdResponse = new StandardResponse();
-        stdResponse.init(false, errorPrefix  + "400", "Input Errors");
-        LinkedHashMap<String, Object> payload = new LinkedHashMap<String,Object>();
-        */
+
         // Create Input Errors
         List<String> errors = new ArrayList<String>();
         _manvEx.getBindingResult().getAllErrors().forEach((error) -> {
@@ -72,22 +70,27 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
             } catch (Exception ignored) {}
         });
         Collections.sort(errors);
-        /**
-        payload.put("input", errors);
 
-        LinkedHashMap<String,Object> errorData = new LinkedHashMap<String,Object>();
-        errorData.put("code", _status.value());
-        errorData.put("mesg", _status.name());
-        errorData.put("srv", MDC.get("Service"));
-        errorData.put("reqId", MDC.get("ReqId"));
-        errorData.put("http", MDC.get("Protocol"));
-        errorData.put("path", MDC.get("URI"));
-        payload.put("errors", errorData);
-
-        stdResponse.setPayload(payload);
-         */
         StandardResponse stdResponse = Utils.createErrorResponse(
-                errors, errorPrefix, _status, "400", "Input Errors");
+                errors, errorPrefix,  "400", _status,"Input Errors: Invalid Method Arguments");
         return new ResponseEntity<>(stdResponse, _headers, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Constraints Violation Exceptions
+     * @param _cvEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException _cvEx,  WebRequest _request) {
+
+        String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
+        List<String> errors = new ArrayList<>();
+        _cvEx.getConstraintViolations().forEach(cv -> errors.add(cv.getMessage()));
+
+        StandardResponse stdResponse = Utils.createErrorResponse(
+                errors, errorPrefix, "401", HttpStatus.BAD_REQUEST, "Input Errors: Constraint Violations");
+        return new ResponseEntity<>(stdResponse, null, HttpStatus.BAD_REQUEST);
     }
 }
