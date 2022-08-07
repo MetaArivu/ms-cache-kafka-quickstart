@@ -17,7 +17,10 @@ package io.fusion.air.microservice.adapters.aop;
 
 import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
+import io.fusion.air.microservice.utils.CPU;
 import io.fusion.air.microservice.utils.Utils;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.slf4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -35,6 +38,9 @@ import javax.validation.ConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -43,6 +49,9 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 @Order(1)
 public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
+
+    // Set Logger -> Lookup will automatically determine the class name.
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     // ServiceConfiguration
     @Autowired
@@ -61,7 +70,9 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
                                       HttpHeaders _headers, HttpStatus _status, WebRequest _request) {
 
         String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
-
+        String errorMsg = "Input Errors: Invalid Method Arguments";
+        long startTime = System.currentTimeMillis();
+        String status = "STATUS=ERROR: "+errorMsg;
         // Create Input Errors
         List<String> errors = new ArrayList<String>();
         _manvEx.getBindingResult().getAllErrors().forEach((error) -> {
@@ -70,9 +81,8 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
             } catch (Exception ignored) {}
         });
         Collections.sort(errors);
-
-        StandardResponse stdResponse = Utils.createErrorResponse(
-                errors, errorPrefix,  "400", _status,"Input Errors: Invalid Method Arguments");
+        StandardResponse stdResponse = Utils.createErrorResponse(errors, errorPrefix,"400", _status,errorMsg);
+        logTime(startTime, status);
         return new ResponseEntity<>(stdResponse, _headers, HttpStatus.BAD_REQUEST);
     }
 
@@ -86,11 +96,26 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException _cvEx,  WebRequest _request) {
 
         String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
+        String errorMsg = "Input Errors: Constraint Violations";
+        long startTime = System.currentTimeMillis();
+        String status = "STATUS=ERROR: "+errorMsg;
+
         List<String> errors = new ArrayList<>();
         _cvEx.getConstraintViolations().forEach(cv -> errors.add(cv.getMessage()));
 
         StandardResponse stdResponse = Utils.createErrorResponse(
                 errors, errorPrefix, "401", HttpStatus.BAD_REQUEST, "Input Errors: Constraint Violations");
+        logTime(startTime, status);
         return new ResponseEntity<>(stdResponse, null, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Log Time with Input Validation Errors
+     * @param _startTime
+     * @param _status
+     */
+    private void logTime(long _startTime, String _status) {
+        long timeTaken=System.currentTimeMillis() - _startTime;
+        log.info("2|IV|TIME={} ms|{}|CLASS=|", timeTaken, _status);
     }
 }

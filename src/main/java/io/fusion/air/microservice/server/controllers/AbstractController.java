@@ -49,11 +49,11 @@ public abstract class AbstractController {
 	public final  String name() {
 		if(serviceName == null) {
 			if(serviceConfig == null) {
-				log.info("|Error Autowiring Service config!!!");
+				log.debug("1|AC|TIME=|STATUS=INIT|Class=|Error Autowiring Service config!!!");
 				serviceName = "|NoServiceName";
 			} else {
 				serviceName = "|" + serviceConfig.getServiceName() + "Service";
-				log.info("|Version="+ServiceHelp.VERSION);
+				log.debug("1|AC|TIME=|STATUS=INIT|Class=|Version="+ServiceHelp.VERSION);
 			}
 		}
 		return serviceName;
