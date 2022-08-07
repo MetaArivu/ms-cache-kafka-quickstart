@@ -18,6 +18,10 @@ ORG=`getServiceName 1`
 echo "---------------------------------------------------------------------------------------"
 echo "Compiling $ORG/$SERVICE Microservice"
 echo "---------------------------------------------------------------------------------------"
+echo "Changing Logback Log File Name: /tmp/$SERVICE-server.%d{yyyy-MM-dd}.%i.log"
+echo "---------------------------------------------------------------------------------------"
+sed -i -r "s/microservice/$SERVICE/g" src/main/resources/logback.xml
+sed -i -r "s/microservice/$SERVICE/g" src/main/resources/logback-test.xml
 echo "Clean up the target folder: mvn clean"
 echo "---------------------------------------------------------------------------------------"
 mvn clean
