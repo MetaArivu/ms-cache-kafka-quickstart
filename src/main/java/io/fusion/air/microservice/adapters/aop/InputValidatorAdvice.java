@@ -17,6 +17,7 @@ package io.fusion.air.microservice.adapters.aop;
 
 import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
+import io.fusion.air.microservice.utils.Utils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -57,11 +58,13 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException _manvEx,
                                       HttpHeaders _headers, HttpStatus _status, WebRequest _request) {
 
-        StandardResponse stdResponse = new StandardResponse();
         String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
-
+        /**
+        StandardResponse stdResponse = new StandardResponse();
         stdResponse.init(false, errorPrefix  + "400", "Input Errors");
         LinkedHashMap<String, Object> payload = new LinkedHashMap<String,Object>();
+        */
+        // Create Input Errors
         List<String> errors = new ArrayList<String>();
         _manvEx.getBindingResult().getAllErrors().forEach((error) -> {
             try {
@@ -69,6 +72,7 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
             } catch (Exception ignored) {}
         });
         Collections.sort(errors);
+        /**
         payload.put("input", errors);
 
         LinkedHashMap<String,Object> errorData = new LinkedHashMap<String,Object>();
@@ -81,6 +85,9 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
         payload.put("errors", errorData);
 
         stdResponse.setPayload(payload);
+         */
+        StandardResponse stdResponse = Utils.createErrorResponse(
+                errors, errorPrefix, _status, "400", "Input Errors");
         return new ResponseEntity<>(stdResponse, _headers, HttpStatus.BAD_REQUEST);
     }
 }

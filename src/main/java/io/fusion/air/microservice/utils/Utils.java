@@ -16,13 +16,17 @@
 
 package io.fusion.air.microservice.utils;
 
+import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
+
+import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.MDC;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -95,6 +99,13 @@ public final class Utils {
 	    }
 	}
 
+	/**
+	 * Create Cookie
+	 * @param request
+	 * @param _key
+	 * @param _value
+	 * @return
+	 */
 	public static Cookie createCookie(HttpServletRequest request, String _key, String _value) {
 		Cookie c = new Cookie(_key, _value);
 		// c.setDomain(serviceConfig.getServerHost());
@@ -105,6 +116,14 @@ public final class Utils {
 		return c;
 	}
 
+	/**
+	 * Create Cookie
+	 * @param request
+	 * @param _key
+	 * @param _value
+	 * @param _age
+	 * @return
+	 */
 	public static Cookie createCookie(HttpServletRequest request, String _key, String _value, int _age) {
 		Cookie c = new Cookie(_key, _value);
 		// c.setDomain(serviceConfig.getServerHost());
@@ -115,6 +134,47 @@ public final class Utils {
 		return c;
 	}
 
+	/**
+	 * Create Standard Error Response
+	 * @param _inputErrors
+	 * @param servicePrefix
+	 * @param _httpStatus
+	 * @param _errorCode
+	 * @param _message
+	 * @return
+	 */
+	public static StandardResponse createErrorResponse(Object _inputErrors, String servicePrefix,
+							HttpStatus _httpStatus, String _errorCode, String _message) {
+
+		// Initialize Standard Error Response
+		StandardResponse stdResponse = new StandardResponse();
+		stdResponse.initFailure(servicePrefix + _errorCode, _message);
+		LinkedHashMap<String, Object> payload = new LinkedHashMap<String,Object>();
+
+		// Add Input Errors If Available
+		if(_inputErrors != null) {
+			payload.put("input", _inputErrors);
+		}
+
+		// Add Error Details
+		LinkedHashMap<String,Object> errorData = new LinkedHashMap<String,Object>();
+		errorData.put("code", _httpStatus.value());
+		errorData.put("mesg", _httpStatus.name());
+		errorData.put("srv", MDC.get("Service"));
+		errorData.put("reqId", MDC.get("ReqId"));
+		errorData.put("http", MDC.get("Protocol"));
+		errorData.put("path", MDC.get("URI"));
+		payload.put("errors", errorData);
+		stdResponse.setPayload(payload);
+
+		return stdResponse;
+	}
+
+	/**
+	 * For Testing ONLY
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 
 		System.out.println("Utils.toJsonString() = "+Utils.toJsonString(new ServiceConfiguration("localhost", 9090)));
