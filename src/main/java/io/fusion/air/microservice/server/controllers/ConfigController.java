@@ -47,7 +47,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Configuration
 @RestController
-//  "/api/v1/payments/config"
+//  "/service/api/v1/config"
 @RequestMapping("${service.api.path}"+ ServiceConfiguration.CONFIG_PATH)
 @RequestScope
 @Tag(name = "System", description = "Config (Environment, Secrets, ConfigMap.. etc)")
@@ -58,7 +58,7 @@ public class ConfigController extends AbstractController {
 	
 	private final String title = "<h1>Welcome to Health Service<h1/>"
 					+ ServiceHelp.NL
-					+"<h3>Copyright (c) MetaArivu Pvt Ltd, 2021</h3>"
+					+"<h3>Copyright (c) COMPANY Pvt Ltd, 2022</h3>"
 					+ ServiceHelp.NL
 					;
 

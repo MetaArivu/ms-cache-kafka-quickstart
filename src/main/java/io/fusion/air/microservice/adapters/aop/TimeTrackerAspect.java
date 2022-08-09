@@ -15,6 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.aop;
 
+import io.fusion.air.microservice.domain.exceptions.AbstractServiceException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -122,7 +123,7 @@ public class TimeTrackerAspect {
         try {
             return joinPoint.proceed();
         }catch(Throwable e) {
-            status = "STATUS=ERROR: "+e.getMessage();
+            status = "STATUS=ERROR:"+e.getMessage();
             throw e;
         } finally {
             logTime(_method, startTime, status, joinPoint);

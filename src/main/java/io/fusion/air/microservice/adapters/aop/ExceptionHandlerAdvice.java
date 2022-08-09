@@ -142,7 +142,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
 
         StandardResponse stdResponse = Utils.createErrorResponse(
-                null, errorPrefix, "400", _httpStatus,  _message);
+                null, errorPrefix, _errorCode, _httpStatus,  _message);
         if(_headers != null) {
             return new ResponseEntity<>(stdResponse, _headers, _httpStatus);
         }

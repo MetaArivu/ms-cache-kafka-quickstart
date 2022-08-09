@@ -57,7 +57,7 @@ import java.util.Map;
  */
 @Configuration
 @RestController
-// "/api/v1/payments/service"
+// "/service/api/v1/service"
 @RequestMapping("${service.api.path}"+ ServiceConfiguration.HEALTH_PATH)
 @RequestScope
 @Tag(name = "System", description = "Health (Liveness, Readiness, ReStart.. etc)")
@@ -68,7 +68,7 @@ public class HealthController extends AbstractController {
 	
 	private final String title = "<h1>Welcome to Health Service<h1/>"
 					+ ServiceHelp.NL
-					+"<h3>Copyright (c) MetaArivu Pvt Ltd, 2021</h3>"
+					+"<h3>Copyright (c) COMPANY Pvt Ltd, 2022</h3>"
 					+ ServiceHelp.NL
 					;
 
