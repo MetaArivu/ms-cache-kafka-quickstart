@@ -1,5 +1,9 @@
 # Microservice Cache / Kafka Template
 
+## Microservice Structure
+
+![Package Structure](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Pkg-Structure.jpg)
+
 ## Pre-Requisites 
 
 1. Java 17 (17.0.3.1)
