@@ -4,12 +4,23 @@
 
 ![Package Structure](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Pkg-Structure.jpg)
 
-## Pre-Requisites 
+### What the Template Provides out of the box
+
+1. Springboot App with Swagger Docs (...adapters.controllers)
+2. Exception Handling with Exception Framework using AOP ( ..adapters.aop)
+3. Log Management using Logback  (...adapters.filters)
+4. Standardized REST Responses (...domain.models.StandardResponse) 
+5. Security using JWT Tokens (...adapters.security)
+6. Encrypting Sensitie Data using Encryption Algorithms (...security)
+7. JPA configurations for H2 and PostgreSQL (...server.config)
+
+### Pre-Requisites 
 
 1. Java 17 (17.0.3.1)
 2. Maven 3.8.6
+3. Git 2.31
 
-## Microservice Cache / Kafka Template gives you a 
+### Microservice Cache / Kafka Template gives you a 
 
 1. SpringBoot App template with 
 2. Open API 3 Ex, 
@@ -23,6 +34,11 @@
 ## Service Setup
 
 ### Step 1 - Setup Org, Service, & Container Name, Versions, API Path in app.props.tmpl
+
+1. git clone https://github.com/MetaArivu/ms-cache-kafka-quickstart.git
+2. cd ms-cache-kafka-quickstart
+
+Update the Properties Template
 
 1. Update the Org Name in src/main/resources/app.props.tmpl file (service.org)
 2. Update the Microservice name in src/main/resources/app.props.tmpl file (service.name)
@@ -38,7 +54,8 @@ When you change the version in POM.xml, update that info in src/main/resources/a
 
 ###  Step 2 - Compile (Once your code is ready) 
 
-1. compile 
+1. run the compile from ms-cache-kafka-quickstart
+2. compile 
 
 The above compile script will do the following
 
