@@ -81,7 +81,7 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
             } catch (Exception ignored) {}
         });
         Collections.sort(errors);
-        StandardResponse stdResponse = Utils.createErrorResponse(errors, errorPrefix,"400", _status,errorMsg);
+        StandardResponse stdResponse = Utils.createErrorResponse(errors, errorPrefix,"461", _status,errorMsg);
         logTime(startTime, status);
         return new ResponseEntity<>(stdResponse, _headers, HttpStatus.BAD_REQUEST);
     }
@@ -104,7 +104,7 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
         _cvEx.getConstraintViolations().forEach(cv -> errors.add(cv.getMessage()));
 
         StandardResponse stdResponse = Utils.createErrorResponse(
-                errors, errorPrefix, "401", HttpStatus.BAD_REQUEST, "Input Errors: Constraint Violations");
+                errors, errorPrefix, "461", HttpStatus.BAD_REQUEST, "Input Errors: Constraint Violations");
         logTime(startTime, status);
         return new ResponseEntity<>(stdResponse, null, HttpStatus.BAD_REQUEST);
     }
