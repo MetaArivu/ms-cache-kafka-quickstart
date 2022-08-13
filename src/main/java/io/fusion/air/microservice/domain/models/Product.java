@@ -24,6 +24,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Pattern.Flag;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @author: Araf Karsh Hamid
@@ -43,7 +44,7 @@ public class Product implements Serializable {
     private String productDetails;
 
     @NotNull(message = "The Price is required.")
-    private String productPrice;
+    private BigDecimal productPrice;
 
     @NotBlank(message = "The Product Location Zip code is required.")
     @Pattern(regexp = "^\\d{1,5}$", flags = { Flag.CASE_INSENSITIVE, Flag.MULTILINE }, message = "The Zip code is invalid.")
@@ -62,7 +63,7 @@ public class Product implements Serializable {
      * @param _prodDt
      * @param _prodPr
      */
-    public Product(String _pid, String _prodNm, String _prodDt, String _prodPr)  {
+    public Product(String _pid, String _prodNm, String _prodDt, BigDecimal _prodPr)  {
         productId   = _pid;
         productName = _prodNm;
         productDetails = _prodDt;
@@ -96,7 +97,7 @@ public class Product implements Serializable {
     /**
      * Get Product Price
      */
-    public String getProductPrice() {
+    public BigDecimal getProductPrice() {
         return productPrice;
     }
 

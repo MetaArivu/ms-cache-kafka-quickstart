@@ -15,6 +15,7 @@
  */
 package io.fusion.air.microservice.server.controllers;
 
+import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
 import org.slf4j.Logger;
@@ -57,6 +58,28 @@ public abstract class AbstractController {
 			}
 		}
 		return serviceName;
+	}
+
+	/**
+	 * Returns StandardResponse for Success
+	 * @param _msg
+	 * @return
+	 */
+	public StandardResponse createSuccessResponse(String _msg) {
+		return createSuccessResponse("200", _msg);
+	}
+
+	/**
+	 * Returns StandardResponse for Success
+	 * @param _statusCode
+	 * @param _msg
+	 * @return
+	 */
+	public StandardResponse createSuccessResponse(String _statusCode, String _msg) {
+		String prefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "99";
+		StandardResponse stdResponse = new StandardResponse();
+		stdResponse.initSuccess(prefix + _statusCode, _msg);
+		return stdResponse;
 	}
 	
 	/**

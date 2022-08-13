@@ -16,7 +16,15 @@
 
 package io.fusion.air.microservice.utils;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +45,211 @@ import javax.servlet.http.HttpServletRequest;
  *
  */
 public final class Utils {
-	
+
+	private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+	/**
+	 * Returns UUID Object from a Byte Array
+	 * Reference: https://www.baeldung.com/java-uuid
+	 * @param _byteArray
+	 * @return
+	 */
+	public static UUID getUUID(byte[] _byteArray) {
+		return  UUID.nameUUIDFromBytes(_byteArray);
+	}
+
+	/**
+	 * Returns UUID Object from a UUID String
+	 * Reference: https://www.baeldung.com/java-uuid
+	 * A UUID represents a 128-bit value (36 Characters long)
+	 * @param _uuid
+	 * @return
+	 */
+	public static UUID getUUID(String _uuid) {
+		return  UUID.fromString(_uuid);
+	}
+
+	/**
+	 * Generate Random UUID String
+	 * A UUID represents a 128-bit value (36 Characters long)
+	 * @return
+	 */
+	public static String generateUUIDString() {
+		return UUID.randomUUID().toString();
+	}
+
+	/**
+	 * Generate Type 1 UUID
+	 * A UUID represents a 128-bit value (36 Characters long)
+	 * UUID version 1 is based on the current timestamp, measured in units of 100 nanoseconds
+	 * from October 15, 1582, concatenated with the MAC address of the device where the UUID
+	 * is created.
+	 * If privacy is a concern, UUID version 1 can alternatively be generated with a random
+	 * 48-bit number instead of the MAC address.
+	 *
+	 * Reference: https://www.baeldung.com/java-uuid
+	 * @return
+	 */
+	public static UUID generateType1UUID() {
+
+		long most64SigBits = get64MostSignificantBitsForVersion1();
+		long least64SigBits = get64LeastSignificantBitsForVersion1();
+
+		return new UUID(most64SigBits, least64SigBits);
+	}
+
+	/**
+	 * Generate Type 3 UUID
+	 *
+	 *  Reference: https://www.baeldung.com/java-uuid
+	 * @param namespace
+	 * @param name
+	 * @return
+	 */
+	public static UUID generateType3UUID(String namespace, String name) {
+		final byte[] nameSpaceBytes = bytesFromUUID(namespace);
+		final byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
+		final byte[] result = joinBytes(nameSpaceBytes, nameBytes);
+		return UUID.nameUUIDFromBytes(result);
+	}
+
+	/**
+	 * Generate Type 4 UUID
+	 * A UUID represents a 128-bit value (36 Characters long)
+	 */
+	public static UUID generateType4UUID() {
+		return UUID.randomUUID();
+	}
+
+	/**
+	 * Generate Type 5 UUID
+	 * @param namespace
+	 * @param name
+	 * @return
+	 */
+	public static UUID generateType5UUID(String namespace, String name) {
+		final byte[] nameSpaceBytes = bytesFromUUID(namespace);
+		final byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
+		final byte[] result = joinBytes(nameSpaceBytes, nameBytes);
+		return type5UUIDFromBytes(result);
+	}
+
+	/**
+	 * Reference: https://www.baeldung.com/java-uuid
+	 * @return
+	 */
+	public static long get64LeastSignificantBitsForVersion1() {
+		Random random = new Random();
+		long random63BitLong = random.nextLong() & 0x3FFFFFFFFFFFFFFFL;
+		long variant3BitFlag = 0x8000000000000000L;
+		return random63BitLong + variant3BitFlag;
+	}
+
+	/**
+	 * Reference: https://www.baeldung.com/java-uuid
+	 * @return
+	 */
+	public static long get64MostSignificantBitsForVersion1() {
+		LocalDateTime start = LocalDateTime.of(1582, 10, 15, 0, 0, 0);
+		Duration duration = Duration.between(start, LocalDateTime.now());
+		long seconds = duration.getSeconds();
+		long nanos = duration.getNano();
+		long timeForUuidIn100Nanos = seconds * 10000000 + nanos * 100;
+		long least12SignificatBitOfTime = (timeForUuidIn100Nanos & 0x000000000000FFFFL) >> 4;
+		long version = 1 << 12;
+		return (timeForUuidIn100Nanos & 0xFFFFFFFFFFFF0000L) + version + least12SignificatBitOfTime;
+	}
+
+	/**
+	 * Convert Bytes to Hex
+	 * @param bytes
+	 * @return
+	 */
+	private static String bytesToHex(byte[] bytes) {
+		final char[] hexChars = new char[bytes.length * 2];
+		for (int j = 0; j < bytes.length; j++) {
+			final int v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+		}
+		return new String(hexChars);
+	}
+
+	/**
+	 * Convert Bytes from UUID String
+	 * @param uuidHexString
+	 * @return
+	 */
+	private static byte[] bytesFromUUID(String uuidHexString) {
+		final String normalizedUUIDHexString = uuidHexString.replace("-", "");
+		assert normalizedUUIDHexString.length() == 32;
+		final byte[] bytes = new byte[16];
+		for (int i = 0; i < 16; i++) {
+			final byte b = hexToByte(normalizedUUIDHexString.substring(i * 2, i * 2 + 2));
+			bytes[i] = b;
+		}
+		return bytes;
+	}
+
+	/**
+	 * Hex to Bytes
+	 * @param hexString
+	 * @return
+	 */
+	public static byte hexToByte(String hexString) {
+		final int firstDigit = Character.digit(hexString.charAt(0), 16);
+		final int secondDigit = Character.digit(hexString.charAt(1), 16);
+		return (byte) ((firstDigit << 4) + secondDigit);
+	}
+
+	/***
+	 * Join Bytes
+	 * @param byteArray1
+	 * @param byteArray2
+	 * @return
+	 */
+	public static byte[] joinBytes(byte[] byteArray1, byte[] byteArray2) {
+		final int finalLength = byteArray1.length + byteArray2.length;
+		final byte[] result = new byte[finalLength];
+		System.arraycopy(byteArray1, 0, result, 0, byteArray1.length);
+		System.arraycopy(byteArray2, 0, result, byteArray1.length, byteArray2.length);
+		return result;
+	}
+
+	/**
+	 *
+	 * @param name
+	 * @return
+	 */
+	public static UUID type5UUIDFromBytes(byte[] name) {
+		final MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("SHA-1");
+		} catch (NoSuchAlgorithmException exception) {
+			throw new InternalError("SHA-1 not supported", exception);
+		}
+		final byte[] bytes = Arrays.copyOfRange(md.digest(name), 0, 16);
+		bytes[6] &= 0x0f; /* clear version        */
+		bytes[6] |= 0x50; /* set to version 5     */
+		bytes[8] &= 0x3f; /* clear variant        */
+		bytes[8] |= 0x80; /* set to IETF variant  */
+		return constructType5UUID(bytes);
+	}
+
+	/**
+	 *
+	 * @param data
+	 * @return
+	 */
+	private static UUID constructType5UUID(byte[] data) {
+		long msb = 0;
+		long lsb = 0;
+		assert data.length == 16 : "data must be 16 bytes in length";
+		for (int i = 0; i < 8; i++) {msb = (msb << 8) | (data[i] & 0xff);}
+		for (int i = 8; i < 16; i++) {lsb = (lsb << 8) | (data[i] & 0xff);}
+		return new UUID(msb, lsb);
+	}
+
 	/***
 	 * 
 	 * @param _object

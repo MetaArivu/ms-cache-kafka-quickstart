@@ -16,6 +16,7 @@
 package io.fusion.air.microservice.adapters.controllers;
 
 import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
+import io.fusion.air.microservice.domain.entities.ProductEntity;
 import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
 import io.fusion.air.microservice.domain.exceptions.ControllerException;
 import io.fusion.air.microservice.domain.exceptions.DuplicateDataException;
@@ -23,6 +24,7 @@ import io.fusion.air.microservice.domain.exceptions.InputDataException;
 import io.fusion.air.microservice.domain.exceptions.ResourceNotFoundException;
 import io.fusion.air.microservice.domain.models.*;
 import io.fusion.air.microservice.domain.ports.CountryService;
+import io.fusion.air.microservice.domain.ports.ProductService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,11 +47,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -82,7 +82,7 @@ public class ProductControllerImpl extends AbstractController {
 	private String serviceName;
 
 	@Autowired
-	CountryService countryServiceImpl;
+	ProductService productServiceImpl;
 
 	/**
 	 * GET Method Call to Check the Product Status
@@ -104,12 +104,9 @@ public class ProductControllerImpl extends AbstractController {
 														HttpServletRequest request,
 														HttpServletResponse response) throws Exception {
 		log.debug("|"+name()+"|Request to Product Status of Service... ");
-		response.setHeader("Cache-Control", "no-cache");
-
+		//  response.setHeader("Cache-Control", "no-cache");
 		// response.addCookie(new Cookie("SameSite", "Strict"));
-
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Data Fetch Success!");
+		StandardResponse stdResponse = createSuccessResponse("Data Fetch Success!");
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("ReferenceNo", _referenceNo);
 		status.put("Message","Product Status is good!");
@@ -136,15 +133,15 @@ public class ProductControllerImpl extends AbstractController {
 	public ResponseEntity<StandardResponse> getAllProducts(HttpServletRequest request,
 													  HttpServletResponse response) throws Exception {
 		log.debug("|"+name()+"|Request to Product Status of Service... ");
-		response.setHeader("Cache-Control", "no-cache");
-
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Data Fetch Success!");
-		ArrayList<String> products = new ArrayList<String>();
-		products.add("iPhone 11");
-		products.add("iPhone 12");
-		products.add("iPhone 13");
-		stdResponse.setPayload(products);
+		List<ProductEntity> productList = productServiceImpl.getAllProduct();
+		StandardResponse stdResponse = null;
+		if(productList == null || productList.isEmpty()) {
+			stdResponse = createSuccessResponse("201","Fallback Data!");
+			productList.add(new ProductEntity("iPhone 10", "iPhone 10, 664 GB", new BigDecimal(65000), "12345"));
+		} else {
+			stdResponse = createSuccessResponse("Data Fetch Success!");
+		}
+		stdResponse.setPayload(productList);
 		return ResponseEntity.ok(stdResponse);
 	}
 
@@ -164,8 +161,7 @@ public class ProductControllerImpl extends AbstractController {
     public ResponseEntity<StandardResponse> processProduct(@RequestBody PaymentDetails _payDetails) {
 		log.debug("|"+name()+"|Request to process Product... "+_payDetails);
 		if(_payDetails != null && _payDetails.getOrderValue() > 0) {
-			StandardResponse stdResponse = new StandardResponse();
-			stdResponse.init(true, "200", "Processing Success!");
+			StandardResponse stdResponse = createSuccessResponse("Processing Success!");
 			PaymentStatus ps = new PaymentStatus(
 					"fb908151-d249-4d30-a6a1-4705729394f4",
 					LocalDateTime.now(),
@@ -201,9 +197,9 @@ public class ProductControllerImpl extends AbstractController {
 	@PostMapping("/create")
 	public ResponseEntity<StandardResponse> createProduct(@Valid @RequestBody Product _product) {
 		log.debug("|"+name()+"|Request to Create Product... "+_product);
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Product Created");
-		stdResponse.setPayload(_product);
+		ProductEntity prodEntity = productServiceImpl.createProduct(_product);
+		StandardResponse stdResponse = createSuccessResponse("Product Created");
+		stdResponse.setPayload(prodEntity);
 		return ResponseEntity.ok(stdResponse);
 	}
 
@@ -223,8 +219,7 @@ public class ProductControllerImpl extends AbstractController {
 	@DeleteMapping("/cancel/{referenceNo}")
 	public ResponseEntity<StandardResponse> cancel(@PathVariable("referenceNo") String _referenceNo) {
 		log.debug("|"+name()+"|Request to Cancel the Product... ");
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Cancelled!");
+		StandardResponse stdResponse = createSuccessResponse("Product Cancelled");
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("ReferenceNo", _referenceNo);
 		status.put("Message","Payment cancelled!");
@@ -248,8 +243,7 @@ public class ProductControllerImpl extends AbstractController {
 	@PutMapping("/update/{referenceNo}")
 	public ResponseEntity<StandardResponse> updatePayment(@PathVariable("referenceNo") String _referenceNo) {
 		log.debug("|"+name()+"|Request to Update Product... "+_referenceNo);
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Updated!");
+		StandardResponse stdResponse = createSuccessResponse("Product Updated");
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("ReferenceNo", _referenceNo);
 		status.put("Message","Product updated!");

@@ -40,7 +40,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EntityScan("io.fusion.air.microservice.domain.*")
-@EnableJpaRepositories(basePackages = { "io.fusion.air.microservice.domain.ports" })
+@EnableJpaRepositories(basePackages = { "io.fusion.air.microservice.domain.ports", "io.fusion.air.microservice.adapters.repository" })
 @EnableTransactionManagement
 public class JpaConfig {
 

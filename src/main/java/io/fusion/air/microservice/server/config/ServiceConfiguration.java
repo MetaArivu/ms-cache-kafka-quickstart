@@ -408,7 +408,7 @@ public class ServiceConfiguration implements Serializable {
 	 * @return
 	 */
 	public String getServiceAPIErrorPrefix() {
-		return serviceApiErrorPrefix;
+		return (serviceApiErrorPrefix != null) ? serviceApiErrorPrefix : "99";
 	}
 
 	/**
