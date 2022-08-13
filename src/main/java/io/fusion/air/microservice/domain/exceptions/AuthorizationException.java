@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
  * @version:
  * @date:
  */
-public class AuthorizationException extends AbstractServiceException {
+public class AuthorizationException extends ResourceException {
 
 
     /**

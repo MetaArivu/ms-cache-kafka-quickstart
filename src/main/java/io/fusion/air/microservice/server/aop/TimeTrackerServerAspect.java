@@ -21,7 +21,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Aspect
 @Configuration
-public class ExceptionHandlerServerAdvice {
+public class TimeTrackerServerAspect {
 
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
@@ -32,7 +32,7 @@ public class ExceptionHandlerServerAdvice {
      */
     @Before(value = "execution(* io.fusion.air.microservice.server.controllers.*.*(..))")
     public void logStatementBefore(JoinPoint joinPoint) {
-        log.debug("START={}",joinPoint);
+        log.debug("1|EH|TIME=|STATUS=START|CLASS={}",joinPoint);
     }
 
     /**
@@ -41,7 +41,7 @@ public class ExceptionHandlerServerAdvice {
      */
     @After(value = "execution(* io.fusion.air.microservice.server.controllers.*.*(..))")
     public void logStatementAfter(JoinPoint joinPoint) {
-        log.debug("END={}",joinPoint);
+        log.debug("9|EH|TIME=|STATUS=END|CLASS={}",joinPoint);
     }
 
     /**
@@ -52,16 +52,37 @@ public class ExceptionHandlerServerAdvice {
      */
     @Around(value = "execution(* io.fusion.air.microservice.server.controllers.*.*(..))")
     public Object timeTracker(ProceedingJoinPoint joinPoint) throws Throwable {
+        return trackTime("WS", joinPoint);
+    }
+
+    /**
+     * Track Time
+     * @param _method
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    private Object trackTime(String _method, ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
+        String status = "STATUS=SUCCESS";
         try {
-            Object method = joinPoint.proceed();
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("TIME={} ms|SUCCESS=true|CLASS={}",timeTaken,joinPoint);
-            return method;
+            return joinPoint.proceed();
         }catch(Throwable e) {
-            long timeTaken=System.currentTimeMillis() - startTime;
-            log.info("TIME={} ms|ERROR={}|CLASS={}",timeTaken, e.getMessage(),joinPoint);
+            status = "STATUS=ERROR:"+e.getMessage();
             throw e;
+        } finally {
+            logTime(_method, startTime, status, joinPoint);
         }
+    }
+
+    /**
+     * Log Time Taken to Execute the Function
+     * @param _startTime
+     * @param _status
+     * @param joinPoint
+     */
+    private void logTime(String _method, long _startTime, String _status, ProceedingJoinPoint joinPoint) {
+        long timeTaken=System.currentTimeMillis() - _startTime;
+        log.info("2|{}|TIME={} ms|{}|CLASS={}|",_method, timeTaken, _status,joinPoint);
     }
 }

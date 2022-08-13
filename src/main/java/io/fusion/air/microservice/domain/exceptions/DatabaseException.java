@@ -34,6 +34,14 @@ public class DatabaseException extends AbstractServiceException {
 
     /**
      * Database Exception - Bad Request
+     * @param _e
+     */
+    public DatabaseException(Exception _e) {
+        super(_e);
+    }
+
+    /**
+     * Database Exception - Bad Request
      * @param _msg
      * @param _e
      */

@@ -33,6 +33,14 @@ public class ControllerException extends AbstractServiceException {
     }
 
     /**
+     * Controller Exception - Bad Request
+     * @param _e
+     */
+    public ControllerException(Exception _e) {
+        super(_e);
+    }
+
+    /**
      * Controller Exception
      * @param _msg
      * @param _e

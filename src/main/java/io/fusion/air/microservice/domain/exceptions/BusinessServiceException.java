@@ -35,6 +35,14 @@ public class BusinessServiceException extends AbstractServiceException {
 
     /**
      * Business Service Exception Bad Request
+     * @param _e
+     */
+    public BusinessServiceException(Exception _e) {
+        super(_e);
+    }
+
+    /**
+     * Business Service Exception Bad Request
      * @param _msg
      * @param _e
      */

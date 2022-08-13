@@ -16,31 +16,47 @@
 package io.fusion.air.microservice.domain.exceptions;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ResourceNotFoundException extends ResourceException {
+public class ResourceException extends AbstractServiceException {
+
 
     /**
-     * ResourceNotFound Exception
+     * Resource Exception Bad Request
      * @param _msg
      */
-    public ResourceNotFoundException(String _msg) {
+    public ResourceException(String _msg) {
         super(_msg);
     }
 
+    /**
+     * Resource Exception Bad Request
+     * @param _e
+     */
+    public ResourceException(Exception _e) {
+        super(_e);
+    }
 
     /**
-     * ResourceNotFound Exception
+     * Resource Exception Bad Request
      * @param _msg
      * @param _e
      */
-    public ResourceNotFoundException(String _msg, Exception _e) {
-        super(_msg, HttpStatus.NOT_FOUND, _e);
+    public ResourceException(String _msg, Exception _e) {
+        super(_msg, HttpStatus.BAD_REQUEST, _e);
+    }
+
+    /**
+     * Resource Exception Bad Request
+     * @param _msg
+     * @param badRequest
+     * @param _e
+     */
+    public ResourceException(String _msg, HttpStatus badRequest, Exception _e) {
+        super(_msg, badRequest, _e);
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.server.service;
+package io.fusion.air.microservice.server.filters;
 
 import java.util.UUID;
 
@@ -61,7 +61,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  */
 @WebListener
-public class ServiceRequestListener implements ServletRequestListener {
+public class ServiceRequestFilter implements ServletRequestListener {
 
 	// Set Logger -> Lookup will automatically determine the class name.
 	private static final Logger log = getLogger(lookup().lookupClass());

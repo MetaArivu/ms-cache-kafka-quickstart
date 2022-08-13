@@ -182,8 +182,19 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_adEx, _adEx.getMessage(), "403", null, HttpStatus.FORBIDDEN, _request);
     }
 
+    /**
+     * Authorization Exception
+     * @param _adEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = AuthorizationException.class)
+    public ResponseEntity<Object> authorizationException(AuthorizationException _adEx,  WebRequest _request) {
+        return createErrorResponse(_adEx, _adEx.getMessage(), "403", null, HttpStatus.FORBIDDEN, _request);
+    }
+
     /**v
-     * Exception if the Request IS NOT FOUND!
+     * Exception if the Resource IS NOT FOUND!
      * @param _rnfEx
      * @param _request
      * @return
