@@ -62,7 +62,7 @@ When you change the version in POM.xml, update that info in src/main/resources/a
 ###  Step 2 - Compile (Once your code is ready) 
 
 1. run the compile from ms-cache-kafka-quickstart
-2. compile 
+2. compile OR ./compile
 
 The above compile script will do the following
 
@@ -77,11 +77,14 @@ Without generated application.properties file the service will NOT be running.
 
 ###  Step 3 - Run and Test
 
-2. run
-3. test
+2. run OR ./run
+3. test OR ./test
+
+### $ run Result 
+![Run Results](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Run-Result.jpg)
 
 ### MS Cache Swagger UI Docs for Testing
-![Property File](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Cache-Swagger-UI.jpg)
+![Swagger Docs](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Cache-Swagger-UI.jpg)
 
 
 ## Docker Container Setup
