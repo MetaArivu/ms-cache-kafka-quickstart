@@ -80,6 +80,10 @@ Without generated application.properties file the service will NOT be running.
 2. run
 3. test
 
+### MS Cache Swagger UI Docs for Testing
+![Property File](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Cache-Swagger-UI.jpg)
+
+
 ## Docker Container Setup
 
 ### Step 1 - Verify Container Name and Org Name
