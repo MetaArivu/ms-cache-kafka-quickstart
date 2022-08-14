@@ -15,8 +15,12 @@
  */
 package io.fusion.air.microservice.domain.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -30,8 +34,11 @@ import javax.validation.constraints.NotNull;
 public class Country implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "countryUUID", columnDefinition = "char(36)", unique = true)
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    private UUID countryUUID;
 
     @NotNull
     @Column(name = "countryId")

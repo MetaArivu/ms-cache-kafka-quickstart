@@ -59,6 +59,8 @@ public class ProductEntity {
     @Column(name = "productLocationZipCode")
     private String productLocationZipCode;
 
+    private boolean isActive;
+
     /**
      * Empty Product Entity
      */
