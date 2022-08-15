@@ -17,9 +17,13 @@ package io.fusion.air.microservice.server.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
+import io.fusion.air.microservice.domain.exceptions.InputDataException;
+import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
 import io.fusion.air.microservice.server.models.EchoResponseData;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +61,7 @@ import java.util.Map;
  */
 @Configuration
 @RestController
-// "/service/api/v1/service"
+// "/service-name/api/v1/service"
 @RequestMapping("${service.api.path}"+ ServiceConfiguration.HEALTH_PATH)
 @RequestScope
 @Tag(name = "System", description = "Health (Liveness, Readiness, ReStart.. etc)")
@@ -93,14 +97,10 @@ public class HealthController extends AbstractController {
     })
 	@GetMapping("/live")
 	@ResponseBody
-	public ResponseEntity<Map<String,Object>> getHealth(
-			HttpServletRequest request) throws Exception {
-		log.info(name()+"|Request to Health of Service... ");
-		HashMap<String,Object> status = new HashMap<String,Object>();
-		status.put("Code", 200);
-		status.put("Status", true);
-		status.put("Message","Service is OK!");
-		return ResponseEntity.ok(status);
+	public ResponseEntity<StandardResponse> getHealth(HttpServletRequest request) throws Exception {
+		log.debug(name()+"|Request to Health of Service... ");
+		StandardResponse stdResponse = createSuccessResponse("Service is OK!");
+		return ResponseEntity.ok(stdResponse);
 	}
     
     @Operation(summary = "Service Readiness Check")
@@ -114,20 +114,17 @@ public class HealthController extends AbstractController {
     })
 	@GetMapping("/ready")
 	@ResponseBody
-	public ResponseEntity<Map<String,Object>> isReady(
-			HttpServletRequest request) throws Exception {
-		log.info(name()+"|Request to Ready Check.. ");
-		HashMap<String,Object> status = new HashMap<String,Object>();
-		status.put("Code", 200);
-		status.put("Status", true);
-		status.put("Message","Service is Ready!");
-		return ResponseEntity.ok(status);
+	public ResponseEntity<StandardResponse> isReady(HttpServletRequest request) throws Exception {
+		log.debug(name()+"|Request to Ready Check.. ");
+		StandardResponse stdResponse = createSuccessResponse("Service is Ready!");
+		return ResponseEntity.ok(stdResponse);
 	}
 
 	/**
 	 * Restart the Service
 	 */
-    @Operation(summary = "Service ReStart")
+	@AuthorizationRequired(role = "Admin")
+	@Operation(summary = "Service ReStart", security = { @SecurityRequirement(name = "bearer-key") })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Service ReStart",
@@ -139,12 +136,12 @@ public class HealthController extends AbstractController {
     @PostMapping("/restart")
     public void restart() {
 		log.info(name()+"|Server Restart Request Received ....");
-
 		if(serviceConfig != null && serviceConfig.isServerRestart()) {
     		log.info(name()+"|Restarting the service........");
     		ServiceBootStrap.restart();
     	}
-    } 
+    }
+
     /**
      * Remote Echo Test
      * @param echoData
@@ -163,12 +160,14 @@ public class HealthController extends AbstractController {
             		content = @Content)
     })
     @PostMapping("/echo")
-    public ResponseEntity<EchoResponseData> remoteEcho(@RequestBody EchoData echoData) {
-		log.info(name()+"|Request for Echo ... "+echoData);
+    public ResponseEntity<StandardResponse> remoteEcho(@RequestBody EchoData echoData) {
+		log.debug(name()+"|Request for Echo ... "+echoData);
     	if(echoData == null) {
-			return ResponseEntity.notFound().build();
+			throw new InputDataException("Empty EchoData");
 		}
-    	return ResponseEntity.ok(new EchoResponseData(echoData.getWord()));
+		StandardResponse stdResponse = createSuccessResponse("Echo is Good!");
+    	stdResponse.setPayload(new EchoResponseData(echoData.getWord()));
+		return ResponseEntity.ok(stdResponse);
     }
     
 	/**

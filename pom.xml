@@ -41,7 +41,8 @@
 		<slf4j.version>1.7.36</slf4j.version>
 		<logback.version>1.2.11</logback.version>
 		<google.guava.version>31.1-jre</google.guava.version>
-		<apache.httpcore>4.4.15</apache.httpcore>
+		<!-- <apache.httpcore>4.4.15</apache.httpcore> -->
+		<apache.httpcore>4.5.13</apache.httpcore>
 		<apache.commons.version>3.12.0</apache.commons.version>
 		<fasterxml.version>2.13.3</fasterxml.version>
 		<javax.bean.validation.version>2.0.1.Final</javax.bean.validation.version>
@@ -112,12 +113,36 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+		<!--
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
 			<version>${apache.httpcore}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.13</version>
+		</dependency>
+		-->
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>5.2-beta1</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5 -->
+		<!--
+		<dependency>
+			<groupId>org.apache.httpcomponents.core5</groupId>
+			<artifactId>httpcore5</artifactId>
+			<version>5.2-beta2</version>
+		</dependency>
+		-->
 
 		<!-- Used for StringUtils helper -->
 		<dependency>

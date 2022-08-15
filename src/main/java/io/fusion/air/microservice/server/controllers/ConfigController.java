@@ -17,6 +17,8 @@ package io.fusion.air.microservice.server.controllers;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
+import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.server.config.ConfigMap;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
@@ -24,6 +26,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +50,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Configuration
 @RestController
-//  "/service/api/v1/config"
+//  "/service-name/api/v1/config"
 @RequestMapping("${service.api.path}"+ ServiceConfiguration.CONFIG_PATH)
 @RequestScope
 @Tag(name = "System", description = "Config (Environment, Secrets, ConfigMap.. etc)")
@@ -66,7 +69,14 @@ public class ConfigController extends AbstractController {
 	private ServiceConfiguration serviceConfig;
 	private String serviceName;
 
-	@Operation(summary = "Show the Environment Settings ")
+	/**
+	 * Show Service Environment
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@AuthorizationRequired(role = "Admin")
+	@Operation(summary = "Show the Environment Settings ", security = { @SecurityRequirement(name = "bearer-key") })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Show the environment Settings",
@@ -77,13 +87,20 @@ public class ConfigController extends AbstractController {
 	})
 	@GetMapping("/env")
 	@ResponseBody
-	public ResponseEntity<Map> getEnv(
-			HttpServletRequest request) throws Exception {
+	public ResponseEntity<StandardResponse> getEnv(HttpServletRequest request) throws Exception {
 		log.info(name()+"|Request to Get Environment Vars Check.. ");
 		HashMap<String, String> sysProps = serviceConfig.systemProperties();
-		return ResponseEntity.ok(sysProps);
+		StandardResponse stdResponse = createSuccessResponse("System Properties Ready!");
+		stdResponse.setPayload(sysProps);
+		return ResponseEntity.ok(stdResponse);
 	}
 
+	/**
+	 * Show Service Configurations
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@Operation(summary = "Show the ConfigMap Settings ")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
@@ -95,28 +112,20 @@ public class ConfigController extends AbstractController {
 	})
 	@GetMapping("/map")
 	@ResponseBody
-	public ResponseEntity<ConfigMap> getConfigMap(
-	// public ResponseEntity<ServiceConfiguration> getConfigMap(
-			HttpServletRequest request) throws Exception {
-		//  log.info("Pass 1");
+	public ResponseEntity<StandardResponse> getConfigMap(HttpServletRequest request) throws Exception {
+		StandardResponse stdResponse = createSuccessResponse("Config is Ready!");
 		ObjectMapper om = new ObjectMapper()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.findAndRegisterModules();
-		//  log.info("Pass 2");
 		String json = serviceConfig.toJSONString();
-		//  log.info("Pass 3");
-		log.info(name()+"|Request to Get ServiceConfiguration .1. "+json);
-		// String json2 = Utils.toJsonString(serviceConfig);
-		// log.info(name()+"|Request to Get ServiceConfiguration .2. "+json2);
-		// log.info("Pass 4");
-		// return ResponseEntity.ok(serviceConfig.toJSONString());
-		// return ResponseEntity.ok(serviceConfig);
+		log.debug(name()+"|Request to Get ServiceConfiguration .1. "+json);
 		ConfigMap cm = new ConfigMap(serviceConfig.getApiDocPath(),serviceConfig.getServiceName(),
 				serviceConfig.getBuildNumber(), serviceConfig.getBuildDate(), serviceConfig.getServerVersion(),
 				serviceConfig.getServerPort(), serviceConfig.getRemoteHost(), serviceConfig.getRemotePort(),
 				serviceConfig.getSpringCodecMaxMemory(), serviceConfig.getAppPropertyList(), serviceConfig.getAppPropertyMap()
 				);
-		return ResponseEntity.ok(cm);
+		stdResponse.setPayload(cm);
+		return ResponseEntity.ok(stdResponse);
 	}
 
 	/**
@@ -133,15 +142,15 @@ public class ConfigController extends AbstractController {
             content = @Content)
     })
 	@GetMapping("/log")
-    public String log() {
+    public ResponseEntity<StandardResponse> log() {
 		log.info(name()+"|Request to Log Level.. ");
     	log.trace(name()+"|This is TRACE level message");
         log.debug(name()+"|This is a DEBUG level message");
         log.info(name()+"|This is an INFO level message");
         log.warn(name()+"|This is a WARN level message");
         log.error(name()+"|This is an ERROR level message");
-        return name()+"|See the log for details";
+		StandardResponse stdResponse = createSuccessResponse("Check the Log Files!");
+		return ResponseEntity.ok(stdResponse);
     }
-	
  }
 

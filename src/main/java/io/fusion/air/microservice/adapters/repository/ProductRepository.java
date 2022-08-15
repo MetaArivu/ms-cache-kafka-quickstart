@@ -45,8 +45,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
      * @param _name
      * @return
      */
-    // @Query("SELECT ProductEntity FROM ProductEntity product WHERE product.productName like ?1")
-    // public List<ProductEntity> findProductByProductName(String _name);
-
+    // @Query("SELECT ProductEntity FROM ProductEntity p WHERE p.productName like ?1")
+    // public List<ProductEntity> fetchProductsdByName(String _name);
 
 }

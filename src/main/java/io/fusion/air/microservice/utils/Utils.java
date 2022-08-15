@@ -21,15 +21,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import io.fusion.air.microservice.domain.models.StandardResponse;
@@ -380,6 +378,49 @@ public final class Utils {
 		stdResponse.setPayload(payload);
 
 		return stdResponse;
+	}
+
+	/**
+	 * Creates Curl Command
+	 *  curl -X 'POST' \
+	 *   'http://localhost:9090/ms-cache/api/v1/service/echo' \
+	 *   -H 'accept: application/json' \
+	 *   -H 'Content-Type: application/json' \
+	 *   -d '{
+	 *   "word": "John Doe",
+	 *   "day": 0,
+	 *   "requestTime": "2022-08-14T09:06:25.717Z"
+	 * }'
+	 *
+	 * @param httpVerb
+	 * @param url
+	 * @param headers
+	 * @param request
+	 * @return
+	 */
+	public static String createCurlCommand(String httpVerb, String url, HttpHeaders headers, Object request) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("curl -X '").append(httpVerb).append("' ").append("");
+		sb.append(" '").append(url).append("' ").append("");
+		if(headers != null) {
+			for (String key : headers.keySet()) {
+				List<String> val = headers.get(key);
+				if (val != null && val.size() > 0) {
+					sb.append(" -H ").append("'").append(key).append(": ");
+					int x = 0;
+					for (String v : val) {
+						if (x > 0) sb.append(", ");
+						sb.append(v);
+						x++;
+					}
+					sb.append("'  ");
+				}
+			}
+		}
+		if(request != null) {
+			sb.append(" -d '").append(Utils.toJsonString(request)).append("'").append("");
+		}
+		return sb.toString();
 	}
 
 	/**
