@@ -89,18 +89,17 @@ public class PaymentControllerImpl extends AbstractController {
 	public ResponseEntity<StandardResponse> getStatus(@PathVariable("referenceNo") String _referenceNo,
 														HttpServletRequest request) throws Exception {
 		log.debug("|"+name()+"|Request to Payment Status of Service... ");
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Processing Success!");
+		StandardResponse stdResponse = createSuccessResponse("Processing Success!");
 		// Response Object
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("ReferenceNo", _referenceNo);
 		status.put("Message","Payment Status is good!");
 		stdResponse.setPayload(status);
 		// Additional Headers
-		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.add(HttpHeaders.CACHE_CONTROL, "no-cache");
 		// Return the Response
-		return new ResponseEntity<StandardResponse>(stdResponse, headers, HttpStatus.OK);
+		return new ResponseEntity<StandardResponse>(stdResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -118,8 +117,7 @@ public class PaymentControllerImpl extends AbstractController {
     @PostMapping("/processPayments")
     public ResponseEntity<StandardResponse> processPayments(@RequestBody PaymentDetails _payDetails) {
 		log.debug("|"+name()+"|Request to process payments... ");
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Processing Success!");
+		StandardResponse stdResponse = createSuccessResponse("Processing Success!");
 		PaymentStatus ps = new PaymentStatus(
 				"fb908151-d249-4d30-a6a1-4705729394f4",
 				LocalDateTime.now(),
@@ -146,8 +144,7 @@ public class PaymentControllerImpl extends AbstractController {
 	@DeleteMapping("/cancel/{referenceNo}")
 	public ResponseEntity<StandardResponse> cancel(@PathVariable("referenceNo") String _referenceNo) {
 		log.debug("|"+name()+"|Request to Cancel the payments... ");
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Cancelled!");
+		StandardResponse stdResponse = createSuccessResponse("Cancelled!");
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("ReferenceNo", _referenceNo);
 		status.put("Message","Payment cancelled!");
@@ -170,8 +167,7 @@ public class PaymentControllerImpl extends AbstractController {
 	@PutMapping("/update/{referenceNo}")
 	public ResponseEntity<StandardResponse> updatePayment(@PathVariable("referenceNo") String _referenceNo) {
 		log.debug("|"+name()+"|Request to Update Payment... "+_referenceNo);
-		StandardResponse stdResponse = new StandardResponse();
-		stdResponse.init(true, "200", "Updated!");
+		StandardResponse stdResponse = createSuccessResponse("Updated!");
 		HashMap<String,Object> status = new HashMap<String,Object>();
 		status.put("ReferenceNo", _referenceNo);
 		status.put("Message","Product updated!");

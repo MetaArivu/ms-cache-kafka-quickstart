@@ -31,7 +31,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Time Tracker Aspect
  * Log Messages
  * Keep Track of Time for Every Category Function Calls like:
- *  1. WS = Rest Controller (Pkg = com....adapters.controllers.*)
+ *  1. WS = Rest Controller (Pkg = com....adapters.controllers.*, com....adapters.controllers.secured.*)
  *  2. BS = Business Services (Pkg = com....adapters.services.*)
  *  3. DS = Database Services (SQL / NoSQL) (Pkg = com....adapters.repository.*)
  *  4. ES = External Services (External Calls like REST, GRPC, SOAP etc) (Pkg = com....adapters.external.*)
@@ -67,13 +67,24 @@ public class TimeTrackerAspect {
     }
 
     /**
-     * Capture Overall Method Execution Time
+     * Capture Overall Method Execution Time For Controllers
      * @param joinPoint
      * @return
      * @throws Throwable
      */
     @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.*.*(..))")
     public Object timeTrackerRest(ProceedingJoinPoint joinPoint) throws Throwable {
+        return trackTime("WS", joinPoint);
+    }
+
+    /**
+     * Capture Overall Method Execution Time for Secured Controllers
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.secured.*.*(..))")
+    public Object timeTrackerRestSecured(ProceedingJoinPoint joinPoint) throws Throwable {
         return trackTime("WS", joinPoint);
     }
 

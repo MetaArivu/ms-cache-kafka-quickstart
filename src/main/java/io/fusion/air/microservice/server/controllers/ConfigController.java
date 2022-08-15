@@ -132,7 +132,8 @@ public class ConfigController extends AbstractController {
 	 * Check the Current Log Levels
 	 * @return
 	 */
-    @Operation(summary = "Service Log Levels")
+	@AuthorizationRequired(role = "User")
+	@Operation(summary = "Show Service Log Levels", security = { @SecurityRequirement(name = "bearer-key") })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Service Log Level Check",

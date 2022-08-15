@@ -75,12 +75,13 @@ public class ServiceEventListener {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("aud", serviceConfig.getServiceName());
 		claims.put("jti", UUID.randomUUID().toString());
-		claims.put("did", "device id");
-		claims.put("rol", "user");
+		claims.put("did", "Device ID");
+		claims.put("rol", "User");
 		String subject	 = "jane.doe";
-		long expiry		 = JsonWebToken.EXPIRE_IN_TWO_HOUR;
+		long expiry		 = JsonWebToken.EXPIRE_IN_THIRTY_MINS;
 		String token1	 = jwt.generateToken(subject, serviceConfig.getServiceOrg(), expiry, claims);
-		log.info("Token Expiry in Hours / Days:  {} / {} ", JsonWebToken.getHours(expiry), JsonWebToken.getDays(expiry));
+		log.info("Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(expiry),
+						JsonWebToken.getHours(expiry),  JsonWebToken.getMins(expiry) );
 		System.out.println("-------------- aaa.bbb.ccc -------------");
 		System.out.println(token1);
 		System.out.println("-------------- ----------- -------------");

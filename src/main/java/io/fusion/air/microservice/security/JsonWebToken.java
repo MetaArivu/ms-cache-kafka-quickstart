@@ -45,13 +45,20 @@ import javax.crypto.spec.SecretKeySpec;
 public final class JsonWebToken {
 	
 	private static String TOKEN = "<([1234567890SecretKey!!To??Encrypt##Data@12345%6790])>";
-	
-	public static final long EXPIRE_IN_ONE_HOUR 		= 1000 * 60 * 60 * 1;
-	public static final long EXPIRE_IN_TWO_HOUR 		= 1000 * 60 * 60 * 2;
-	public static final long EXPIRE_IN_THREE_HOUR 	= 1000 * 60 * 60 * 3;
-	public static final long EXPIRE_IN_FIVE_HOUR 	= 1000 * 60 * 60 * 5;
-	public static final long EXPIRE_IN_EIGHT_HOUR 	= 1000 * 60 * 60 * 8;
-	public static final long EXPIRE_IN_ONE_DAY 		= 1000 * 60 * 60 * 24;
+
+	public static final long EXPIRE_IN_ONE_MINS 		= 1000 * 60 * 1;
+	public static final long EXPIRE_IN_FIVE_MINS 	= EXPIRE_IN_ONE_MINS * 5;
+	public static final long EXPIRE_IN_TEN_MINS 		= EXPIRE_IN_ONE_MINS * 10;
+	public static final long EXPIRE_IN_TWENTY_MINS 	= EXPIRE_IN_ONE_MINS * 20;
+	public static final long EXPIRE_IN_THIRTY_MINS 	= EXPIRE_IN_ONE_MINS * 30;
+	public static final long EXPIRE_IN_ONE_HOUR 		= EXPIRE_IN_ONE_MINS * 60;
+
+	public static final long EXPIRE_IN_TWO_HOUR 		= EXPIRE_IN_ONE_HOUR * 2;
+	public static final long EXPIRE_IN_THREE_HOUR 	= EXPIRE_IN_ONE_HOUR * 3;
+	public static final long EXPIRE_IN_FIVE_HOUR 	= EXPIRE_IN_ONE_HOUR * 5;
+	public static final long EXPIRE_IN_EIGHT_HOUR 	= EXPIRE_IN_ONE_HOUR * 8;
+	public static final long EXPIRE_IN_ONE_DAY 		= EXPIRE_IN_ONE_HOUR * 24;
+
 	public static final long EXPIRE_IN_TWO_DAYS 		= EXPIRE_IN_ONE_DAY * 2;
 	public static final long EXPIRE_IN_ONE_WEEK 		= EXPIRE_IN_ONE_DAY * 7;
 	public static final long EXPIRE_IN_TWO_WEEKS 	= EXPIRE_IN_ONE_DAY * 14;
@@ -59,6 +66,7 @@ public final class JsonWebToken {
 	public static final long EXPIRE_IN_THREE_MONTHS	= EXPIRE_IN_ONE_DAY * 90;
 	public static final long EXPIRE_IN_SIX_MONTHS 	= EXPIRE_IN_ONE_DAY * 180;
 	public static final long EXPIRE_IN_ONE_YEAR 		= EXPIRE_IN_ONE_DAY * 365;
+
 	public static final long EXPIRE_IN_TWO_YEARS 	= EXPIRE_IN_ONE_YEAR * 2;
 	public static final long EXPIRE_IN_FIVE_YEARS 	= EXPIRE_IN_ONE_YEAR * 5;
 	public static final long EXPIRE_IN_TEN_YEARS 	= EXPIRE_IN_ONE_YEAR * 10;
@@ -358,8 +366,22 @@ public final class JsonWebToken {
     	return _time / (1000 * 60 * 60 * 24);
     }
 
+	/**
+	 * Returns the Expiry in Hours
+	 * @param _time
+	 * @return
+	 */
 	public static double getHours(long _time) {
 		return _time / (1000 * 60 * 60);
+	}
+
+	/**
+	 * Returns the Expiry in Minutes
+	 * @param _time
+	 * @return
+	 */
+	public static double getMins(long _time) {
+		return _time / (1000 * 60);
 	}
     
     /**
@@ -381,7 +403,7 @@ public final class JsonWebToken {
 		long expiry		 = JsonWebToken.EXPIRE_IN_FIVE_HOUR;
 
 		String token1	 = jwt.generateToken(subject, "companyName", expiry, claims);
-		System.out.println("Expiry Time in Hours / Days: "+getHours(expiry) +" / "+getDays(expiry));
+		System.out.println("Expiry Time in Days:Hours:Mins "+getDays(expiry) +":"+getHours(expiry)+":"+getMins(expiry));
 		tokenStats(token1);
 		if(jwt.validateToken(subject, token1)) {
 			System.out.println(">>> Token is Valid");

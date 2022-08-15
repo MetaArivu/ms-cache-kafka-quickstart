@@ -176,7 +176,8 @@ public class HealthController extends AbstractController {
 	 * @param request
 	 * @return
 	 */
-    @Operation(summary = "Service Home")
+	@AuthorizationRequired(role = "User")
+	@Operation(summary = "Service Home", security = { @SecurityRequirement(name = "bearer-key") })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Service Home",
