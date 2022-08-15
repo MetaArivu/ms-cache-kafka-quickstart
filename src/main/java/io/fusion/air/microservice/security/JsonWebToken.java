@@ -357,6 +357,10 @@ public final class JsonWebToken {
     public static double getDays(long _time) {
     	return _time / (1000 * 60 * 60 * 24);
     }
+
+	public static double getHours(long _time) {
+		return _time / (1000 * 60 * 60);
+	}
     
     /**
      * Only for Testing from Command Line
@@ -374,10 +378,10 @@ public final class JsonWebToken {
 		claims.put("did", "device id");
 		claims.put("rol", "user");
 		String subject	 = "jane.doe";
-		long expiry		 = JsonWebToken.EXPIRE_IN_FIVE_YEARS;
+		long expiry		 = JsonWebToken.EXPIRE_IN_FIVE_HOUR;
 
 		String token1	 = jwt.generateToken(subject, "companyName", expiry, claims);
-		System.out.println("Expiry Time in Days: "+getDays(expiry));
+		System.out.println("Expiry Time in Hours / Days: "+getHours(expiry) +" / "+getDays(expiry));
 		tokenStats(token1);
 		if(jwt.validateToken(subject, token1)) {
 			System.out.println(">>> Token is Valid");

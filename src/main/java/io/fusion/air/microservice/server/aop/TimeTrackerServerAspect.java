@@ -32,7 +32,7 @@ public class TimeTrackerServerAspect {
      */
     @Before(value = "execution(* io.fusion.air.microservice.server.controllers.*.*(..))")
     public void logStatementBefore(JoinPoint joinPoint) {
-        log.debug("1|EH|TIME=|STATUS=START|CLASS={}",joinPoint);
+        log.debug("1|TA|TIME=|STATUS=START|CLASS={}",joinPoint);
     }
 
     /**
@@ -41,7 +41,7 @@ public class TimeTrackerServerAspect {
      */
     @After(value = "execution(* io.fusion.air.microservice.server.controllers.*.*(..))")
     public void logStatementAfter(JoinPoint joinPoint) {
-        log.debug("9|EH|TIME=|STATUS=END|CLASS={}",joinPoint);
+        log.debug("9|TA|TIME=|STATUS=END|CLASS={}",joinPoint);
     }
 
     /**
@@ -83,6 +83,6 @@ public class TimeTrackerServerAspect {
      */
     private void logTime(String _method, long _startTime, String _status, ProceedingJoinPoint joinPoint) {
         long timeTaken=System.currentTimeMillis() - _startTime;
-        log.info("2|{}|TIME={} ms|{}|CLASS={}|",_method, timeTaken, _status,joinPoint);
+        log.info("3|{}|TIME={} ms|{}|CLASS={}|",_method, timeTaken, _status,joinPoint);
     }
 }

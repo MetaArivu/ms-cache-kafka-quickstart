@@ -138,7 +138,7 @@ public class TimeTrackerAspect {
      */
     private void logTime(String _method, long _startTime, String _status, ProceedingJoinPoint joinPoint) {
         long timeTaken=System.currentTimeMillis() - _startTime;
-        log.info("2|{}|TIME={} ms|{}|CLASS={}|",_method, timeTaken, _status,joinPoint);
+        log.info("3|{}|TIME={} ms|{}|CLASS={}|",_method, timeTaken, _status,joinPoint);
     }
 }
 

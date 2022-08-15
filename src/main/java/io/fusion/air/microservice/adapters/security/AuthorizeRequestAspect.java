@@ -90,25 +90,27 @@ public class AuthorizeRequestAspect {
      */
     private Object validateRequest(ProceedingJoinPoint joinPoint) throws Throwable {
         // Get the request object
+        long startTime = System.currentTimeMillis();
         ServletRequestAttributes attributes = (ServletRequestAttributes)
                 RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        final String token = getToken(request.getHeader("Authorization"));
-        final String user = getUser(token);
+        final String token = getToken(startTime, request.getHeader("Authorization"), joinPoint);
+        final String user = getUser(startTime, token, joinPoint);
         log.info("1|JA|Time=|Status=Validating|Class=|Request={}", request.getRequestURI());
         // Validate the Token when User is NOT Null and Security Context = NULL
         if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Validate Token
-            UserDetails userDetails = validateToken(user, token, joinPoint);
+            UserDetails userDetails = validateToken(startTime, user, token, joinPoint);
             UsernamePasswordAuthenticationToken authorizeToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             authorizeToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             // Set the Security Context with current user as Authorized for the request,
             // So it passes the Spring Security Configurations successfully.
             SecurityContextHolder.getContext().setAuthentication(authorizeToken);
-            log.info("1|JA|Time=|Status=Error|User Authorized for the request:");
+            logTime(startTime, "Success", "User Authorized for the request",  joinPoint);
         } else {
-            log.info("1|JA|Time=|Status=Error|Security is already set!");
+            logTime(startTime, "Success", "Security is already set!",  joinPoint);
+
         }
         return joinPoint.proceed();
     }
@@ -121,11 +123,13 @@ public class AuthorizeRequestAspect {
      * @param tokenHeader
      * @return
      */
-    private String getToken(String tokenHeader) {
+    private String getToken(long startTime, String tokenHeader, ProceedingJoinPoint joinPoint) {
         if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
             return tokenHeader.substring(7);
         }
-        throw new AuthorizationException("Access Denied: Unable to extract token from Header!");
+        String msg = "Access Denied: Unable to extract token from Header!";
+        logTime(startTime, "Error", msg,  joinPoint);
+        throw new AuthorizationException(msg);
     }
 
     /**
@@ -133,25 +137,30 @@ public class AuthorizeRequestAspect {
      * @param token
      * @return
      */
-    private String getUser(String token) {
+    private String getUser(long startTime, String token, ProceedingJoinPoint joinPoint) {
         String user = null;
+        String msg = null;
         try {
             user = jwtUtil.getSubjectFromToken(token);
             // Store the user info for logging
             MDC.put("user", user);
             return user;
         } catch (IllegalArgumentException e) {
-            log.error("1|JA|Time=|Status=Error|Unable to get JWT Token Error: "+e.getMessage());
-            throw new AuthorizationException("Access Denied: Unable to get JWT Token: "+e.getMessage());
+            msg = "Access Denied: Unable to get JWT Token Error: "+e.getMessage();
+            throw new AuthorizationException(msg);
         } catch (ExpiredJwtException e) {
-            log.error("1|JA|Time=|Status=Error|JWT Token has expired Error: "+e.getMessage());
-            throw new AuthorizationException("Access Denied: JWT Token has expired: "+e.getMessage());
+            msg = "Access Denied: JWT Token has expired Error: "+e.getMessage();
+            throw new AuthorizationException(msg);
         } catch (NullPointerException e) {
-            log.error("1|JA|Time=|Status=Error|Invalid Token (Null Token) Error: "+e.getMessage());
-            throw new AuthorizationException("Access Denied: Invalid Token (Null Token):  "+e.getMessage());
+            msg = "Access Denied: Invalid Token (Null Token) Error: "+e.getMessage();
+            throw new AuthorizationException(msg);
         } catch (Throwable e) {
-            log.error("1|JA|Time=|Status=Error|JAccess Denied: Error:  "+e.getMessage());
-            throw new AuthorizationException("Access Denied: Error: "+e.getMessage());
+            msg = "Access Denied: Error:  "+e.getMessage();
+            throw new AuthorizationException(msg);
+        } finally {
+            if(msg != null) {
+                logTime(startTime, "Error", msg, joinPoint);
+            }
         }
     }
 
@@ -164,8 +173,9 @@ public class AuthorizeRequestAspect {
      * @param joinPoint
      * @return
      */
-    private UserDetails validateToken(String user, String token, ProceedingJoinPoint joinPoint) {
+    private UserDetails validateToken(long startTime, String user, String token, ProceedingJoinPoint joinPoint) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user);
+        String msg = null;
         try {
             // Validate the Token
             if (jwtUtil.validateToken(userDetails.getUsername(), token)) {
@@ -175,17 +185,32 @@ public class AuthorizeRequestAspect {
                 AuthorizationRequired annotation = signature.getMethod().getAnnotation(AuthorizationRequired.class);
                 // If the User Role is Public then Skip the Role Check
                 if (!role.trim().equalsIgnoreCase(UserRole.Public.toString()) && !annotation.role().equals(role)) {
-                    log.warn("1|JA|Time=|Status=Error|Role check failed! User role:{} - Allowed role {}", role, annotation.role());
+                    msg = "Role check failed! User role:"+role+" - Allowed role "+annotation.role();
                     throw new AuthorizationException("Access Not authorized: Invalid Role!");
                 }
                 return userDetails;
             } else {
-                log.error("1|JA|Time=|Status=Error|Unauthorized Access: Validation Failed!");
-                throw new AuthorizationException("Access Not authorized: Validation Failed");
+                msg = "Unauthorized Access: Validation Failed!";
+                throw new AuthorizationException(msg);
             }
         } catch(Throwable e) {
-            log.error("1|JA|Time=|Status=Error|Unauthorized Access");
-            throw new AuthorizationException("Access Not authorized: Invalid Token: "+e.getMessage());
+            msg = "Unauthorized Access: Invalid Token! Error: "+e.getMessage();
+            throw new AuthorizationException(msg);
+        } finally {
+            if(msg != null) {
+                logTime(startTime, "Error", msg, joinPoint);
+            }
         }
+    }
+
+    /**
+     * Log Time
+     * @param _startTime
+     * @param _status
+     * @param joinPoint
+     */
+    private void logTime(long _startTime, String _status, String _msg, ProceedingJoinPoint joinPoint) {
+        long timeTaken=System.currentTimeMillis() - _startTime;
+        log.info("2|JA|TIME={} ms|STATUS={}|CLASS={}|Msg={}", timeTaken, _status,joinPoint, _msg);
     }
 }

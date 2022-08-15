@@ -148,7 +148,6 @@ public class ServiceConfiguration implements Serializable {
 	@Value("${server.host.prod.desc:localhost:9090}")
 	private String serverHostProdDesc;
 
-
 	@Value("${server.port:9080}")
 	private int serverPort;
 	
@@ -164,6 +163,9 @@ public class ServiceConfiguration implements Serializable {
 	
 	@Value("${server.restart:false}")
 	private boolean serverRestart;
+
+	@Value("${server.testToken=:false}")
+	private boolean serverTestToken;
 
 	// Database Configurations
 
@@ -319,6 +321,14 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public boolean isServerRestart() {
 		return serverRestart;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public boolean isServerTestToken() {
+		return serverTestToken;
 	}
 
 	/**
