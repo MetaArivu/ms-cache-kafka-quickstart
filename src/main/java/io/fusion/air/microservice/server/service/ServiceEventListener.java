@@ -75,16 +75,30 @@ public class ServiceEventListener {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("aud", serviceConfig.getServiceName());
 		claims.put("jti", UUID.randomUUID().toString());
-		claims.put("did", "Device ID");
 		claims.put("rol", "User");
-		String subject	 = "jane.doe";
-		long expiry		 = JsonWebToken.EXPIRE_IN_THIRTY_MINS;
-		String token1	 = jwt.generateToken(subject, serviceConfig.getServiceOrg(), expiry, claims);
-		log.info("Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(expiry),
-						JsonWebToken.getHours(expiry),  JsonWebToken.getMins(expiry) );
-		System.out.println("-------------- aaa.bbb.ccc -------------");
-		System.out.println(token1);
-		System.out.println("-------------- ----------- -------------");
+		claims.put("did", "Device ID");
+		String subject	 		= "jane.doe";
+		long expiryToken		= JsonWebToken.EXPIRE_IN_FIVE_MINS;
+		long expiryTokenRefresh	= JsonWebToken.EXPIRE_IN_THIRTY_MINS;
+
+		HashMap<String,String> tokens = new JsonWebToken(SignatureAlgorithm.HS512)
+										.setSubject(subject)
+										.setIssuer(serviceConfig.getServiceOrg())
+										.setTokenExpiry(expiryToken)
+										.setTokenRefreshExpiry(expiryTokenRefresh)
+										.addAllTokenClaims(claims)
+										.addAllRefreshTokenClaims(claims)
+										.generateTokens();
+
+		String token = tokens.get("token");
+		String refresh = tokens.get("refresh");
+		log.info("Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(expiryToken),
+				JsonWebToken.getHours(expiryToken),  JsonWebToken.getMins(expiryToken) );
+		JsonWebToken.tokenStats(token, false, false);
+
+		log.info("Refresh Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(expiryTokenRefresh),
+				JsonWebToken.getHours(expiryTokenRefresh),  JsonWebToken.getMins(expiryTokenRefresh) );
+		JsonWebToken.tokenStats(refresh, false, false);
 	}
 	
 	/**

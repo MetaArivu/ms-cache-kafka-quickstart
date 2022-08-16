@@ -28,12 +28,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import javax.annotation.PostConstruct;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -78,6 +76,13 @@ public final class JsonWebToken {
 	private final SignatureAlgorithm algorithm;
 	public final static SignatureAlgorithm defaultAlgo = SignatureAlgorithm.HS512;
 
+	private final Map<String, Object> claimsToken;
+	private final Map<String, Object> claimsRefreshToken;
+	private String issuer;
+	private String subject;
+	private long tokenExpiry;
+	private long tokenRefreshExpiry;
+
 	/**
 	 * Initialize the JWT with Default Algorithm
 	 */
@@ -92,6 +97,118 @@ public final class JsonWebToken {
 	public JsonWebToken(SignatureAlgorithm _algorithm) {
 		algorithm 	= _algorithm;
 		signingKey 	= new SecretKeySpec(getTokenKeyBytes(), algorithm.getJcaName());
+		claimsToken = new HashMap<String, Object>();
+		claimsRefreshToken = new HashMap<String, Object>();
+		issuer		= "metarivu";
+		subject 	= "jane.doe";
+		tokenExpiry	= EXPIRE_IN_FIVE_MINS;
+		tokenRefreshExpiry = EXPIRE_IN_TWENTY_MINS;
+	}
+
+	/**
+	 * Set the Issuer
+	 * @param _issuer
+	 * @return
+	 */
+	public JsonWebToken setIssuer(String _issuer) {
+		issuer = _issuer;
+		return this;
+	}
+
+	/**
+	 * Set the Subject
+	 * @param _subject
+	 * @return
+	 */
+	public JsonWebToken setSubject(String _subject)   {
+		subject = _subject;
+		return this;
+	}
+
+	/**
+	 * Set the Token Expiry Time - MUST NOT BE GREATER THAN 30 MINS
+	 * IF YES THEN SET EXPIRY TO 5 MINS
+	 * @param _time
+	 * @return
+	 */
+	public JsonWebToken setTokenExpiry(long _time)   {
+		tokenExpiry = (_time > EXPIRE_IN_THIRTY_MINS) ? EXPIRE_IN_FIVE_MINS : _time;
+		return this;
+	}
+
+	/**
+	 * Set the Token Expiry Time
+	 * @param _time
+	 * @return
+	 */
+	public JsonWebToken setTokenRefreshExpiry(long _time)   {
+		tokenRefreshExpiry = _time;
+		return this;
+	}
+
+	/**
+	 * Clear & Add All Claims for Token
+	 * @param _claims
+	 * @return
+	 */
+	public JsonWebToken addAllTokenClaims(Map<String, Object> _claims) {
+		claimsToken.clear();
+		claimsToken.putAll(_claims);
+		String aud = (serviceConfig != null) ? serviceConfig.getServiceName() : "general";
+		claimsToken.putIfAbsent("aud", aud);
+		claimsToken.putIfAbsent("jti", UUID.randomUUID().toString());
+		claimsToken.putIfAbsent("rol", "User");
+		return this;
+	}
+
+	/**
+	 * Clear & Add All Claims for Refresh Token
+	 * @param _claims
+	 * @return
+	 */
+	public JsonWebToken addAllRefreshTokenClaims(Map<String, Object> _claims) {
+		claimsRefreshToken.clear();
+		claimsRefreshToken.putAll(_claims);
+		String aud = (serviceConfig != null) ? serviceConfig.getServiceName() : "general";
+		claimsRefreshToken.putIfAbsent("aud", aud);
+		claimsRefreshToken.putIfAbsent("jti", UUID.randomUUID().toString());
+		claimsRefreshToken.putIfAbsent("rol", "User");
+		return this;
+	}
+
+	/**
+	 * Generate Authorize Bearer Token and Refresh Token
+	 * Returns in a HashMap
+	 * token = Authorization Token
+	 * refresh = Refresh token to re-generate the Authorize Token
+	 * API Usage
+	 * HashMap<String,String> tokens = new JsonWebToken(SignatureAlgorithm.HS512)
+	 * 									.setSubject("user")
+	 * 									.setIssuer("company")
+	 * 									.setTokenExpiry(JsonWebToken.EXPIRE_IN_FIVE_MINS)
+	 * 									.setTokenRefreshExpiry(JsonWebToken.EXPIRE_IN_THIRTY_MINS)
+	 * 									.addAllTokenClaims(Map<String,Object> claims)
+	 * 									.addAllRefreshTokenClaims(Map<String,Object> claims)
+	 * 									generateTokens()
+	 * @return
+	 */
+	public HashMap<String,String>  generateTokens() {
+		HashMap<String, String> tokens  = new HashMap<String, String>();
+		String tokenAuth 	= generateToken(subject, issuer, tokenExpiry, claimsToken);
+		String tokenRefresh = generateToken(subject, issuer, tokenRefreshExpiry, claimsRefreshToken);
+		tokens.put("token", tokenAuth);
+		tokens.put("refresh", tokenRefresh);
+		return tokens;
+	}
+
+	/**
+	 * Clear All Claims (Token and Refresh Token)
+	 * @return
+	 */
+	public JsonWebToken clearAllClaims()  {
+		claimsToken.clear();
+		claimsRefreshToken.clear();
+		return this;
 	}
 
 	/**
@@ -127,7 +244,7 @@ public final class JsonWebToken {
 	private byte[] getTokenKeyBytes() {
 		return HashData.base64Encoder(getTokenKey()).getBytes();
 	}
-	
+
     /**
      * Generate Token for the User
      *  
@@ -137,7 +254,7 @@ public final class JsonWebToken {
 	 */
     public String generateToken(String _userId, long _expiryTime) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("aud", "ShoppingServices");
+        claims.put("aud", "general");
         claims.put("jti", UUID.randomUUID().toString());
         return generateToken(_userId,"metarivu",_expiryTime,claims);
     }
@@ -150,8 +267,7 @@ public final class JsonWebToken {
      * @param _claims
      * @return
      */
-    public String generateToken(String _userId, long _expiryTime,
-    		Map<String, Object> _claims) {
+    public String generateToken(String _userId, long _expiryTime, Map<String, Object> _claims) {
         return generateToken(_userId,"metarivu",_expiryTime, _claims);
     }
     
@@ -324,35 +440,54 @@ public final class JsonWebToken {
 				.parseClaimsJws(_token)
         		.getBody();
     }
-    
+	/**
+	 * Print Token Stats
+	 * @param token
+	 */
+	public static void tokenStats(String token) {
+		tokenStats(token, true, true);
+	}
+
     /**
      * Print Token Stats
-     * 
-     * @param token
-     */
-    public static void tokenStats(String token) {
-		JsonWebToken jwt = new JsonWebToken();
-		System.out.println("----------------------------------------------");
-		System.out.println("Token    = "+token);
-		System.out.println("----------------------------------------------");
+	 * @param token
+	 * @param showClaims
+	 */
+	public static void tokenStats(String token,  boolean showClaims) {
+		tokenStats(token, showClaims, false);
+	}
 
+	/**
+	 * Print Token Stats
+	 * @param token
+	 * @param showClaims
+	 * @param showPayload
+	 */
+    public static void tokenStats(String token, boolean showClaims, boolean showPayload) {
+		JsonWebToken jwt = new JsonWebToken();
+		System.out.println("-------------- aaa.bbb.ccc -------------------");
+		System.out.println(token);
+		System.out.println("-------------- ----------- -------------------");
 		System.out.println("Subject  = "+jwt.getSubjectFromToken(token));
 		System.out.println("Audience = "+jwt.getAudienceFromToken(token));
 		System.out.println("Issuer   = "+jwt.getIssuerFromToken(token));
 		System.out.println("IssuedAt = "+jwt.getIssuedAtFromToken(token));
 		System.out.println("Expiry   = "+jwt.getExpiryDateFromToken(token));
 		System.out.println("Expired  = "+jwt.isTokenExpired(token));
-
 		System.out.println("----------------------------------------------");
-		Claims claims = jwt.getAllClaims(token);
-		int x=1;
-		for(Entry<String, Object> o : claims.entrySet()) {
-			System.out.println(x+"> "+o);				
-			x++;
+		if(showClaims) {
+			Claims claims = jwt.getAllClaims(token);
+			int x = 1;
+			for (Entry<String, Object> o : claims.entrySet()) {
+				System.out.println(x + "> " + o);
+				x++;
+			}
 		}
-		System.out.println("----------------------------------------------");
-		System.out.println("Payload="+jwt.getPayload(token));
-		System.out.println("----------------------------------------------");
+		if(showPayload) {
+			System.out.println("----------------------------------------------");
+			System.out.println("Payload=" + jwt.getPayload(token));
+			System.out.println("----------------------------------------------");
+		}
 
     }
     
@@ -383,15 +518,47 @@ public final class JsonWebToken {
 	public static double getMins(long _time) {
 		return _time / (1000 * 60);
 	}
-    
-    /**
-     * Only for Testing from Command Line
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-    	// Default Algo is HS512 = Hmac with SHA-512
+
+	/**
+	 * Returns Token Claims Set for Generating the Token
+	 * @return
+	 */
+	public Map<String, Object> getClaimsToken() {
+		return claimsToken;
+	}
+
+	/**
+	 * Returns the Token Claims set for Generating the Refresh Token
+	 * @return
+	 */
+	public Map<String, Object> getClaimsRefreshToken() {
+		return claimsRefreshToken;
+	}
+
+	/**
+	 * Get the Issuer Set for Generating Token / Refresher Token
+	 * @return
+	 */
+	public String getIssuer() {
+		return issuer;
+	}
+
+	/**
+	 * Get the Subject Set for Generating Token / Refresher Token
+	 * @return
+	 */
+	public String getSubject() {
+		return subject;
+	}
+
+	/**
+	 * Only for Testing from Command Line
+	 *
+	 * @param args
+	 * @throws Exception
+	 */
+	public static void main(String[] args) throws Exception {
+		// Default Algo is HS512 = Hmac with SHA-512
 		JsonWebToken jwt = new JsonWebToken(SignatureAlgorithm.HS512);
 
 		Map<String, Object> claims = new HashMap<>();
@@ -400,7 +567,7 @@ public final class JsonWebToken {
 		claims.put("did", "device id");
 		claims.put("rol", "user");
 		String subject	 = "jane.doe";
-		long expiry		 = JsonWebToken.EXPIRE_IN_FIVE_HOUR;
+		long expiry		 = JsonWebToken.EXPIRE_IN_ONE_HOUR;
 
 		String token1	 = jwt.generateToken(subject, "companyName", expiry, claims);
 		System.out.println("Expiry Time in Days:Hours:Mins "+getDays(expiry) +":"+getHours(expiry)+":"+getMins(expiry));
