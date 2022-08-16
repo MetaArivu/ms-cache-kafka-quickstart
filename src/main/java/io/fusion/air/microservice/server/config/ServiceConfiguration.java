@@ -161,10 +161,10 @@ public class ServiceConfiguration implements Serializable {
 	@Value("${remote.port:9091}")
 	private int remotePort;
 	
-	@Value("${server.restart:false}")
+	@Value("${server.restart}")
 	private boolean serverRestart;
 
-	@Value("${server.testToken=:false}")
+	@Value("${server.testToken}")
 	private boolean serverTestToken;
 
 	// Database Configurations

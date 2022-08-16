@@ -22,6 +22,7 @@ import io.fusion.air.microservice.server.config.ServiceHelp;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
@@ -53,8 +54,11 @@ public class ServiceEventListener {
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 
+	@Value("${server.testToken}")
+	private boolean serverTestToken;
+
 	/**
-	 * 
+	 * Shows Logo and Generate Test Tokens
 	 */
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() {
@@ -63,15 +67,21 @@ public class ServiceEventListener {
 	    // System.out.println(LocalDateTime.now()+"|Service is getting ready...... ");
 	    // System.out.println(LocalDateTime.now()+"|"+CPU.printCpuStats());
 		showLogo();
-		log.info("Generate Test Token = {} / {} ", serviceConfig.isServerTestToken(), serviceConfig.isServerRestart());
+		log.info("Generate Test Tokens = {} ", serverTestToken);
 		if(serviceConfig.isServerTestToken()) {
-			//  generateTestToken();
+			generateTestToken();
 		}
-		generateTestToken();
 	}
 
+	/**
+	 * Generate Tokens for Testing Purpose Only
+	 * Token 			= Expires in 5 Mins
+	 * Refresh Token 	= Expires in 30 Mins
+	 * This shld be disabled in Production Environment
+	 * serverTestToken=false
+	 */
 	private void generateTestToken() {
-		JsonWebToken jwt = new JsonWebToken(SignatureAlgorithm.HS512);
+
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("aud", serviceConfig.getServiceName());
 		claims.put("jti", UUID.randomUUID().toString());
