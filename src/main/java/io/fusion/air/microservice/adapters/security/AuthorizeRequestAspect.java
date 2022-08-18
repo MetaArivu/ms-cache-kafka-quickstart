@@ -54,11 +54,26 @@ public class AuthorizeRequestAspect {
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
+    public final static String REFRESH_TOKEN = "Refresh-Token";
+    public final static String AUTH_TOKEN = "Authorization";
+
+
     @Autowired
     private JsonWebToken jwtUtil;
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
+
+    /**
+     * Validate REST Endpoint Annotated with @validateRefreshToken Annotation
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    @Around("@annotation(io.fusion.air.microservice.adapters.security.ValidateRefreshToken)")
+    public Object validateRefreshRequest(ProceedingJoinPoint joinPoint) throws Throwable {
+        return validateRequest(REFRESH_TOKEN, joinPoint);
+    }
 
     /**
      * Validate REST Endpoints Annotated with @AuthorizationRequired Annotation
@@ -68,7 +83,7 @@ public class AuthorizeRequestAspect {
      */
     @Around("@annotation(io.fusion.air.microservice.adapters.security.AuthorizationRequired)")
     public Object validateAnnotatedRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-        return validateRequest(joinPoint);
+        return validateRequest(AUTH_TOKEN, joinPoint);
     }
 
     /**
@@ -79,7 +94,7 @@ public class AuthorizeRequestAspect {
      */
     @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.secured.*.*(..))")
     public Object validateAnyRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-        return validateRequest(joinPoint);
+        return validateRequest(AUTH_TOKEN,joinPoint);
     }
 
     /**
@@ -88,19 +103,20 @@ public class AuthorizeRequestAspect {
      * @return
      * @throws Throwable
      */
-    private Object validateRequest(ProceedingJoinPoint joinPoint) throws Throwable {
+    private Object validateRequest(String tokenKey, ProceedingJoinPoint joinPoint) throws Throwable {
         // Get the request object
         long startTime = System.currentTimeMillis();
         ServletRequestAttributes attributes = (ServletRequestAttributes)
                 RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        final String token = getToken(startTime, request.getHeader("Authorization"), joinPoint);
+        logTime(startTime, "Validating", request.getRequestURI(), joinPoint);
+
+        final String token = getToken(startTime, request.getHeader(tokenKey), joinPoint);
         final String user = getUser(startTime, token, joinPoint);
-        log.info("1|JA|Time=|Status=Validating|Class=|Request={}", request.getRequestURI());
         // Validate the Token when User is NOT Null and Security Context = NULL
         if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Validate Token
-            UserDetails userDetails = validateToken(startTime, user, token, joinPoint);
+            UserDetails userDetails = validateToken(startTime, user, tokenKey, token, joinPoint);
             UsernamePasswordAuthenticationToken authorizeToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             authorizeToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -120,12 +136,12 @@ public class AuthorizeRequestAspect {
      * ------------------------------------------------------------------------------------------------------
      * Authorization: Bearer AAA.BBB.CCC
      * ------------------------------------------------------------------------------------------------------
-     * @param tokenHeader
+     * @param tokenKey
      * @return
      */
-    private String getToken(long startTime, String tokenHeader, ProceedingJoinPoint joinPoint) {
-        if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
-            return tokenHeader.substring(7);
+    private String getToken(long startTime, String tokenKey, ProceedingJoinPoint joinPoint) {
+        if (tokenKey != null && tokenKey.startsWith("Bearer ")) {
+            return tokenKey.substring(7);
         }
         String msg = "Access Denied: Unable to extract token from Header!";
         logTime(startTime, "Error", msg,  joinPoint);
@@ -173,7 +189,8 @@ public class AuthorizeRequestAspect {
      * @param joinPoint
      * @return
      */
-    private UserDetails validateToken(long startTime, String user, String token, ProceedingJoinPoint joinPoint) {
+    private UserDetails validateToken(long startTime, String user, String tokenKey,
+                                      String token, ProceedingJoinPoint joinPoint) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user);
         String msg = null;
         try {
