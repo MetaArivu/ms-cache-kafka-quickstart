@@ -48,6 +48,7 @@ public final class Algorithms {
     public final static String DESede_CBC_PKCS5Padding = "DESede/CBC/PKCS5Padding";
     public final static String DESede_ECB_NoPadding = "DESede/ECB/NoPadding";
     public final static String DESede_ECB_PKCS5Padding = "DESede/ECB/PKCS5Padding";
+    public final static String TripleDES_CBC_PKCS5Padding = "TripleDES/CBC/PKCS5Padding";
     public final static String RSA_ECB_PKCS1Padding = "RSA/ECB/PKCS1Padding";
     public final static String RSA_ECB_OAEPWithSHA_1AndMGF1Padding = "RSA/ECB/OAEPWithSHA-1AndMGF1Padding";
     public final static String RSA_ECB_OAEPWithSHA_256AndMGF1Padding = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
@@ -55,9 +56,11 @@ public final class Algorithms {
     // Algorithm Parameters
     public static final String AES          = "AES";
     public static final String DES          = "DES";
+    public static final String TripleDES    = "TripleDES";
     public static final String DESede       = "DESede";
     public static final String DiffieHellman = "DiffieHellman";
     public static final String DSA          = "DSA";
+
 
     private String DEFAULT_MD_ALGO            = SHA_256;
     private String CURRENT_MD_ALGO            = DEFAULT_MD_ALGO;

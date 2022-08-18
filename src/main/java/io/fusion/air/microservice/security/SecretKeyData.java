@@ -16,6 +16,7 @@
 package io.fusion.air.microservice.security;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.util.Arrays;
 
 /**
  * @author: Araf Karsh Hamid
@@ -26,15 +27,18 @@ public class SecretKeyData {
 
     private final SecretKeySpec secretKeySpec;
     private final byte[] keyBytes;
+    private final String encryptAlgo;
 
     /**
      * Create SecretKey Data
      * @param _secretKey
      * @param _keyBytes
+     * @param _encryptAlgo
      */
-    public SecretKeyData(SecretKeySpec _secretKey, byte[] _keyBytes) {
+    public SecretKeyData(SecretKeySpec _secretKey, byte[] _keyBytes, String  _encryptAlgo) {
         secretKeySpec   = _secretKey;
         keyBytes        = _keyBytes;
+        encryptAlgo     = _encryptAlgo;
     }
 
     /**
@@ -51,5 +55,13 @@ public class SecretKeyData {
      */
     public byte[] getKeyBytes() {
         return keyBytes;
+    }
+
+    /***
+     *
+     * @return
+     */
+    public byte[] getKeyBytesForIVSpecs() {
+        return (encryptAlgo == Algorithms.TripleDES) ? Arrays.copyOf(keyBytes, 8) : keyBytes;
     }
 }
