@@ -16,6 +16,7 @@
 package io.fusion.air.microservice.adapters.aop;
 
 import io.fusion.air.microservice.domain.exceptions.*;
+import io.fusion.air.microservice.domain.exceptions.SecurityException;
 import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.utils.Utils;
@@ -31,13 +32,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import org.slf4j.MDC;
 
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -140,7 +134,12 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                                                        HttpHeaders _headers, HttpStatus _httpStatus, WebRequest _request) {
 
         String errorPrefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "AK";
-
+        String errorCode = errorPrefix+_errorCode;
+        if(_exception instanceof AbstractServiceException) {
+            AbstractServiceException ase = (AbstractServiceException)_exception;
+            ase.setErrorCode(errorCode);
+        }
+        logException(errorCode,  _exception);
         StandardResponse stdResponse = Utils.createErrorResponse(
                 null, errorPrefix, _errorCode, _httpStatus,  _message);
         if(_headers != null) {
@@ -182,15 +181,15 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_adEx, _adEx.getMessage(), "403", null, HttpStatus.FORBIDDEN, _request);
     }
 
-    /**
-     * Authorization Exception
-     * @param _adEx
+    /**v
+     * Exception if the Resource NOT Available!
+     * @param _rnfEx
      * @param _request
      * @return
      */
-    @ExceptionHandler(value = AuthorizationException.class)
-    public ResponseEntity<Object> authorizationException(AuthorizationException _adEx,  WebRequest _request) {
-        return createErrorResponse(_adEx, _adEx.getMessage(), "403", null, HttpStatus.FORBIDDEN, _request);
+    @ExceptionHandler(value = ResourceException.class)
+    public ResponseEntity<Object> resourceException(ResourceException _rnfEx,  WebRequest _request) {
+        return createErrorResponse(_rnfEx,  "404", _request);
     }
 
     /**v
@@ -200,8 +199,74 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException _rnfEx,  WebRequest _request) {
+    public ResponseEntity<Object> resourceNotFoundException(ResourceNotFoundException _rnfEx,  WebRequest _request) {
         return createErrorResponse(_rnfEx,  "404", _request);
+    }
+
+    /**
+     * Authorization Exception
+     * @param _adEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = SecurityException.class)
+    public ResponseEntity<Object> securityException(SecurityException _adEx, WebRequest _request) {
+        return createErrorResponse(_adEx,  "411",  _request);
+    }
+
+    /**
+     * Authorization Exception
+     * @param _adEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = AuthorizationException.class)
+    public ResponseEntity<Object> authorizationException(AuthorizationException _adEx,  WebRequest _request) {
+        return createErrorResponse(_adEx,  "413", _request);
+    }
+
+    /**
+     * JWT Token Extraction Exception
+     * @param _adEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = JWTTokenExtractionException.class)
+    public ResponseEntity<Object> JWTTokenExtractionException(JWTTokenExtractionException _adEx,  WebRequest _request) {
+        return createErrorResponse(_adEx, "414",  _request);
+    }
+
+    /**
+     * JWT Token Expired Exception
+     * @param _adEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = JWTTokenExpiredException.class)
+    public ResponseEntity<Object> JWTTokenExpiredException(JWTTokenExpiredException _adEx,  WebRequest _request) {
+        return createErrorResponse(_adEx, "415", _request);
+    }
+
+    /**
+     * JWT Token Subject Exception
+     * @param _adEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = JWTTokenSubjectException.class)
+    public ResponseEntity<Object> JWTTokenSubjectException(JWTTokenSubjectException _adEx,  WebRequest _request) {
+        return createErrorResponse(_adEx,"416",  _request);
+    }
+
+    /**
+     * JWT UnDefined Exception
+     * @param _adEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = JWTUnDefinedException.class)
+    public ResponseEntity<Object> JWTUnDefinedException(JWTUnDefinedException _adEx,  WebRequest _request) {
+        return createErrorResponse(_adEx,  "417",  _request);
     }
 
     /**
@@ -292,7 +357,6 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_mdrEx,  "462", _request);
     }
 
-
     /**
      * Controller Exception
      * @param _coEx
@@ -304,4 +368,12 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_coEx,  "490", _request);
     }
 
+    /**
+     *
+     * @param _status
+     * @param e
+     */
+    private void logException(String _status, Throwable e) {
+        log.info("2|EH|TIME=00|STATUS=Error: {}|CLASS={}|",_status, e.toString());
+    }
 }

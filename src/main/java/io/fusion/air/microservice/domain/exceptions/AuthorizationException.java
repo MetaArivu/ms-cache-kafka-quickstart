@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
  * @version:
  * @date:
  */
-public class AuthorizationException extends ResourceException {
+public class AuthorizationException extends SecurityException {
 
 
     /**
@@ -38,7 +38,7 @@ public class AuthorizationException extends ResourceException {
      * @param _msg
      * @param _e
      */
-    public AuthorizationException(String _msg, Exception _e) {
+    public AuthorizationException(String _msg, Throwable _e) {
         super(_msg, HttpStatus.UNAUTHORIZED, _e);
     }
 
@@ -46,7 +46,7 @@ public class AuthorizationException extends ResourceException {
      * Authorization Service Exception
      * @param _e
      */
-    public AuthorizationException(Exception _e) {
+    public AuthorizationException(Throwable _e) {
         super("", HttpStatus.UNAUTHORIZED, _e);
     }
 }

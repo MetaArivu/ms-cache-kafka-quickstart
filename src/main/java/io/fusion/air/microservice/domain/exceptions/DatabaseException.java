@@ -36,7 +36,7 @@ public class DatabaseException extends AbstractServiceException {
      * Database Exception - Bad Request
      * @param _e
      */
-    public DatabaseException(Exception _e) {
+    public DatabaseException(Throwable _e) {
         super(_e);
     }
 
@@ -45,7 +45,7 @@ public class DatabaseException extends AbstractServiceException {
      * @param _msg
      * @param _e
      */
-    public DatabaseException(String _msg, Exception _e) {
+    public DatabaseException(String _msg, Throwable _e) {
         super(_msg, _e);
     }
 
@@ -55,7 +55,7 @@ public class DatabaseException extends AbstractServiceException {
      * @param badRequest
      * @param _e
      */
-    public DatabaseException(String _msg, HttpStatus badRequest, Exception _e) {
+    public DatabaseException(String _msg, HttpStatus badRequest, Throwable _e) {
         super(_msg, badRequest, _e);
     }
 }

@@ -37,7 +37,7 @@ public class BusinessServiceException extends AbstractServiceException {
      * Business Service Exception Bad Request
      * @param _e
      */
-    public BusinessServiceException(Exception _e) {
+    public BusinessServiceException(Throwable _e) {
         super(_e);
     }
 
@@ -46,7 +46,7 @@ public class BusinessServiceException extends AbstractServiceException {
      * @param _msg
      * @param _e
      */
-    public BusinessServiceException(String _msg, Exception _e) {
+    public BusinessServiceException(String _msg, Throwable _e) {
         super(_msg,  _e);
     }
 
@@ -56,7 +56,7 @@ public class BusinessServiceException extends AbstractServiceException {
      * @param badRequest
      * @param _e
      */
-    public BusinessServiceException(String _msg, HttpStatus badRequest, Exception _e) {
+    public BusinessServiceException(String _msg, HttpStatus badRequest, Throwable _e) {
         super(_msg, badRequest, _e);
     }
 }

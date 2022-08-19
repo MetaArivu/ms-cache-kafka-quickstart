@@ -22,31 +22,31 @@ import org.springframework.http.HttpStatus;
  * @version:
  * @date:
  */
-public class DataNotFoundException extends DatabaseException {
+public class JWTUnDefinedException extends SecurityException {
+
 
     /**
-     * DataNotFound Exception
+     * JWT UnDefined Exception - FORBIDDEN
      * @param _msg
-     * @param _e
      */
-    public DataNotFoundException(String _msg) {
-        super(_msg, HttpStatus.NOT_FOUND, null);
+    public JWTUnDefinedException(String _msg) {
+        super(_msg);
     }
 
     /**
-     * DataNotFound Exception
+     * JWT UnDefined Exception - FORBIDDEN
      * @param _msg
      * @param _e
      */
-    public DataNotFoundException(String _msg, Throwable _e) {
-        super(_msg, HttpStatus.NOT_FOUND, _e);
+    public JWTUnDefinedException(String _msg, Throwable _e) {
+        super(_msg, HttpStatus.FORBIDDEN, _e);
     }
 
     /**
-     * DataNotFound Exception
+     * JWT UnDefined Exception - FORBIDDEN
      * @param _e
      */
-    public DataNotFoundException(Throwable _e) {
-        super("Data Not Found!", HttpStatus.NOT_FOUND, _e);
+    public JWTUnDefinedException(Throwable _e) {
+        super("", HttpStatus.FORBIDDEN, _e);
     }
 }

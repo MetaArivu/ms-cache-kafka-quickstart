@@ -36,7 +36,15 @@ public class InputDataException extends BusinessServiceException {
      * @param _msg
      * @param _e
      */
-    public InputDataException(String _msg, Exception _e) {
+    public InputDataException(String _msg, Throwable _e) {
         super(_msg, HttpStatus.BAD_REQUEST, _e);
+    }
+
+    /**
+     * Input Data Exception
+     * @param _e
+     */
+    public InputDataException(Throwable _e) {
+        super("Invalid Input!", HttpStatus.BAD_REQUEST, _e);
     }
 }

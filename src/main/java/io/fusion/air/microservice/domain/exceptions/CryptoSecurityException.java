@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @version:
  * @date:
  */
-public class CryptoSecurityException extends ResourceException {
+public class CryptoSecurityException extends SecurityException {
 
     /**
-     * CryptoSecurity Exception
+     * CryptoSecurity Exception INTERNAL_SERVER_ERROR,
      * @param _msg
      */
     public CryptoSecurityException(String _msg) {
@@ -34,19 +34,19 @@ public class CryptoSecurityException extends ResourceException {
     }
 
     /**
-     * CryptoSecurity Exception
+     * CryptoSecurity Exception INTERNAL_SERVER_ERROR,
      * @param _e
      */
-    public CryptoSecurityException(Exception _e) {
+    public CryptoSecurityException(Throwable _e) {
         super("Crypto Exception: ", HttpStatus.INTERNAL_SERVER_ERROR, _e);
     }
 
     /**
-     * CryptoSecurity Exception
+     * CryptoSecurity Exception INTERNAL_SERVER_ERROR,
      * @param _msg
      * @param _e
      */
-    public CryptoSecurityException(String _msg, Exception _e) {
+    public CryptoSecurityException(String _msg, Throwable _e) {
         super("Crypto Exception: "+_msg, HttpStatus.INTERNAL_SERVER_ERROR, _e);
     }
 }

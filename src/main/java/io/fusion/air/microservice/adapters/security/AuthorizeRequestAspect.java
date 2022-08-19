@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.adapters.security;
 
-import io.fusion.air.microservice.domain.exceptions.AuthorizationException;
+import io.fusion.air.microservice.domain.exceptions.*;
 import io.fusion.air.microservice.security.JsonWebToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -56,7 +56,6 @@ public class AuthorizeRequestAspect {
 
     public final static String REFRESH_TOKEN = "Refresh-Token";
     public final static String AUTH_TOKEN = "Authorization";
-
 
     @Autowired
     private JsonWebToken jwtUtil;
@@ -117,6 +116,7 @@ public class AuthorizeRequestAspect {
         if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Validate Token
             UserDetails userDetails = validateToken(startTime, user, tokenKey, token, joinPoint);
+            // Create Authorize Token
             UsernamePasswordAuthenticationToken authorizeToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             authorizeToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -145,7 +145,7 @@ public class AuthorizeRequestAspect {
         }
         String msg = "Access Denied: Unable to extract token from Header!";
         logTime(startTime, "Error", msg,  joinPoint);
-        throw new AuthorizationException(msg);
+        throw new JWTTokenExtractionException(msg);
     }
 
     /**
@@ -162,17 +162,17 @@ public class AuthorizeRequestAspect {
             MDC.put("user", user);
             return user;
         } catch (IllegalArgumentException e) {
-            msg = "Access Denied: Unable to get JWT Token Error: "+e.getMessage();
-            throw new AuthorizationException(msg);
+            msg = "Access Denied: Unable to get Subject JWT Token Error: "+e.getMessage();
+            throw new JWTTokenSubjectException(msg, e);
         } catch (ExpiredJwtException e) {
             msg = "Access Denied: JWT Token has expired Error: "+e.getMessage();
-            throw new AuthorizationException(msg);
+            throw new JWTTokenExpiredException(msg, e);
         } catch (NullPointerException e) {
             msg = "Access Denied: Invalid Token (Null Token) Error: "+e.getMessage();
-            throw new AuthorizationException(msg);
+            throw new JWTUnDefinedException(msg, e);
         } catch (Throwable e) {
             msg = "Access Denied: Error:  "+e.getMessage();
-            throw new AuthorizationException(msg);
+            throw new JWTUnDefinedException(msg, e);
         } finally {
             if(msg != null) {
                 logTime(startTime, "Error", msg, joinPoint);
@@ -207,12 +207,12 @@ public class AuthorizeRequestAspect {
                 }
                 return userDetails;
             } else {
-                msg = "Unauthorized Access: Validation Failed!";
+                msg = "Unauthorized Access: Token Validation Failed!";
                 throw new AuthorizationException(msg);
             }
         } catch(Throwable e) {
             msg = "Unauthorized Access: Invalid Token! Error: "+e.getMessage();
-            throw new AuthorizationException(msg);
+            throw new AuthorizationException(msg, e);
         } finally {
             if(msg != null) {
                 logTime(startTime, "Error", msg, joinPoint);

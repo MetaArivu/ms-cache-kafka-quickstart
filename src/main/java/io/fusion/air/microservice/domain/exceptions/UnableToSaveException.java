@@ -15,6 +15,8 @@
  */
 package io.fusion.air.microservice.domain.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author: Araf Karsh Hamid
  * @version:
@@ -23,11 +25,28 @@ package io.fusion.air.microservice.domain.exceptions;
 public class UnableToSaveException extends DatabaseException {
 
     /**
-     * Database Exception
+     * Unable to Save Exception
      * @param _msg
      * @param _e
      */
-    public UnableToSaveException(String _msg, Exception _e) {
-        super(_msg, _e);
+    public UnableToSaveException(String _msg) {
+        super(_msg);
+    }
+
+    /**
+     * Unable to Save Exception
+     * @param _msg
+     * @param _e
+     */
+    public UnableToSaveException(String _msg, Throwable _e) {
+        super(_msg, HttpStatus.BAD_REQUEST, _e);
+    }
+
+    /**
+     * Unable to Save Exception
+     * @param _e
+     */
+    public UnableToSaveException(Throwable _e) {
+        super("Unable to Save Data!", HttpStatus.BAD_REQUEST, _e);
     }
 }

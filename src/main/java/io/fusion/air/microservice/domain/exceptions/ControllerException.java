@@ -36,7 +36,7 @@ public class ControllerException extends AbstractServiceException {
      * Controller Exception - Bad Request
      * @param _e
      */
-    public ControllerException(Exception _e) {
+    public ControllerException(Throwable _e) {
         super(_e);
     }
 
@@ -45,7 +45,7 @@ public class ControllerException extends AbstractServiceException {
      * @param _msg
      * @param _e
      */
-    public ControllerException(String _msg, Exception _e) {
+    public ControllerException(String _msg, Throwable _e) {
         super(_msg, _e);
     }
 
@@ -55,7 +55,7 @@ public class ControllerException extends AbstractServiceException {
      * @param badRequest
      * @param _e
      */
-    public ControllerException(String _msg, HttpStatus badRequest, Exception _e) {
+    public ControllerException(String _msg, HttpStatus badRequest, Throwable _e) {
         super(_msg, badRequest, _e);
     }
 }

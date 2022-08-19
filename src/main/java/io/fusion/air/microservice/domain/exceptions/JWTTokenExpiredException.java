@@ -22,31 +22,31 @@ import org.springframework.http.HttpStatus;
  * @version:
  * @date:
  */
-public class DataNotFoundException extends DatabaseException {
+public class JWTTokenExpiredException extends SecurityException {
+
 
     /**
-     * DataNotFound Exception
+     * JWT Token Expired Exception - FORBIDDEN
      * @param _msg
-     * @param _e
      */
-    public DataNotFoundException(String _msg) {
-        super(_msg, HttpStatus.NOT_FOUND, null);
+    public JWTTokenExpiredException(String _msg) {
+        super(_msg);
     }
 
     /**
-     * DataNotFound Exception
+     * JWT Token Expired Exception - FORBIDDEN
      * @param _msg
      * @param _e
      */
-    public DataNotFoundException(String _msg, Throwable _e) {
-        super(_msg, HttpStatus.NOT_FOUND, _e);
+    public JWTTokenExpiredException(String _msg, Throwable _e) {
+        super(_msg, HttpStatus.FORBIDDEN, _e);
     }
 
     /**
-     * DataNotFound Exception
+     * JWT Token Expired Exception - FORBIDDEN
      * @param _e
      */
-    public DataNotFoundException(Throwable _e) {
-        super("Data Not Found!", HttpStatus.NOT_FOUND, _e);
+    public JWTTokenExpiredException(Throwable _e) {
+        super("", HttpStatus.FORBIDDEN, _e);
     }
 }

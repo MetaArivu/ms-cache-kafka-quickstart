@@ -15,12 +15,14 @@
  */
 package io.fusion.air.microservice.server.controllers;
 
+import io.fusion.air.microservice.domain.exceptions.*;
 import io.fusion.air.microservice.ServiceBootStrap;
 import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.adapters.security.AuthorizeRequestAspect;
 import io.fusion.air.microservice.adapters.security.ValidateRefreshToken;
 import io.fusion.air.microservice.domain.exceptions.AuthorizationException;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
+import io.fusion.air.microservice.domain.exceptions.JWTTokenExtractionException;
 import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.security.JsonWebToken;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
@@ -112,8 +114,8 @@ public class TokenController extends AbstractController {
 		if (tokenKey != null && tokenKey.startsWith("Bearer ")) {
 			return tokenKey.substring(7);
 		}
-		String msg = "Access Denied: Unable to extract token from Header = "+tokenKey;
-		throw new AuthorizationException(msg);
+		String msg = "Access Denied: Unable to extract token from Header = ";
+		throw new JWTTokenExtractionException(msg);
 	}
 
 	/**

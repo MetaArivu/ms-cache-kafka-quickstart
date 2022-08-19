@@ -24,7 +24,6 @@ import org.springframework.http.HttpStatus;
  */
 public class DuplicateDataException extends DatabaseException {
 
-
     /**
      * DuplicateData Exception
      * @param _msg
@@ -38,7 +37,15 @@ public class DuplicateDataException extends DatabaseException {
      * @param _msg
      * @param _e
      */
-    public DuplicateDataException(String _msg, Exception _e) {
+    public DuplicateDataException(String _msg, Throwable _e) {
         super(_msg, HttpStatus.BAD_REQUEST, _e);
+    }
+
+    /**
+     * DuplicateData Exception
+     * @param _e
+     */
+    public DuplicateDataException(Throwable _e) {
+        super("Duplicate Data Exception!", HttpStatus.BAD_REQUEST, _e);
     }
 }

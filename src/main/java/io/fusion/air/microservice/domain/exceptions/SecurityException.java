@@ -22,31 +22,40 @@ import org.springframework.http.HttpStatus;
  * @version:
  * @date:
  */
-public class DataNotFoundException extends DatabaseException {
+public class SecurityException extends AbstractServiceException {
 
     /**
-     * DataNotFound Exception
+     * Security Exception Forbidden
      * @param _msg
-     * @param _e
      */
-    public DataNotFoundException(String _msg) {
-        super(_msg, HttpStatus.NOT_FOUND, null);
+    public SecurityException(String _msg) {
+        super(_msg);
     }
 
     /**
-     * DataNotFound Exception
-     * @param _msg
+     * Security Exception Forbidden
      * @param _e
      */
-    public DataNotFoundException(String _msg, Throwable _e) {
-        super(_msg, HttpStatus.NOT_FOUND, _e);
+    public SecurityException(Throwable _e) {
+        super("Security Exception!", HttpStatus.FORBIDDEN, _e);
     }
 
     /**
-     * DataNotFound Exception
+     * Security Exception Forbidden
+     * @param _msg
      * @param _e
      */
-    public DataNotFoundException(Throwable _e) {
-        super("Data Not Found!", HttpStatus.NOT_FOUND, _e);
+    public SecurityException(String _msg, Throwable _e) {
+        super(_msg, HttpStatus.FORBIDDEN, _e);
+    }
+
+    /**
+     * Security Exception Forbidden
+     * @param _msg
+     * @param badRequest
+     * @param _e
+     */
+    public SecurityException(String _msg, HttpStatus badRequest, Throwable _e) {
+        super(_msg, badRequest, _e);
     }
 }

@@ -40,7 +40,7 @@ public class ResourceNotFoundException extends ResourceException {
      * @param _msg
      * @param _e
      */
-    public ResourceNotFoundException(String _msg, Exception _e) {
+    public ResourceNotFoundException(String _msg, Throwable _e) {
         super(_msg, HttpStatus.NOT_FOUND, _e);
     }
 }

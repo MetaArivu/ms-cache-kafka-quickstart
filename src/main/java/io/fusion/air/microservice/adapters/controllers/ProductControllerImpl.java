@@ -17,11 +17,7 @@ package io.fusion.air.microservice.adapters.controllers;
 
 import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.entities.ProductEntity;
-import io.fusion.air.microservice.domain.exceptions.BusinessServiceException;
-import io.fusion.air.microservice.domain.exceptions.ControllerException;
-import io.fusion.air.microservice.domain.exceptions.DuplicateDataException;
-import io.fusion.air.microservice.domain.exceptions.InputDataException;
-import io.fusion.air.microservice.domain.exceptions.ResourceNotFoundException;
+import io.fusion.air.microservice.domain.exceptions.*;
 import io.fusion.air.microservice.domain.models.*;
 import io.fusion.air.microservice.domain.ports.CountryService;
 import io.fusion.air.microservice.domain.ports.ProductService;
