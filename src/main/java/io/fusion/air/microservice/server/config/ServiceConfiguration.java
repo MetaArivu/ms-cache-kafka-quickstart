@@ -161,6 +161,19 @@ public class ServiceConfiguration implements Serializable {
 	@Value("${server.restart}")
 	private boolean serverRestart;
 
+	// server.crypto.public.key=publicKey.pem
+	@Value("${server.crypto.public.key:publicKey.pem}")
+	private String cryptoPublicKeyFile;
+
+	// server.crypto.private.key=privateKey.pem
+	@Value("${server.crypto.private.key:privateKey.pem}")
+	private String cryptoPrivateKeyFile;
+
+	// server.token.type=1
+	// (Type 1 = secret key, 2 = public / private key)
+	@Value("${server.token.type:1}")
+	private int tokenType;
+
 	@Value("${server.token.test}")
 	private boolean serverTokenTest;
 
@@ -615,5 +628,32 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public String getSecureDataKey() {
 		return secureDataKey;
+	}
+
+	/**
+	 * Returns Token Type
+	 * Token Type is used to sign the JWTs.
+	 * 1 = secret key,
+	 * 2 = public / private key
+	 * @return
+	 */
+	public int getTokenType() {
+		return tokenType;
+	}
+
+	/**
+	 * Returns the Public Key File Name
+	 * @return
+	 */
+	public String getCryptoPublicKeyFile() {
+		return cryptoPublicKeyFile;
+	}
+
+	/**
+	 * Returns the Private Key File Name
+	 * @return
+	 */
+	public String getCryptoPrivateKeyFile() {
+		return cryptoPrivateKeyFile;
 	}
 }

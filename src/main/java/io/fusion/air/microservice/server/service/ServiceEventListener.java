@@ -91,17 +91,22 @@ public class ServiceEventListener {
 	private void generateTestToken() {
 		tokenAuthExpiry = (tokenAuthExpiry < 10) ? JsonWebToken.EXPIRE_IN_FIVE_MINS : tokenAuthExpiry;
 		tokenRefreshExpiry = (tokenRefreshExpiry < 10) ? JsonWebToken.EXPIRE_IN_THIRTY_MINS : tokenRefreshExpiry;
+
+		String subject	 = "jane.doe";
+		String issuer    = serviceConfig.getServiceOrg();
+		
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("aud", serviceConfig.getServiceName());
 		claims.put("jti", UUID.randomUUID().toString());
 		claims.put("rol", "User");
 		claims.put("did", "Device ID");
-		String subject	 		= "jane.doe";
+		claims.put("iss", issuer);
+		claims.put("sub", subject);
 
 		HashMap<String,String> tokens = new JsonWebToken(SignatureAlgorithm.HS512)
 										.setSubject(subject)
-										.setIssuer(serviceConfig.getServiceOrg())
-										.setTokenExpiry(tokenAuthExpiry)
+										.setIssuer(issuer)
+										.setTokenAuthExpiry(tokenAuthExpiry)
 										.setTokenRefreshExpiry(tokenRefreshExpiry)
 										.addAllTokenClaims(claims)
 										.addAllRefreshTokenClaims(claims)

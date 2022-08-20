@@ -16,22 +16,17 @@
 
 package io.fusion.air.microservice.security;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.security.*;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.function.Function;
 
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -72,6 +67,9 @@ public final class JsonWebToken {
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 
+	@Autowired
+	private GenerateCryptoKeys cryptoKeys;
+
 	private Key signingKey;
 	private final SignatureAlgorithm algorithm;
 	public final static SignatureAlgorithm defaultAlgo = SignatureAlgorithm.HS512;
@@ -80,29 +78,37 @@ public final class JsonWebToken {
 	private final Map<String, Object> claimsRefreshToken;
 	private String issuer;
 	private String subject;
-	private long tokenExpiry;
+	private long tokenAuthExpiry;
 	private long tokenRefreshExpiry;
 
 	/**
 	 * Initialize the JWT with Default Algorithm
 	 */
 	public JsonWebToken() {
-		this(defaultAlgo);
+		this(1, defaultAlgo);
 	}
 
 	/**
-	 * Initialize the JWT with the Signature Algorithm
+	 *
 	 * @param _algorithm
 	 */
 	public JsonWebToken(SignatureAlgorithm _algorithm) {
-		algorithm 	= _algorithm;
-		signingKey 	= new SecretKeySpec(getTokenKeyBytes(), algorithm.getJcaName());
-		claimsToken = new HashMap<String, Object>();
-		claimsRefreshToken = new HashMap<String, Object>();
-		issuer		= "metarivu";
-		subject 	= "jane.doe";
-		tokenExpiry	= EXPIRE_IN_FIVE_MINS;
-		tokenRefreshExpiry = EXPIRE_IN_TWENTY_MINS;
+		this(1, _algorithm);
+	}
+
+		/**
+         * Initialize the JWT with the Signature Algorithm
+         * @param _algorithm
+         */
+	public JsonWebToken(int _type, SignatureAlgorithm _algorithm) {
+		algorithm 			= _algorithm;
+		signingKey 			= new SecretKeySpec(getTokenKeyBytes(), algorithm.getJcaName());
+		claimsToken 		= new HashMap<String, Object>();
+		claimsRefreshToken 	= new HashMap<String, Object>();
+		issuer				= "metarivu";
+		subject 			= "jane.doe";
+		tokenAuthExpiry 	= (tokenAuthExpiry < 10) ? EXPIRE_IN_FIVE_MINS : tokenAuthExpiry;
+		tokenRefreshExpiry 	= (tokenRefreshExpiry < 10) ? EXPIRE_IN_THIRTY_MINS : tokenRefreshExpiry;
 	}
 
 	/**
@@ -131,8 +137,8 @@ public final class JsonWebToken {
 	 * @param _time
 	 * @return
 	 */
-	public JsonWebToken setTokenExpiry(long _time)   {
-		tokenExpiry = (_time > EXPIRE_IN_THIRTY_MINS) ? EXPIRE_IN_FIVE_MINS : _time;
+	public JsonWebToken setTokenAuthExpiry(long _time)   {
+		tokenAuthExpiry = (_time > EXPIRE_IN_THIRTY_MINS) ? EXPIRE_IN_FIVE_MINS : _time;
 		return this;
 	}
 
@@ -194,7 +200,7 @@ public final class JsonWebToken {
 	 */
 	public HashMap<String,String>  generateTokens() {
 		HashMap<String, String> tokens  = new HashMap<String, String>();
-		String tokenAuth 	= generateToken(subject, issuer, tokenExpiry, claimsToken);
+		String tokenAuth 	= generateToken(subject, issuer, tokenAuthExpiry, claimsToken);
 		String tokenRefresh = generateToken(subject, issuer, tokenRefreshExpiry, claimsRefreshToken);
 		tokens.put("token", tokenAuth);
 		tokens.put("refresh", tokenRefresh);
@@ -273,26 +279,42 @@ public final class JsonWebToken {
     
     /**
      * Generate Token with Claims
-     * 
-     * @param _userId
-     * @param _expiryTime
-     * @param _algo
-     * @param _claims
-     * @return
-     */
+	 *
+	 * @param _userId
+	 * @param _issuer
+	 * @param _expiryTime
+	 * @param _claims
+	 * @return
+	 */
     public String generateToken(String _userId, String _issuer, long _expiryTime, Map<String, Object> _claims) {
-    	long currentTime = System.currentTimeMillis();
-        return Jwts.builder()
-        		.setClaims(_claims)
-        		.setSubject(_userId)
-				.setIssuer(_issuer)
-        		.setIssuedAt(new Date(currentTime))
-                .setExpiration(new Date(currentTime + _expiryTime))
-				.signWith(algorithm, signingKey)
-				// .signWith(getKey())
-                // .signWith(_algo, HashData.base64Encoder(getTokenKey()))
-                .compact();
+		return generateToken( _userId,  _issuer,  _expiryTime, _claims, signingKey, algorithm);
+
     }
+
+	/**
+	 * Generate Token with Claims and with Either Secret Key or Private Key
+	 *
+	 * @param _userId
+	 * @param _issuer
+	 * @param _expiryTime
+	 * @param _claims
+	 * @param key
+	 * @param algorithm
+	 * @return
+	 */
+	public String generateToken(String _userId, String _issuer, long _expiryTime,
+								Map<String, Object> _claims, Key key, SignatureAlgorithm algorithm) {
+		long currentTime = System.currentTimeMillis();
+		return Jwts.builder()
+				.setSubject(_userId)
+				.setIssuer(_issuer)
+				.setClaims(_claims)
+				.setIssuedAt(new Date(currentTime))
+				.setExpiration(new Date(currentTime + _expiryTime))
+				// Key Secret Key or Public/Private Key
+				.signWith(key, algorithm)
+				.compact();
+	}
 
     /**
      * Validate User Id with Token
@@ -561,19 +583,78 @@ public final class JsonWebToken {
 		// Default Algo is HS512 = Hmac with SHA-512
 		JsonWebToken jwt = new JsonWebToken(SignatureAlgorithm.HS512);
 
+		String subject	 = "jane.doe";
+		String issuer    = "metarivu.com";
+		long expiry		 = JsonWebToken.EXPIRE_IN_ONE_HOUR;
+
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("aud", "microservices");
 		claims.put("jti", UUID.randomUUID().toString());
 		claims.put("did", "device id");
 		claims.put("rol", "user");
-		String subject	 = "jane.doe";
-		long expiry		 = JsonWebToken.EXPIRE_IN_ONE_HOUR;
+		claims.put("iss", issuer);
+		claims.put("sub", subject);
 
-		String token1	 = jwt.generateToken(subject, "companyName", expiry, claims);
+		String token1	 = jwt.generateToken(subject, issuer, expiry, claims);
 		System.out.println("Expiry Time in Days:Hours:Mins "+getDays(expiry) +":"+getHours(expiry)+":"+getMins(expiry));
 		tokenStats(token1);
 		if(jwt.validateToken(subject, token1)) {
 			System.out.println(">>> Token is Valid");
 		}
+		System.out.println("--------------------------------------------------------------------");
+		System.out.println("Based on Public / Private Keys");
+		generateRSAKeyPairForJWT(subject,  issuer,  expiry, claims);
+		System.out.println("--------------------------------------------------------------------");
+	}
+
+	public static void generateRSAKeyPairForJWT(String subject, String issuer, long _expiryTime, Map<String, Object> _claims) throws NoSuchAlgorithmException {
+		KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
+		keyGenerator.initialize(2048);
+
+		KeyPair kp = keyGenerator.genKeyPair();
+		PublicKey publicKey = (PublicKey) kp.getPublic();
+		PrivateKey privateKey = (PrivateKey) kp.getPrivate();
+
+		String encodedPublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+		System.out.println("Public Key:");
+		System.out.println(convertToPublicKey(encodedPublicKey));
+		String token = generateJwtToken(subject,  issuer,  _expiryTime, _claims, privateKey);
+		System.out.println("TOKEN:");
+		System.out.println(token);
+		printStructure(token, publicKey);
+	}
+
+	private static String convertToPublicKey(String key){
+		StringBuilder result = new StringBuilder();
+		result.append("-----BEGIN PUBLIC KEY-----\n");
+		result.append(key);
+		result.append("\n-----END PUBLIC KEY-----");
+		return result.toString();
+	}
+
+	private static String generateJwtToken(String subject, String issuer, long _expiryTime,
+										   Map<String, Object> _claims, PrivateKey privateKey) {
+		String token = Jwts.builder()
+				.setSubject(subject)
+				.setExpiration(new Date(_expiryTime))
+				.setIssuer(issuer)
+				.setClaims(_claims)
+				// RS256 with privateKey
+				.signWith(privateKey, SignatureAlgorithm.RS256)
+				.compact();
+		return token;
+	}
+
+	private static void printStructure(String token, PublicKey publicKey)  {
+		// Jws parseClaimsJws = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token);
+		Jws jwt = Jwts.parserBuilder()
+				.setSigningKey(publicKey)
+         		.requireIssuer("metarivu.com")
+				.build()
+				.parseClaimsJws(token);
+
+		System.out.println("Header     : " + jwt.getHeader());
+		System.out.println("Body       : " + jwt.getBody());
+		System.out.println("Signature  : " + jwt.getSignature());
 	}
 }

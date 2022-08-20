@@ -147,7 +147,7 @@ public class TokenController extends AbstractController {
 		return new JsonWebToken(SignatureAlgorithm.HS512)
 				.setSubject(subject)
 				.setIssuer(serviceConfig.getServiceOrg())
-				.setTokenExpiry(tokenAuthExpiry)
+				.setTokenAuthExpiry(tokenAuthExpiry)
 				.setTokenRefreshExpiry(tokenRefreshExpiry)
 				.addAllTokenClaims(authTokenClaims)
 				.addAllRefreshTokenClaims(refreshTokenClaims)
