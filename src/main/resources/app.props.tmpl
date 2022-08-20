@@ -19,7 +19,14 @@ service.license=Apache 2 License
 server.port=9090
 server.version=0.3.0
 server.restart=false
-server.testToken=true
+# JWT Token Details
+# ------------------------------------------------------------------------
+server.token.test=true
+server.token.auth.expiry=600000
+server.token.refresh.expiry=3600000
+server.token.key=<([1234567890SecretKey!!To??Encrypt##Data@12345%6790])>
+# Host Details
+# ------------------------------------------------------------------------
 server.host=localhost
 server.host.dev=http://localhost:${server.port}
 server.host.dev.desc=Development Server
@@ -28,8 +35,9 @@ server.host.uat.desc=UAT Server
 server.host.prod=https://prod.${service.org}.com
 server.host.prod.desc=Production Server
 #logging.level=INFO
+# Service Properties Details
+# ------------------------------------------------------------------------
 spring.codec.max-in-memory-size=3MB
-token.key=<([1234567890SecretKey!!To??Encrypt##Data@12345%6790])>
 app.property.list=element1, element2, element3
 app.property.map={key1:'val1', key2 : 'val2', key3 : 'val3'}
 # =======================================================================
@@ -61,6 +69,7 @@ spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 #spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
 # =======================================================================
 # JPA / Hibernate Properties
+# ------------------------------------------------------------------------
 spring.jpa.show-sql=true
 spring.jpa.defer-datasource-initialization=true
 #spring.sql.init.data-locations=data-trans.sql

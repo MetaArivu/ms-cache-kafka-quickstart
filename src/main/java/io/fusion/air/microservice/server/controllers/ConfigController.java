@@ -53,7 +53,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 //  "/service-name/api/v1/config"
 @RequestMapping("${service.api.path}"+ ServiceConfiguration.CONFIG_PATH)
 @RequestScope
-@Tag(name = "System", description = "Config (Environment, Secrets, ConfigMap.. etc)")
+@Tag(name = "System - Config", description = "Config (Environment, Secrets, ConfigMap.. etc)")
 public class ConfigController extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.

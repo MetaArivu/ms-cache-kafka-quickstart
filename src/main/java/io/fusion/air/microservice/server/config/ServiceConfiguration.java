@@ -164,11 +164,21 @@ public class ServiceConfiguration implements Serializable {
 	@Value("${server.restart}")
 	private boolean serverRestart;
 
-	@Value("${server.testToken}")
-	private boolean serverTestToken;
+	@Value("${server.token.test}")
+	private boolean serverTokenTest;
+
+	// server.token.auth.expiry=300000
+	@Value("${server.token.auth.expiry:300000}")
+	private long tokenAuthExpiry;
+
+	// server.token.refresh.expiry=1800000
+	@Value("${server.token.refresh.expiry:1800000}")
+	private long tokenRefreshExpiry;
+
+	@Value("${server.token.key:sigmaEpsilon6109871597}")
+	private String tokenKey;
 
 	// Database Configurations
-
 	@Value("${db.server:localhost}")
 	private String dataSourceServer;
 
@@ -201,9 +211,7 @@ public class ServiceConfiguration implements Serializable {
 	
 	@Value("${spring.codec.max-in-memory-size:3MB}")
 	private String springCodecMaxMemory;
-	
-	@Value("${token.key:sigmaEpsilon6109871597}")
-	private String tokenKey;
+
 
 	// Get All the System Properties
 	@JsonIgnore
@@ -327,8 +335,8 @@ public class ServiceConfiguration implements Serializable {
 	 *
 	 * @return
 	 */
-	public boolean isServerTestToken() {
-		return serverTestToken;
+	public boolean isServerTokenTest() {
+		return serverTokenTest;
 	}
 
 	/**
@@ -418,7 +426,7 @@ public class ServiceConfiguration implements Serializable {
 	 * @return
 	 */
 	public String getServiceAPIErrorPrefix() {
-		return (serviceApiErrorPrefix != null) ? serviceApiErrorPrefix : "99";
+		return (getServiceApiErrorPrefix() != null) ? getServiceApiErrorPrefix() : "99";
 	}
 
 	/**
@@ -569,7 +577,34 @@ public class ServiceConfiguration implements Serializable {
 		return systemProperties;
 	}
 
+	/**
+	 * Returns the Data Source Vendor (Ex. H2, PostgreSQL)
+	 * @return
+	 */
 	public String getDataSourceVendor() {
 		return dataSourceVendor;
+	}
+
+	/**
+	 * Returns the Service API Error Prefix
+	 * @return
+	 */
+	public String getServiceApiErrorPrefix() {
+		return serviceApiErrorPrefix;
+	}
+
+	/**
+	 * Returns the Auth Token Expiry
+	 * @return
+	 */
+	public long getTokenAuthExpiry() {
+		return tokenAuthExpiry;
+	}
+
+	/**
+	 * Returns the Refresh Token Expiry
+	 */
+	public long getTokenRefreshExpiry() {
+		return tokenRefreshExpiry;
 	}
 }

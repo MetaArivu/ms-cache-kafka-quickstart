@@ -54,8 +54,16 @@ public class ServiceEventListener {
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 
-	@Value("${server.testToken}")
-	private boolean serverTestToken;
+	@Value("${server.token.test}")
+	private boolean serverTokenTest;
+
+	// server.token.auth.expiry=300000
+	@Value("${server.token.auth.expiry:300000}")
+	private long tokenAuthExpiry;
+
+	// server.token.refresh.expiry=1800000
+	@Value("${server.token.refresh.expiry:1800000}")
+	private long tokenRefreshExpiry;
 
 	/**
 	 * Shows Logo and Generate Test Tokens
@@ -67,8 +75,8 @@ public class ServiceEventListener {
 	    // System.out.println(LocalDateTime.now()+"|Service is getting ready...... ");
 	    // System.out.println(LocalDateTime.now()+"|"+CPU.printCpuStats());
 		showLogo();
-		log.info("Generate Test Tokens = {} ", serverTestToken);
-		if(serviceConfig.isServerTestToken()) {
+		log.info("Generate Test Tokens = {} ", serverTokenTest);
+		if(serverTokenTest) {
 			generateTestToken();
 		}
 	}
@@ -81,33 +89,32 @@ public class ServiceEventListener {
 	 * serverTestToken=false
 	 */
 	private void generateTestToken() {
-
+		tokenAuthExpiry = (tokenAuthExpiry < 10) ? JsonWebToken.EXPIRE_IN_FIVE_MINS : tokenAuthExpiry;
+		tokenRefreshExpiry = (tokenRefreshExpiry < 10) ? JsonWebToken.EXPIRE_IN_THIRTY_MINS : tokenRefreshExpiry;
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("aud", serviceConfig.getServiceName());
 		claims.put("jti", UUID.randomUUID().toString());
 		claims.put("rol", "User");
 		claims.put("did", "Device ID");
 		String subject	 		= "jane.doe";
-		long expiryToken		= JsonWebToken.EXPIRE_IN_FIVE_MINS;
-		long expiryTokenRefresh	= JsonWebToken.EXPIRE_IN_THIRTY_MINS;
 
 		HashMap<String,String> tokens = new JsonWebToken(SignatureAlgorithm.HS512)
 										.setSubject(subject)
 										.setIssuer(serviceConfig.getServiceOrg())
-										.setTokenExpiry(expiryToken)
-										.setTokenRefreshExpiry(expiryTokenRefresh)
+										.setTokenExpiry(tokenAuthExpiry)
+										.setTokenRefreshExpiry(tokenRefreshExpiry)
 										.addAllTokenClaims(claims)
 										.addAllRefreshTokenClaims(claims)
 										.generateTokens();
 
 		String token = tokens.get("token");
 		String refresh = tokens.get("refresh");
-		log.info("Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(expiryToken),
-				JsonWebToken.getHours(expiryToken),  JsonWebToken.getMins(expiryToken) );
+		log.info("Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(tokenAuthExpiry),
+				JsonWebToken.getHours(tokenAuthExpiry),  JsonWebToken.getMins(tokenAuthExpiry) );
 		JsonWebToken.tokenStats(token, false, false);
 
-		log.info("Refresh Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(expiryTokenRefresh),
-				JsonWebToken.getHours(expiryTokenRefresh),  JsonWebToken.getMins(expiryTokenRefresh) );
+		log.info("Refresh Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(tokenRefreshExpiry),
+				JsonWebToken.getHours(tokenRefreshExpiry),  JsonWebToken.getMins(tokenRefreshExpiry) );
 		JsonWebToken.tokenStats(refresh, false, false);
 	}
 	

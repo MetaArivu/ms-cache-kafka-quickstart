@@ -64,7 +64,7 @@ import java.util.Map;
 // "/service-name/api/v1/service"
 @RequestMapping("${service.api.path}"+ ServiceConfiguration.HEALTH_PATH)
 @RequestScope
-@Tag(name = "System", description = "Health (Liveness, Readiness, ReStart.. etc)")
+@Tag(name = "System - Health", description = "Health (Liveness, Readiness, ReStart.. etc)")
 public class HealthController extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.

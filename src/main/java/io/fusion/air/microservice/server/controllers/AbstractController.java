@@ -50,7 +50,7 @@ public abstract class AbstractController {
 	public final  String name() {
 		if(serviceName == null) {
 			if(serviceConfig == null) {
-				log.debug("1|AC|TIME=|STATUS=INIT|Class=|Error Autowiring Service config!!!");
+				log.debug("1|AC|TIME=|STATUS=Error|Class=|Msg=Error in Autowiring Service config!!!");
 				serviceName = "|NoServiceName";
 			} else {
 				serviceName = "|" + serviceConfig.getServiceName() + "Service";
@@ -65,7 +65,7 @@ public abstract class AbstractController {
 	 * @param _msg
 	 * @return
 	 */
-	public StandardResponse createSuccessResponse(String _msg) {
+	public final StandardResponse createSuccessResponse(String _msg) {
 		return createSuccessResponse("200", _msg);
 	}
 
@@ -75,7 +75,7 @@ public abstract class AbstractController {
 	 * @param _msg
 	 * @return
 	 */
-	public StandardResponse createSuccessResponse(String _statusCode, String _msg) {
+	public final StandardResponse createSuccessResponse(String _statusCode, String _msg) {
 		String prefix = (serviceConfig != null) ? serviceConfig.getServiceAPIErrorPrefix() : "99";
 		StandardResponse stdResponse = new StandardResponse();
 		stdResponse.initSuccess(prefix + _statusCode, _msg);

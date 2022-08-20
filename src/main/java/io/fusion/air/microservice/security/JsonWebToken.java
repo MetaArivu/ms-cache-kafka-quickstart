@@ -44,7 +44,7 @@ public final class JsonWebToken {
 	
 	private static String TOKEN = "<([1234567890SecretKey!!To??Encrypt##Data@12345%6790])>";
 
-	public static final long EXPIRE_IN_ONE_MINS 		= 1000 * 60 * 1;
+	public static final long EXPIRE_IN_ONE_MINS 		= 1000 * 60;
 	public static final long EXPIRE_IN_FIVE_MINS 	= EXPIRE_IN_ONE_MINS * 5;
 	public static final long EXPIRE_IN_TEN_MINS 		= EXPIRE_IN_ONE_MINS * 10;
 	public static final long EXPIRE_IN_TWENTY_MINS 	= EXPIRE_IN_ONE_MINS * 20;
