@@ -19,6 +19,9 @@ import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * Password Manager Decrypts the Encrypted DB Credentials in the property file
+ * In Production Environment Use Secure Vault to Store Sensitive Information like Credentials etc
+ *
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
@@ -54,14 +57,25 @@ public class PasswordManager {
                 .append("|")
                 .append(serviceConfig.getServiceName())
                 .append("|")
-                .append(serviceConfig.getTokenKey())
+                .append(serviceConfig.getSecureDataKey())
                 .toString();
     }
 
+    /**
+     * For Testing ONLY
+     * In Production Environment Use Secure Vault to Store Sensitive Information like Credentials etc.
+     * @param args
+     */
     public static void main (String[] args) {
 
+        String seed  = "metamagic"+"|"+"ms-cache"+"|"+"<([1234567890SecretKEY!!TO??Encrypt##DATA@12345%6790])>";
         String userName = "sa";
         String password = "password";
-
+        String userNameEnc = SecureData.encrypt(userName, seed);
+        String passwordEnc = SecureData.encrypt(password, seed);
+        System.out.println("Username="+userName+" | Encrypted="+userNameEnc);
+        System.out.println("Username="+userName+" | Decrypted="+SecureData.decrypt(userNameEnc, seed));
+        System.out.println("Password="+password+" | Encrypted="+passwordEnc);
+        System.out.println("Username="+password+" | Decrypted="+SecureData.decrypt(passwordEnc, seed));
     }
 }

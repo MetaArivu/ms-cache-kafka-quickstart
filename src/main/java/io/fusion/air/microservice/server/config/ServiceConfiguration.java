@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package io.fusion.air.microservice.server.config;
-// package io.fusion.air.microservice.server.config;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -74,8 +73,6 @@ public class ServiceConfiguration implements Serializable {
 		sb.append("\"build.date\": \"").append(buildDate).append("\",");
 		sb.append("\"serverVersion\": \"").append(serverVersion).append("\",");
 		sb.append("\"server.port\": ").append(serverPort).append(",");
-		sb.append("\"remote.host\": \"").append(remoteHost).append("\",");
-		sb.append("\"remote.port\": ").append(remotePort).append(",");
 		sb.append("\"server.restart\": ").append(serverRestart).append(",");
 		sb.append("\"spring.codec.max-in-memory-size\": \"").append(springCodecMaxMemory).append("\",");
 		sb.append("\"token.key\": \"").append(tokenKey).append("\",");
@@ -177,6 +174,10 @@ public class ServiceConfiguration implements Serializable {
 
 	@Value("${server.token.key:sigmaEpsilon6109871597}")
 	private String tokenKey;
+
+	// server.secure.data.key
+	@Value("${server.secure.data.key:alphaHawk6109871597}")
+	private String secureDataKey;
 
 	// Database Configurations
 	@Value("${db.server:localhost}")
@@ -606,5 +607,13 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public long getTokenRefreshExpiry() {
 		return tokenRefreshExpiry;
+	}
+
+	/**
+	 * Secure Data Key
+	 * @return
+	 */
+	public String getSecureDataKey() {
+		return secureDataKey;
 	}
 }
