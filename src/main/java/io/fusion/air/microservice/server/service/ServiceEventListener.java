@@ -92,6 +92,8 @@ public class ServiceEventListener {
 	 * serverTestToken=false
 	 */
 	private void generateTestToken() {
+		log.info("Token Type = {}", serviceConfig.getTokenType());
+
 		tokenAuthExpiry = (tokenAuthExpiry < 10) ? JsonWebToken.EXPIRE_IN_FIVE_MINS : tokenAuthExpiry;
 		tokenRefreshExpiry = (tokenRefreshExpiry < 10) ? JsonWebToken.EXPIRE_IN_THIRTY_MINS : tokenRefreshExpiry;
 
@@ -107,6 +109,7 @@ public class ServiceEventListener {
 		claims.put("sub", subject);
 
 		HashMap<String,String> tokens = jsonWebToken
+										.init()
 										.setSubject(subject)
 										.setIssuer(issuer)
 										.setTokenAuthExpiry(tokenAuthExpiry)

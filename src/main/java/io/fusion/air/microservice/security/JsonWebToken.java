@@ -24,10 +24,14 @@ import java.util.function.Function;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.jsonwebtoken.*;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * 
@@ -36,6 +40,9 @@ import javax.crypto.spec.SecretKeySpec;
  */
 @Service
 public final class JsonWebToken {
+
+	// Set Logger -> Lookup will automatically determine the class name.
+	private static final Logger log = getLogger(lookup().lookupClass());
 	
 	private static String TOKEN = "<([1234567890SecretKey!!To??Encrypt##Data@12345%6790])>";
 
@@ -78,7 +85,7 @@ public final class JsonWebToken {
 	private Key signingKey;
 	private Key validatorKey;
 
-	private final SignatureAlgorithm algorithm;
+	private SignatureAlgorithm algorithm;
 	public final static SignatureAlgorithm defaultAlgo = SignatureAlgorithm.HS512;
 
 	private final Map<String, Object> claimsToken;
@@ -92,18 +99,30 @@ public final class JsonWebToken {
 	 * Initialize the JWT with the Signature Algorithm based on Secret Key or Public / Private Key
 	 */
 	public JsonWebToken() {
+		claimsToken 		= new HashMap<String, Object>();
+		claimsRefreshToken 	= new HashMap<String, Object>();
+	}
+
+	/**
+	 * Initialize the JsonWebToken with Token Type (Secret or Public/Private Keys) and other default claims
+	 * settings.
+	 * @return
+	 */
+	public JsonWebToken init() {
 		tokenType 			= (serviceConfig == null) ? SECRET_KEY : serviceConfig.getTokenType();
 		// Set the Algo Symmetric (Secret) OR Asymmetric (Public/Private) based on the Configuration
 		algorithm 			= (tokenType == SECRET_KEY) ? SignatureAlgorithm.HS512 : SignatureAlgorithm.RS256;
+
+		System.out.println("Token Type = "+tokenType+" Algorithm = "+algorithm);
+
 		// Create the Key based on Secret Key or Private Key
 		createSigningKey();
 
-		claimsToken 		= new HashMap<String, Object>();
-		claimsRefreshToken 	= new HashMap<String, Object>();
 		issuer				= (serviceConfig != null) ? serviceConfig.getServiceOrg() : "metarivu";
 		subject 			= "jane.doe";
 		setTokenAuthExpiry((serviceConfig != null) ? serviceConfig.getTokenAuthExpiry() : EXPIRE_IN_FIVE_MINS );
 		setTokenRefreshExpiry((serviceConfig != null) ? serviceConfig.getTokenRefreshExpiry() : EXPIRE_IN_THIRTY_MINS );
+		return this;
 	}
 
 	/**
@@ -127,6 +146,8 @@ public final class JsonWebToken {
 				.build();
 				signingKey = getCryptoKeyGenerator().getPrivateKey();
 				validatorKey = getCryptoKeyGenerator().getPublicKey();
+				System.out.println("Public key format: " + getCryptoKeyGenerator().getPublicKey().getFormat());
+				System.out.println(getCryptoKeyGenerator().getPublicKeyPEMFormat());
 				break;
 		}
 
@@ -239,6 +260,7 @@ public final class JsonWebToken {
 	 * refresh = Refresh token to re-generate the Authorize Token
 	 * API Usage
 	 * HashMap<String,String> tokens = new JsonWebToken()
+	 * 									.init()
 	 * 									.setSubject("user")
 	 * 									.setIssuer("company")
 	 * 									.setTokenExpiry(JsonWebToken.EXPIRE_IN_FIVE_MINS)

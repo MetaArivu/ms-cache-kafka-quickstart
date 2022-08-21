@@ -290,7 +290,7 @@ public class CryptoKeyGenerator {
 
         System.out.println("Private key format: " + priKey.getFormat());
         System.out.println(keys.getPrivateKeyPEMFormat());
-        System.out.println("Public  key format: " + pubKey.getFormat());
+        System.out.println("Public key format: " + pubKey.getFormat());
         System.out.println(keys.getPublicKeyPEMFormat());
 
         // System.out.println("<><><>\n");
