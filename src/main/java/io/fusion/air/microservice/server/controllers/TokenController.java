@@ -15,10 +15,12 @@
  */
 package io.fusion.air.microservice.server.controllers;
 
+import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.exceptions.*;
 import io.fusion.air.microservice.adapters.security.AuthorizeRequestAspect;
 import io.fusion.air.microservice.adapters.security.ValidateRefreshToken;
 import io.fusion.air.microservice.domain.models.StandardResponse;
+import io.fusion.air.microservice.security.CryptoKeyGenerator;
 import io.fusion.air.microservice.security.JsonWebToken;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.jsonwebtoken.Claims;
@@ -71,6 +73,9 @@ public class TokenController extends AbstractController {
 	@Autowired
 	private JsonWebToken jsonWebToken;
 
+	@Autowired
+	private CryptoKeyGenerator cryptoKeys;
+
 	// server.token.auth.expiry=300000
 	@Value("${server.token.auth.expiry:300000}")
 	private long tokenAuthExpiry;
@@ -78,6 +83,48 @@ public class TokenController extends AbstractController {
 	// server.token.refresh.expiry=1800000
 	@Value("${server.token.refresh.expiry:1800000}")
 	private long tokenRefreshExpiry;
+
+	@AuthorizationRequired(role = "User")
+	@Operation(summary = "Get the Key", security = { @SecurityRequirement(name = "bearer-key") })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Key Retrieved",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Key Retrieval Failed!",
+					content = @Content)
+	})
+	@GetMapping("/publickey")
+	@ResponseBody
+	public ResponseEntity<StandardResponse> getPublicKey(HttpServletRequest request) throws Exception {
+		log.debug(name()+"|Request to Generate Tokens... ");
+		cryptoKeys.setKeyFiles(getCryptoPublicKeyFile(), getCryptoPrivateKeyFile())
+				.readRSAKeyFiles();
+		StandardResponse stdResponse = createSuccessResponse("Public Key Retrieved!");
+		// Send the Token in the Body (This is NOT Required and ONLY for Testing Purpose)
+		HashMap<String,String> data = new HashMap<String,String>();
+		data.put("type", "Public-Key");
+		data.put("format", cryptoKeys.getPublicKey().getFormat());
+		data.put("key", cryptoKeys.getPublicKeyPEMFormat());
+		stdResponse.setPayload(data);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Returns Crypto Public Key File
+	 * @return
+	 */
+	private String getCryptoPublicKeyFile() {
+		return (serviceConfig != null) ? serviceConfig.getCryptoPublicKeyFile() : "publicKey.pem";
+	}
+
+	/**
+	 * Returns Crypto Private Key File
+	 * @return
+	 */
+	private String getCryptoPrivateKeyFile() {
+		return (serviceConfig != null) ? serviceConfig.getCryptoPrivateKeyFile() : "privateKey.pem";
+	}
 
 	/**
 	 * Get Method Call To Generate Authorization Token if the Refresh Token is Valid.

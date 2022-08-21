@@ -77,6 +77,10 @@ public class CryptoKeyGenerator {
         return this;
     }
 
+    /**
+     * Checks if the Public / Private Key File Exists
+     * @return
+     */
     public CryptoKeyGenerator iFPublicPrivateKeyFileNotFound() {
         publicKeyFileExists = (publicKeyFile == null || !publicKeyFile.exists()) ? false : true;
         privateKeyFileExists = (privateKeyFile == null || !privateKeyFile.exists()) ? false : true;
@@ -85,6 +89,9 @@ public class CryptoKeyGenerator {
 
     public CryptoKeyGenerator THEN() { return this; }
 
+    /**
+     * Generate the Public / Private Keys if the File doesnt exists
+     */
     public CryptoKeyGenerator createRSAKeyFiles()  {
         if(!publicKeyFileExists) {
             try {
@@ -97,10 +104,18 @@ public class CryptoKeyGenerator {
         return this;
     }
 
+    /**
+     * Else Read the Files to load the Public / Private Keys
+     * @return
+     */
     public CryptoKeyGenerator ELSE()   {
-        return readRSAKeyFiles();
+        return this;
     }
 
+    /**
+     * Read The Files
+     * @return
+     */
     public CryptoKeyGenerator readRSAKeyFiles() {
         // File Exists - Then Read the PEM File
         try {

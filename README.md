@@ -86,6 +86,16 @@ Without generated application.properties file the service will NOT be running.
 ### MS Cache Swagger UI Docs for Testing
 ![Swagger Docs](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Cache-Swagger-UI.jpg)
 
+## Import Swagger API Docs Into Postman
+
+### Step 1: Swagger Open API 3.0 Docs JSON Format
+![Swagger JSON](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/Import-API-into-Postman-0.jpg)
+
+### Step 2: Import Into Postman - Set the Link
+![Postman Import](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/Import-API-Into-Postman-1.jpg)
+
+### Step 3: Import Into Postman - Confirm
+![Postman Import](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/Import-API-into-Postman-2.jpg)
 
 ## Docker Container Setup
 
