@@ -1,4 +1,9 @@
 # =======================================================================
+# MS-Cache Service Properties
+# =======================================================================
+build.number=79
+build.date=Sun Aug 21 08:12:09 IST 2022
+# =======================================================================
 # Service Name & API Details -  Version, Path
 # =======================================================================
 service.org=metamagic
@@ -24,7 +29,6 @@ server.restart=false
 # ------------------------------------------------------------------------
 server.crypto.public.key=publicKey.pem
 server.crypto.private.key=privateKey.pem
-server.token.issuer=${service.org}
 server.token.type=1
 server.token.test=true
 server.token.auth.expiry=600000

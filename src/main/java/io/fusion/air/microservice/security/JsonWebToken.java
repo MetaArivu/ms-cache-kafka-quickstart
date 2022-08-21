@@ -486,15 +486,6 @@ public final class JsonWebToken {
      * @return
      */
     public Claims getAllClaims(String _token) {
-    	/**
-		return Jwts
-        		.parser()
-				// .signWith(signingKey)
-        		.setSigningKey(signingKey)
-				// .signWith(signingKey, algorithm)
-				.parseClaimsJws(_token)
-        		.getBody();
-		 */
 		return Jwts.parserBuilder()
 				.setSigningKey(validatorKey)
 				.requireIssuer(issuer)

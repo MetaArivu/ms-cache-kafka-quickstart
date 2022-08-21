@@ -169,6 +169,10 @@ public class ServiceConfiguration implements Serializable {
 	@Value("${server.crypto.private.key:privateKey.pem}")
 	private String cryptoPrivateKeyFile;
 
+	// server.token.issuer=${service.org}
+	@Value("${server.token.issuer}")
+	private String tokenIssuer;
+
 	// server.token.type=1
 	// (Type 1 = secret key, 2 = public / private key)
 	@Value("${server.token.type:1}")
@@ -655,5 +659,12 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public String getCryptoPrivateKeyFile() {
 		return cryptoPrivateKeyFile;
+	}
+
+	/**
+	 * Returns the Token Issuer
+	 */
+	public String getTokenIssuer() {
+		return tokenIssuer;
 	}
 }
