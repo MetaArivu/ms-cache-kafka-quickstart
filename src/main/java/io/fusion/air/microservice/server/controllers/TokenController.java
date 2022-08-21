@@ -22,7 +22,6 @@ import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.security.JsonWebToken;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -70,7 +69,7 @@ public class TokenController extends AbstractController {
 	private String serviceName;
 
 	@Autowired
-	private JsonWebToken jwtUtil;
+	private JsonWebToken jsonWebToken;
 
 	// server.token.auth.expiry=300000
 	@Value("${server.token.auth.expiry:300000}")
@@ -108,9 +107,9 @@ public class TokenController extends AbstractController {
 		log.debug(name()+"|Request to Generate Tokens... ");
 		//  final String authToken = getToken(request.getHeader(AuthorizeRequestAspect.AUTH_TOKEN));
 		final String refreshToken = getToken(request.getHeader(AuthorizeRequestAspect.REFRESH_TOKEN));
-		String subject = jwtUtil.getSubjectFromToken(refreshToken);
+		String subject = jsonWebToken.getSubjectFromToken(refreshToken);
 		// Claims authTokenClaims = jwtUtil.getAllClaims(authToken);
-		Claims refreshTokenClaims = jwtUtil.getAllClaims(refreshToken);
+		Claims refreshTokenClaims = jsonWebToken.getAllClaims(refreshToken);
 		HashMap<String, String> tokens = refreshTokens(subject, refreshTokenClaims, refreshTokenClaims);
 		StandardResponse stdResponse = createSuccessResponse("Tokens Generated!");
 		// Send the Token in the Body (This is NOT Required and ONLY for Testing Purpose)
@@ -144,7 +143,7 @@ public class TokenController extends AbstractController {
 												  Claims authTokenClaims, Claims refreshTokenClaims) {
 		tokenAuthExpiry = (tokenAuthExpiry < 10) ? JsonWebToken.EXPIRE_IN_FIVE_MINS : tokenAuthExpiry;
 		tokenRefreshExpiry = (tokenRefreshExpiry < 10) ? JsonWebToken.EXPIRE_IN_THIRTY_MINS : tokenRefreshExpiry;
-		return new JsonWebToken(SignatureAlgorithm.HS512)
+		return jsonWebToken
 				.setSubject(subject)
 				.setIssuer(serviceConfig.getServiceOrg())
 				.setTokenAuthExpiry(tokenAuthExpiry)

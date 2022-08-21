@@ -64,13 +64,20 @@ public final class JsonWebToken {
 	public static final long EXPIRE_IN_FIVE_YEARS 	= EXPIRE_IN_ONE_YEAR * 5;
 	public static final long EXPIRE_IN_TEN_YEARS 	= EXPIRE_IN_ONE_YEAR * 10;
 
+	public static final int SECRET_KEY 				= 1;
+	public static final int PUBLIC_KEY				= 2;
+
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 
 	@Autowired
-	private GenerateCryptoKeys cryptoKeys;
+	private CryptoKeyGenerator cryptoKeys;
+
+	private int tokenType;
 
 	private Key signingKey;
+	private Key validatorKey;
+
 	private final SignatureAlgorithm algorithm;
 	public final static SignatureAlgorithm defaultAlgo = SignatureAlgorithm.HS512;
 
@@ -82,33 +89,76 @@ public final class JsonWebToken {
 	private long tokenRefreshExpiry;
 
 	/**
-	 * Initialize the JWT with Default Algorithm
+	 * Initialize the JWT with the Signature Algorithm based on Secret Key or Public / Private Key
 	 */
 	public JsonWebToken() {
-		this(1, defaultAlgo);
+		tokenType 			= (serviceConfig == null) ? SECRET_KEY : serviceConfig.getTokenType();
+		// Set the Algo Symmetric (Secret) OR Asymmetric (Public/Private) based on the Configuration
+		algorithm 			= (tokenType == SECRET_KEY) ? SignatureAlgorithm.HS512 : SignatureAlgorithm.RS256;
+		// Create the Key based on Secret Key or Private Key
+		createSigningKey();
+
+		claimsToken 		= new HashMap<String, Object>();
+		claimsRefreshToken 	= new HashMap<String, Object>();
+		issuer				= (serviceConfig != null) ? serviceConfig.getServiceOrg() : "metarivu";
+		subject 			= "jane.doe";
+		setTokenAuthExpiry((serviceConfig != null) ? serviceConfig.getTokenAuthExpiry() : EXPIRE_IN_FIVE_MINS );
+		setTokenRefreshExpiry((serviceConfig != null) ? serviceConfig.getTokenRefreshExpiry() : EXPIRE_IN_THIRTY_MINS );
 	}
 
 	/**
+	 * Create the Key based on  Secret Key or Public / Private Key
 	 *
-	 * @param _algorithm
+	 * @return
 	 */
-	public JsonWebToken(SignatureAlgorithm _algorithm) {
-		this(1, _algorithm);
+	private void createSigningKey() {
+		switch(tokenType) {
+			case SECRET_KEY:
+				signingKey = new SecretKeySpec(getTokenKeyBytes(), algorithm.getJcaName());
+				validatorKey = signingKey;
+				break;
+			case PUBLIC_KEY:
+				getCryptoKeyGenerator()
+				.setKeyFiles(serviceConfig.getCryptoPublicKeyFile(), serviceConfig.getCryptoPrivateKeyFile())
+				.iFPublicPrivateKeyFileNotFound().THEN()
+					.createRSAKeyFiles()
+				.ELSE()
+					.readRSAKeyFiles()
+				.build();
+				signingKey = getCryptoKeyGenerator().getPrivateKey();
+				validatorKey = getCryptoKeyGenerator().getPublicKey();
+				break;
+		}
+
 	}
 
-		/**
-         * Initialize the JWT with the Signature Algorithm
-         * @param _algorithm
-         */
-	public JsonWebToken(int _type, SignatureAlgorithm _algorithm) {
-		algorithm 			= _algorithm;
-		signingKey 			= new SecretKeySpec(getTokenKeyBytes(), algorithm.getJcaName());
-		claimsToken 		= new HashMap<String, Object>();
-		claimsRefreshToken 	= new HashMap<String, Object>();
-		issuer				= "metarivu";
-		subject 			= "jane.doe";
-		tokenAuthExpiry 	= (tokenAuthExpiry < 10) ? EXPIRE_IN_FIVE_MINS : tokenAuthExpiry;
-		tokenRefreshExpiry 	= (tokenRefreshExpiry < 10) ? EXPIRE_IN_THIRTY_MINS : tokenRefreshExpiry;
+	/**
+	 * Returns Token Key -
+	 * In SpringBooT Context from ServiceConfiguration
+	 * Else from Static TOKEN Key
+	 * @return
+	 */
+	private String getTokenKey() {
+		return (serviceConfig != null) ? serviceConfig.getTokenKey() : TOKEN;
+	}
+
+	/**
+	 * Returns the Token Key in Bytes
+	 * @return
+	 */
+	private byte[] getTokenKeyBytes() {
+		return HashData.base64Encoder(getTokenKey()).getBytes();
+	}
+
+	/**
+	 * Returns CryptoKeyGenerator
+	 * @return
+	 */
+	private CryptoKeyGenerator getCryptoKeyGenerator() {
+		if(cryptoKeys == null) {
+			cryptoKeys = new CryptoKeyGenerator();
+		}
+		return cryptoKeys;
 	}
 
 	/**
@@ -148,7 +198,7 @@ public final class JsonWebToken {
 	 * @return
 	 */
 	public JsonWebToken setTokenRefreshExpiry(long _time)   {
-		tokenRefreshExpiry = _time;
+		tokenRefreshExpiry = (_time < EXPIRE_IN_THIRTY_MINS) ? EXPIRE_IN_THIRTY_MINS : _time;;
 		return this;
 	}
 
@@ -188,7 +238,7 @@ public final class JsonWebToken {
 	 * token = Authorization Token
 	 * refresh = Refresh token to re-generate the Authorize Token
 	 * API Usage
-	 * HashMap<String,String> tokens = new JsonWebToken(SignatureAlgorithm.HS512)
+	 * HashMap<String,String> tokens = new JsonWebToken()
 	 * 									.setSubject("user")
 	 * 									.setIssuer("company")
 	 * 									.setTokenExpiry(JsonWebToken.EXPIRE_IN_FIVE_MINS)
@@ -233,24 +283,6 @@ public final class JsonWebToken {
 		return signingKey;
 	}
 
-	/**
-	 * Returns Token Key - 
-	 * In SpringBooT Context from ServiceConfiguration
-	 * Else from Static TOKEN Key
-	 * @return
-	 */
-	private String getTokenKey() {
-		return (serviceConfig != null) ? serviceConfig.getTokenKey() : TOKEN;
-	}
-
-	/**
-	 * Returns the Token Key in Bytes
-	 * @return
-	 */
-	private byte[] getTokenKeyBytes() {
-		return HashData.base64Encoder(getTokenKey()).getBytes();
-	}
-
     /**
      * Generate Token for the User
      *  
@@ -262,7 +294,7 @@ public final class JsonWebToken {
         Map<String, Object> claims = new HashMap<>();
         claims.put("aud", "general");
         claims.put("jti", UUID.randomUUID().toString());
-        return generateToken(_userId,"metarivu",_expiryTime,claims);
+        return generateToken(_userId,issuer,_expiryTime,claims);
     }
 
     /**
@@ -274,7 +306,7 @@ public final class JsonWebToken {
      * @return
      */
     public String generateToken(String _userId, long _expiryTime, Map<String, Object> _claims) {
-        return generateToken(_userId,"metarivu",_expiryTime, _claims);
+        return generateToken(_userId,issuer,_expiryTime, _claims);
     }
     
     /**
@@ -454,19 +486,40 @@ public final class JsonWebToken {
      * @return
      */
     public Claims getAllClaims(String _token) {
+    	/**
 		return Jwts
         		.parser()
 				// .signWith(signingKey)
         		.setSigningKey(signingKey)
-				// .signWith(algorithm, signingKey)
+				// .signWith(signingKey, algorithm)
 				.parseClaimsJws(_token)
         		.getBody();
+		 */
+		return Jwts.parserBuilder()
+				.setSigningKey(validatorKey)
+				.requireIssuer(issuer)
+				.build()
+				.parseClaimsJws(_token)
+				.getBody();
     }
+
+	/**
+	 * Returns Jws
+	 * @param _token
+	 * @return
+	 */
+	public Jws getJws(String _token) {
+		return Jwts.parserBuilder()
+				.setSigningKey(validatorKey)
+				.requireIssuer(issuer)
+				.build()
+				.parseClaimsJws(_token);
+	}
 	/**
 	 * Print Token Stats
 	 * @param token
 	 */
-	public static void tokenStats(String token) {
+	public void tokenStats(String token) {
 		tokenStats(token, true, true);
 	}
 
@@ -475,7 +528,7 @@ public final class JsonWebToken {
 	 * @param token
 	 * @param showClaims
 	 */
-	public static void tokenStats(String token,  boolean showClaims) {
+	public void tokenStats(String token,  boolean showClaims) {
 		tokenStats(token, showClaims, false);
 	}
 
@@ -485,20 +538,24 @@ public final class JsonWebToken {
 	 * @param showClaims
 	 * @param showPayload
 	 */
-    public static void tokenStats(String token, boolean showClaims, boolean showPayload) {
-		JsonWebToken jwt = new JsonWebToken();
+    public void tokenStats(String token, boolean showClaims, boolean showPayload) {
 		System.out.println("-------------- aaa.bbb.ccc -------------------");
 		System.out.println(token);
 		System.out.println("-------------- ----------- -------------------");
-		System.out.println("Subject  = "+jwt.getSubjectFromToken(token));
-		System.out.println("Audience = "+jwt.getAudienceFromToken(token));
-		System.out.println("Issuer   = "+jwt.getIssuerFromToken(token));
-		System.out.println("IssuedAt = "+jwt.getIssuedAtFromToken(token));
-		System.out.println("Expiry   = "+jwt.getExpiryDateFromToken(token));
-		System.out.println("Expired  = "+jwt.isTokenExpired(token));
+		System.out.println("Subject  = "+getSubjectFromToken(token));
+		System.out.println("Audience = "+getAudienceFromToken(token));
+		System.out.println("Issuer   = "+getIssuerFromToken(token));
+		System.out.println("IssuedAt = "+getIssuedAtFromToken(token));
+		System.out.println("Expiry   = "+getExpiryDateFromToken(token));
+		System.out.println("Expired  = "+isTokenExpired(token));
 		System.out.println("----------------------------------------------");
+		Jws jws = getJws(token);
+
+		System.out.println("Header     : " + jws.getHeader());
+		System.out.println("Body       : " + jws.getBody());
+		System.out.println("Signature  : " + jws.getSignature());
 		if(showClaims) {
-			Claims claims = jwt.getAllClaims(token);
+			Claims claims = getAllClaims(token);
 			int x = 1;
 			for (Entry<String, Object> o : claims.entrySet()) {
 				System.out.println(x + "> " + o);
@@ -507,7 +564,7 @@ public final class JsonWebToken {
 		}
 		if(showPayload) {
 			System.out.println("----------------------------------------------");
-			System.out.println("Payload=" + jwt.getPayload(token));
+			System.out.println("Payload=" + getPayload(token));
 			System.out.println("----------------------------------------------");
 		}
 
@@ -580,8 +637,9 @@ public final class JsonWebToken {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		// Default Algo is HS512 = Hmac with SHA-512
-		JsonWebToken jwt = new JsonWebToken(SignatureAlgorithm.HS512);
+		// Default Algo Secret Key is HS512 = Hmac with SHA-512
+		// for Public / Private Key is RS256
+		JsonWebToken jwt = new JsonWebToken();
 
 		String subject	 = "jane.doe";
 		String issuer    = "metarivu.com";
@@ -597,7 +655,7 @@ public final class JsonWebToken {
 
 		String token1	 = jwt.generateToken(subject, issuer, expiry, claims);
 		System.out.println("Expiry Time in Days:Hours:Mins "+getDays(expiry) +":"+getHours(expiry)+":"+getMins(expiry));
-		tokenStats(token1);
+		jwt.tokenStats(token1);
 		if(jwt.validateToken(subject, token1)) {
 			System.out.println(">>> Token is Valid");
 		}

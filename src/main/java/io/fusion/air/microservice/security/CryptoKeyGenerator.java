@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
  * @date:
  */
 @Component
-public class GenerateCryptoKeys {
+public class CryptoKeyGenerator {
 
     public final static String PUBLIC = "PUBLIC";
     private final static String PRIVATE = "PRIVATE";
@@ -45,22 +45,102 @@ public class GenerateCryptoKeys {
     private PublicKey publicKey;
     private PrivateKey privateKey;
 
+    private File publicKeyFile;
+    private File privateKeyFile;
+
+    private boolean publicKeyFileExists = false;
+    private boolean privateKeyFileExists = false;
+
     /**
      * Instantiate Generate Crypto Keys
+     * CryptoKeyGenerator cryptoKeys = new CryptoKeyGenerator()
+     *                                  .setKeyFiles(publicKeyFileName, privateKeyFileName)
+     *                                  .iFPublicPrivateKeyFileNotFound().THEN()
+     *                                      .createRSAKeyFiles()
+     *                                  .ELSE()
+     *                                      .readRSAKeyFiles()
+     *                                  .build();
+     *
      */
-    public GenerateCryptoKeys() {
+    public CryptoKeyGenerator() {
+    }
+
+    /**
+     * Set the Crypto Key File Names
+     * @param _publicKeyFile
+     * @param _privateKeyFile
+     * @return
+     */
+    public CryptoKeyGenerator setKeyFiles(String _publicKeyFile, String _privateKeyFile) {
+        publicKeyFile = new File(_publicKeyFile);
+        privateKeyFile = new File(_privateKeyFile);
+        return this;
+    }
+
+    public CryptoKeyGenerator iFPublicPrivateKeyFileNotFound() {
+        publicKeyFileExists = (publicKeyFile == null || !publicKeyFile.exists()) ? false : true;
+        privateKeyFileExists = (privateKeyFile == null || !privateKeyFile.exists()) ? false : true;
+        return this;
+    }
+
+    public CryptoKeyGenerator THEN() { return this; }
+
+    public CryptoKeyGenerator createRSAKeyFiles()  {
+        if(!publicKeyFileExists) {
+            try {
+                generateRSAKeyPair();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            writeKeyFiles();
+        }
+        return this;
+    }
+
+    public CryptoKeyGenerator ELSE()   {
+        return readRSAKeyFiles();
+    }
+
+    public CryptoKeyGenerator readRSAKeyFiles() {
+        // File Exists - Then Read the PEM File
+        try {
+            publicKey = readPublicKey(publicKeyFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            privateKey = readPrivateKey(privateKeyFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
+    public CryptoKeyGenerator build()  {
+        return this;
     }
 
     /**
      * Generate RSA Key Pair
      * @throws NoSuchAlgorithmException
      */
-    public void generateRSAKeyPair() throws NoSuchAlgorithmException {
+    public CryptoKeyGenerator generateRSAKeyPair() throws NoSuchAlgorithmException {
         KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
         keyGenerator.initialize(2048);
         KeyPair kp = keyGenerator.genKeyPair();
         publicKey = (PublicKey) kp.getPublic();
         privateKey = (PrivateKey) kp.getPrivate();
+        return this;
+    }
+
+    /**
+     *
+     * @return
+     */
+    private CryptoKeyGenerator writeKeyFiles() {
+        writePEMFile(publicKey, publicKeyFile.getName(), "RSA PUBLIC KEY");
+        writePEMFile(privateKey, privateKeyFile.getName(), "RSA PRIVATE KEY");
+        return this;
     }
 
     /**
@@ -203,7 +283,7 @@ public class GenerateCryptoKeys {
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        GenerateCryptoKeys keys = new GenerateCryptoKeys();
+        CryptoKeyGenerator keys = new CryptoKeyGenerator();
         keys.generateRSAKeyPair();
         Key pubKey = keys.getPublicKey();
         Key priKey = keys.getPrivateKey();

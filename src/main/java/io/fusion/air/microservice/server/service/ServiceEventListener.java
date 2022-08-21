@@ -54,6 +54,9 @@ public class ServiceEventListener {
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 
+	@Autowired
+	JsonWebToken jsonWebToken;
+
 	@Value("${server.token.test}")
 	private boolean serverTokenTest;
 
@@ -94,7 +97,7 @@ public class ServiceEventListener {
 
 		String subject	 = "jane.doe";
 		String issuer    = serviceConfig.getServiceOrg();
-		
+
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("aud", serviceConfig.getServiceName());
 		claims.put("jti", UUID.randomUUID().toString());
@@ -103,7 +106,7 @@ public class ServiceEventListener {
 		claims.put("iss", issuer);
 		claims.put("sub", subject);
 
-		HashMap<String,String> tokens = new JsonWebToken(SignatureAlgorithm.HS512)
+		HashMap<String,String> tokens = jsonWebToken
 										.setSubject(subject)
 										.setIssuer(issuer)
 										.setTokenAuthExpiry(tokenAuthExpiry)
@@ -116,11 +119,11 @@ public class ServiceEventListener {
 		String refresh = tokens.get("refresh");
 		log.info("Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(tokenAuthExpiry),
 				JsonWebToken.getHours(tokenAuthExpiry),  JsonWebToken.getMins(tokenAuthExpiry) );
-		JsonWebToken.tokenStats(token, false, false);
+		jsonWebToken.tokenStats(token, false, false);
 
 		log.info("Refresh Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(tokenRefreshExpiry),
 				JsonWebToken.getHours(tokenRefreshExpiry),  JsonWebToken.getMins(tokenRefreshExpiry) );
-		JsonWebToken.tokenStats(refresh, false, false);
+		jsonWebToken.tokenStats(refresh, false, false);
 	}
 	
 	/**
