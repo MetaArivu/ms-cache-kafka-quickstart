@@ -93,7 +93,6 @@ public class ServiceEventListener {
 	 */
 	private void generateTestToken() {
 		log.info("Token Type = {}", serviceConfig.getTokenType());
-
 		tokenAuthExpiry = (tokenAuthExpiry < 10) ? JsonWebToken.EXPIRE_IN_FIVE_MINS : tokenAuthExpiry;
 		tokenRefreshExpiry = (tokenRefreshExpiry < 10) ? JsonWebToken.EXPIRE_IN_THIRTY_MINS : tokenRefreshExpiry;
 
@@ -109,7 +108,7 @@ public class ServiceEventListener {
 		claims.put("sub", subject);
 
 		HashMap<String,String> tokens = jsonWebToken
-										.init()
+										.init(serviceConfig.getTokenType())
 										.setSubject(subject)
 										.setIssuer(issuer)
 										.setTokenAuthExpiry(tokenAuthExpiry)
@@ -120,12 +119,10 @@ public class ServiceEventListener {
 
 		String token = tokens.get("token");
 		String refresh = tokens.get("refresh");
-		log.info("Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(tokenAuthExpiry),
-				JsonWebToken.getHours(tokenAuthExpiry),  JsonWebToken.getMins(tokenAuthExpiry) );
+		log.info("Token Expiry in Days:Hours:Mins  {} ", JsonWebToken.printExpiryTime(tokenAuthExpiry));
 		jsonWebToken.tokenStats(token, false, false);
 
-		log.info("Refresh Token Expiry in Days:or:Hours:or:Mins  {}:{}:{} ", JsonWebToken.getDays(tokenRefreshExpiry),
-				JsonWebToken.getHours(tokenRefreshExpiry),  JsonWebToken.getMins(tokenRefreshExpiry) );
+		log.info("Refresh Token Expiry in Days:Hours:Mins  {}", JsonWebToken.printExpiryTime(tokenRefreshExpiry));
 		jsonWebToken.tokenStats(refresh, false, false);
 	}
 	

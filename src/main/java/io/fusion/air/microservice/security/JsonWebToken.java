@@ -17,6 +17,7 @@
 package io.fusion.air.microservice.security;
 
 import java.security.*;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -42,7 +43,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public final class JsonWebToken {
 
 	// Set Logger -> Lookup will automatically determine the class name.
-	private static final Logger log = getLogger(lookup().lookupClass());
+	//  private static final Logger log = getLogger(lookup().lookupClass());
 	
 	private static String TOKEN = "<([1234567890SecretKey!!To??Encrypt##Data@12345%6790])>";
 
@@ -104,17 +105,25 @@ public final class JsonWebToken {
 	}
 
 	/**
-	 * Initialize the JsonWebToken with Token Type (Secret or Public/Private Keys) and other default claims
+	 * Initialize the JsonWebToken with Token Type Secret Keys and other default claims
 	 * settings.
 	 * @return
 	 */
 	public JsonWebToken init() {
-		tokenType 			= (serviceConfig == null) ? SECRET_KEY : serviceConfig.getTokenType();
+		return init(SECRET_KEY);
+	}
+
+	/**
+	 * Initialize the JsonWebToken with Token Type (Secret or Public/Private Keys) and other default claims
+	 * settings.
+	 * @return
+	 */
+	public JsonWebToken init(int _tokenType) {
+		tokenType 			= _tokenType;
 		// Set the Algo Symmetric (Secret) OR Asymmetric (Public/Private) based on the Configuration
 		algorithm 			= (tokenType == SECRET_KEY) ? SignatureAlgorithm.HS512 : SignatureAlgorithm.RS256;
 
 		System.out.println("Token Type = "+tokenType+" Algorithm = "+algorithm);
-
 		// Create the Key based on Secret Key or Private Key
 		createSigningKey();
 
@@ -138,7 +147,7 @@ public final class JsonWebToken {
 				break;
 			case PUBLIC_KEY:
 				getCryptoKeyGenerator()
-				.setKeyFiles(serviceConfig.getCryptoPublicKeyFile(), serviceConfig.getCryptoPrivateKeyFile())
+				.setKeyFiles(getCryptoPublicKeyFile(), getCryptoPrivateKeyFile())
 				.iFPublicPrivateKeyFileNotFound().THEN()
 					.createRSAKeyFiles()
 				.ELSE()
@@ -150,7 +159,22 @@ public final class JsonWebToken {
 				System.out.println(getCryptoKeyGenerator().getPublicKeyPEMFormat());
 				break;
 		}
+	}
 
+	/**
+	 * Returns Crypto Public Key File
+	 * @return
+	 */
+	private String getCryptoPublicKeyFile() {
+		return (serviceConfig != null) ? serviceConfig.getCryptoPublicKeyFile() : "publicKey.pem";
+	}
+
+	/**
+	 * Returns Crypto Private Key File
+	 * @return
+	 */
+	private String getCryptoPrivateKeyFile() {
+		return (serviceConfig != null) ? serviceConfig.getCryptoPrivateKeyFile() : "privateKey.pem";
 	}
 
 	/**
@@ -582,33 +606,23 @@ public final class JsonWebToken {
 		}
 
     }
-    
-    /**
-     * Returns the Expiry in Days
-     * 
-     * @param _time
-     * @return
-     */
-    public static double getDays(long _time) {
-    	return _time / (1000 * 60 * 60 * 24);
-    }
 
 	/**
-	 * Returns the Expiry in Hours
+	 * Returns Expiry Time in Days:Hours:Mins
 	 * @param _time
 	 * @return
 	 */
-	public static double getHours(long _time) {
-		return _time / (1000 * 60 * 60);
-	}
-
-	/**
-	 * Returns the Expiry in Minutes
-	 * @param _time
-	 * @return
-	 */
-	public static double getMins(long _time) {
-		return _time / (1000 * 60);
+	public static String printExpiryTime(long _time) {
+		String ms="0", hs="0", ds="0";
+		long m = _time / (1000 * 60);
+		long h = _time / (1000 * 60 * 60);
+		long d = _time / (1000 * 60 * 60 * 24);
+		if(m > 59) { m = m-(h*60); }
+		if(h > 23) { h = h-(d*24);}
+		ms = (m<10) ? ms + m : ""+m;
+		hs = (h<10) ? hs + h : ""+h;
+		ds = (d<10) ? ds + d : ""+d;
+		return ds + ":" + hs + ":" + ms;
 	}
 
 	/**
@@ -650,82 +664,69 @@ public final class JsonWebToken {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
+		System.out.println("===============================================================================");
+		System.out.println("Generate Json Web Tokens Based on SECRET KEYS");
+		System.out.println("===============================================================================");
+		testJWTCreation(JsonWebToken.SECRET_KEY);
+		System.out.println("===============================================================================");
+		System.out.println("Generate Json Web Tokens Based on PUBLIC/PRIVATE KEYS");
+		System.out.println("===============================================================================");
+		testJWTCreation(JsonWebToken.PUBLIC_KEY);
+		System.out.println("===============================================================================");
+	}
+
+	/**
+	 * Test JWT Creation
+	 * @param _tokenType
+	 */
+	protected static void testJWTCreation(int _tokenType) {
 		// Default Algo Secret Key is HS512 = Hmac with SHA-512
 		// for Public / Private Key is RS256
-		JsonWebToken jwt = new JsonWebToken();
+		JsonWebToken jsonWebToken = new JsonWebToken();
+
+		long tokenAuthExpiry = JsonWebToken.EXPIRE_IN_FIVE_MINS;
+		long tokenRefreshExpiry = JsonWebToken.EXPIRE_IN_THIRTY_MINS;
 
 		String subject	 = "jane.doe";
 		String issuer    = "metarivu.com";
-		long expiry		 = JsonWebToken.EXPIRE_IN_ONE_HOUR;
 
 		Map<String, Object> claims = new HashMap<>();
-		claims.put("aud", "microservices");
+		claims.put("aud", "generic");
 		claims.put("jti", UUID.randomUUID().toString());
-		claims.put("did", "device id");
-		claims.put("rol", "user");
+		claims.put("rol", "User");
+		claims.put("did", "Device ID");
 		claims.put("iss", issuer);
 		claims.put("sub", subject);
 
-		String token1	 = jwt.generateToken(subject, issuer, expiry, claims);
-		System.out.println("Expiry Time in Days:Hours:Mins "+getDays(expiry) +":"+getHours(expiry)+":"+getMins(expiry));
-		jwt.tokenStats(token1);
-		if(jwt.validateToken(subject, token1)) {
-			System.out.println(">>> Token is Valid");
-		}
-		System.out.println("--------------------------------------------------------------------");
-		System.out.println("Based on Public / Private Keys");
-		generateRSAKeyPairForJWT(subject,  issuer,  expiry, claims);
-		System.out.println("--------------------------------------------------------------------");
-	}
-
-	public static void generateRSAKeyPairForJWT(String subject, String issuer, long _expiryTime, Map<String, Object> _claims) throws NoSuchAlgorithmException {
-		KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
-		keyGenerator.initialize(2048);
-
-		KeyPair kp = keyGenerator.genKeyPair();
-		PublicKey publicKey = (PublicKey) kp.getPublic();
-		PrivateKey privateKey = (PrivateKey) kp.getPrivate();
-
-		String encodedPublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
-		System.out.println("Public Key:");
-		System.out.println(convertToPublicKey(encodedPublicKey));
-		String token = generateJwtToken(subject,  issuer,  _expiryTime, _claims, privateKey);
-		System.out.println("TOKEN:");
-		System.out.println(token);
-		printStructure(token, publicKey);
-	}
-
-	private static String convertToPublicKey(String key){
-		StringBuilder result = new StringBuilder();
-		result.append("-----BEGIN PUBLIC KEY-----\n");
-		result.append(key);
-		result.append("\n-----END PUBLIC KEY-----");
-		return result.toString();
-	}
-
-	private static String generateJwtToken(String subject, String issuer, long _expiryTime,
-										   Map<String, Object> _claims, PrivateKey privateKey) {
-		String token = Jwts.builder()
+		HashMap<String,String> tokens = jsonWebToken
+				.init(_tokenType)
 				.setSubject(subject)
-				.setExpiration(new Date(_expiryTime))
 				.setIssuer(issuer)
-				.setClaims(_claims)
-				// RS256 with privateKey
-				.signWith(privateKey, SignatureAlgorithm.RS256)
-				.compact();
-		return token;
+				.setTokenAuthExpiry(tokenAuthExpiry)
+				.setTokenRefreshExpiry(tokenRefreshExpiry)
+				.addAllTokenClaims(claims)
+				.addAllRefreshTokenClaims(claims)
+				.generateTokens();
+
+		String token = tokens.get("token");
+		String refresh = tokens.get("refresh");
+		System.out.println("Token Expiry in Days:or:Hours:or:Mins  "+JsonWebToken.printExpiryTime(tokenAuthExpiry));
+		jsonWebToken.tokenStats(token, false, false);
+
+		System.out.println("Refresh Token Expiry in Days:or:Hours:or:Mins "+JsonWebToken.printExpiryTime(tokenRefreshExpiry));
+		jsonWebToken.tokenStats(refresh, false, false);
+
 	}
 
-	private static void printStructure(String token, PublicKey publicKey)  {
-		// Jws parseClaimsJws = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token);
-		Jws jwt = Jwts.parserBuilder()
-				.setSigningKey(publicKey)
-         		.requireIssuer("metarivu.com")
-				.build()
-				.parseClaimsJws(token);
-
-		System.out.println("Header     : " + jwt.getHeader());
-		System.out.println("Body       : " + jwt.getBody());
-		System.out.println("Signature  : " + jwt.getSignature());
-	}
+	/**
+	 protected static void test() {
+	 System.out.println(printExpiryTime(JsonWebToken.EXPIRE_IN_FIVE_MINS));
+	 System.out.println(printExpiryTime(JsonWebToken.EXPIRE_IN_THIRTY_MINS));
+	 System.out.println(printExpiryTime(JsonWebToken.EXPIRE_IN_THREE_HOUR));
+	 System.out.println(printExpiryTime(JsonWebToken.EXPIRE_IN_ONE_DAY));
+	 System.out.println(printExpiryTime(JsonWebToken.EXPIRE_IN_THREE_HOUR
+	 +JsonWebToken.EXPIRE_IN_TWENTY_MINS));
+	 System.out.println(printExpiryTime(JsonWebToken.EXPIRE_IN_TWO_DAYS
+	 +JsonWebToken.EXPIRE_IN_THREE_HOUR+JsonWebToken.EXPIRE_IN_THIRTY_MINS));
+	 }*/
 }

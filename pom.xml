@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fusion.air</groupId>
 	<artifactId>ms-cache-service</artifactId>
-	<version>0.3.0</version>
+	<version>0.4.0</version>
 	<packaging>jar</packaging>
 	<name>msCacheService</name>
 	<description>Microservice Cache Kafka Template</description>
@@ -41,13 +41,13 @@
 		<slf4j.version>1.7.36</slf4j.version>
 		<logback.version>1.2.11</logback.version>
 		<google.guava.version>31.1-jre</google.guava.version>
-		<!-- <apache.httpcore>4.4.15</apache.httpcore> -->
 		<apache.httpcore>4.5.13</apache.httpcore>
 		<apache.commons.version>3.12.0</apache.commons.version>
 		<fasterxml.version>2.13.3</fasterxml.version>
 		<javax.bean.validation.version>2.0.1.Final</javax.bean.validation.version>
 		<jwt.api.version>0.11.5</jwt.api.version>
 		<google.gson.version>2.9.0</google.gson.version>
+		<bouncycastle.version>1.46</bouncycastle.version>
 
 		<!-- Spring Libraries ============================================== -->
 		<spring.boot.version>2.7.2</spring.boot.version>
@@ -371,9 +371,8 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk16</artifactId>
-			<version>1.46</version>
+			<version>${bouncycastle.version}</version>
 		</dependency>
-
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
 		<dependency>
