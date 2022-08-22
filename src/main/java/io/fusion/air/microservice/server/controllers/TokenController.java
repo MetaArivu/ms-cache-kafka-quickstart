@@ -34,10 +34,11 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
-
+import org.springframework.http.HttpHeaders;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
@@ -161,7 +162,12 @@ public class TokenController extends AbstractController {
 		StandardResponse stdResponse = createSuccessResponse("Tokens Generated!");
 		// Send the Token in the Body (This is NOT Required and ONLY for Testing Purpose)
 		stdResponse.setPayload(tokens);
-		return ResponseEntity.ok(stdResponse);
+		String authToken = tokens.get("token");
+		String refreshTkn = tokens.get("refresh");
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(AuthorizeRequestAspect.AUTH_TOKEN, "Bearer "+authToken);
+		headers.add(AuthorizeRequestAspect.REFRESH_TOKEN, "Bearer "+refreshTkn);
+		return new ResponseEntity<StandardResponse>(stdResponse, headers, HttpStatus.OK );
 	}
 
 	/**
