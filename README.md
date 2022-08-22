@@ -93,24 +93,39 @@ To test the APIs (in secure mode - you will see a lock icon in the Swagger Docs)
 
 ## 2. CRUD Operations Demo & Error Handling
 
-### 2.1 GET Query Execution and Fallback Data
+### 2.1 CRUD Operations 
+
+#### 2.1.1 GET Query Execution and Fallback Data
 ![Crud Get](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-1-get-fallback.jpg)
 
-### 2.2 POST Create Data - Product 1
+#### 2.1.2 POST Create Data - Product 1
 ![Crud Post-1](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-2-post-prod-1-A.jpg)
 
-### 2.3 POST Create Data - Product 1 : Result
+#### 2.1.3 POST Create Data - Product 1 : Result
 ![Crud Post-2](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-2-post-prod-1-B.jpg)
 
-### 2.4 POST Create Data - Product 2 
+#### 2.1.4 POST Create Data - Product 2 
 ![Crud Post-3](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-3-post-prod-2.jpg)
 
-### 2.5 POST Create Data - Product 3
+#### 2.1.5 POST Create Data - Product 3
 ![Crud Post-4](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-4-post-prod-3.jpg)
 
-### 2.6 GET All the Data (Created in Steps 2.2 - 2.5)
+#### 2.1.6 GET All the Data (Created in Steps 2.2 - 2.5)
 ![Crud Get-5](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-5-get-from-db.jpg)
 
+### 2.2 Error Handling
+
+### 2.2.1 Error Handling - Invalid Input
+![Error-1](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-error-1-post-invalid-input-A.jpg)
+
+### 2.2.2 Error Handling - Invalid Input - Result
+![Error-1](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-error-1-post-invalid-input-B.jpg)
+
+### 2.2.3 Error Handling - Invalid Input - Field Validations
+![Error-1](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-error-2-post-invalid-input-A.jpg)
+
+### 2.2.4 Error Handling - Invalid Input - Field Validations - Result
+![Error-1](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-error-2-post-invalid-input-B.jpg)
 
 ## 3. Configure the Template: Setup Org, Service, & Container Name, Versions, API Path in app.props.tmpl
 
