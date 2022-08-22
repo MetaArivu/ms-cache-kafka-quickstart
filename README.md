@@ -126,12 +126,10 @@ Update the Properties Template
 5. Update the Container Name in src/main/resources/app.props.tmpl file (service.container)
 6. Update the Server Version src/main/resources/app.props.tmpl file (server.version)
    Pom File
-   <version>0.3.0</version>
+   <version>0.4.0</version>
    app.props.tmpl
-   =======================================================================
    Microservice Server Properties
-   =======================================================================
-   server.version=0.3.0
+   server.version=0.4.0
 
 Sample Property File Template
 ![Property File](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Property-File.jpg)
