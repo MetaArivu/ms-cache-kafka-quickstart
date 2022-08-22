@@ -65,6 +65,7 @@ Without generated application.properties file the service will NOT be running. T
 
 #### 1.3.2 Test the Service 
 1. test OR ./test (Runs in Linux or Mac OS)
+2. Execute the curl commands directly (from the test script)
 
 #### $ run Result 
 ![Run Results](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Run-Result.jpg)
@@ -74,7 +75,13 @@ Without generated application.properties file the service will NOT be running. T
 
 ### Step 1.4 - Testing the APIs Using Swagger API Docs or Postman
 
-To test the APIs (in secure mode - you will see a lock icon in the Swagger Docs)
+To test the APIs (in secure mode - you will see a lock icon in the Swagger Docs). These test tokens are generated
+based on the flag server.token.test=true in the application.properties file. (Change the app.props.tmpl if you want to
+change in the build process.) In the Production environment, this flag should be false. These tokens can be generated only in
+an Auth Service. All the services need not generate these tokens unless for the developers to test it out.
+In a real world scenario, disable (Comment out the function generateTestToken() from the code  java file 
+ServiceEventListener.java in the package documentation io.fusion.air.microservice.server.service)  this feature for 
+production environment. 
 
 #### Step 1.4.1: Copy the Auth Token
 ![Authorize Request](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/ms-cache-with-Test-Tokens.jpg)
