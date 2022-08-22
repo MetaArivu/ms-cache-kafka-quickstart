@@ -85,6 +85,12 @@ public class ServiceEventListener {
 	}
 
 	/**
+	 * WARNING:
+	 * These tokens can be generated only in an Auth Service. All the services need not generate these tokens
+	 * unless for the developers to test it out. In a real world scenario, disable (Comment out the function
+	 * generateTestToken()) this feature for production environment.
+	 * THIS IS ONLY FOR TESTING PURPOSES.
+	 *
 	 * Generate Tokens for Testing Purpose Only
 	 * Token 			= Expires in 5 Mins
 	 * Refresh Token 	= Expires in 30 Mins
