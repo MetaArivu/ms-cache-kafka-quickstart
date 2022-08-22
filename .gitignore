@@ -8,6 +8,9 @@ src/docker/Dockerfile-r
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Dont Commit Private Keys
+privateKey.pem
+
 ### STS ###
 .apt_generated
 .classpath
