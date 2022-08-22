@@ -99,7 +99,7 @@ To test the APIs (in secure mode - you will see a lock icon in the Swagger Docs)
 
 ### Step 3: Enter the Token and Click Authorize
 
-![Authorize Request](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/ms-cache-with-Test-Tokens-2.jpg)
+![Authorize Request](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/ms-cache-with-Test-Tokens-3.jpg)
 
 ## Import Swagger API Docs Into Postman
 
