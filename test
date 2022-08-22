@@ -11,28 +11,28 @@ echo "--------------------------------------------------------------------------
 echo "Testing $SERVICE Microservice"
 echo "---------------------------------------------------------------------------------------"
 echo "---------------------------------------------------------------------------------------"
-echo "curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/home"
-curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/home
+echo "curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/home -H 'accept: application/json'"
+curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/home -H 'accept: application/json'
 echo ""
 echo "---------------------------------------------------------------------------------------"
-echo "curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/live"
-curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/live
+echo "curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/live -H 'accept: application/json'"
+curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/live -H 'accept: application/json'
 echo ""
 echo "---------------------------------------------------------------------------------------"
-echo "curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/ready"
-curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/ready
+echo "curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/ready -H 'accept: application/json'"
+curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/ready -H 'accept: application/json'
 echo ""
 echo "---------------------------------------------------------------------------------------"
-echo "curl -X POST localhost:$PORT/api/$API_VERSION/$SERVICE/service/restart"
-curl  -X POST localhost:$PORT/api/$API_VERSION/$SERVICE/service/restart
+echo "curl -X 'POST' localhost:$PORT/$SERVICE/api/$API_VERSION/service/restart -H 'accept: application/json'"
+curl  -X 'POST' localhost:$PORT/$SERVICE/api/$API_VERSION/service/restart -H 'accept: application/json'
 echo ""
 echo "---------------------------------------------------------------------------------------"
 sleep 3
-echo "curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/home"
-curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/home
+echo "curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/home -H 'accept: application/json'"
+curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/home -H 'accept: application/json'
 echo ""
 echo "---------------------------------------------------------------------------------------"
-echo "curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/ready"
-curl localhost:$PORT/api/$API_VERSION/$SERVICE/service/ready
+echo "curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/ready -H 'accept: application/json'"
+curl -X 'GET' localhost:$PORT/$SERVICE/api/$API_VERSION/service/ready -H 'accept: application/json'
 echo ""
 echo "---------------------------------------------------------------------------------------"
