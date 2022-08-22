@@ -86,6 +86,21 @@ Without generated application.properties file the service will NOT be running.
 ### MS Cache Swagger UI Docs for Testing
 ![Swagger Docs](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/MS-Cache-Swagger-UI.jpg)
 
+## Testing the APIs Using Swagger API Docs or Postman
+
+To test the APIs (in secure mode - you will see a lock icon in the Swagger Docs)
+
+### Step 1: Copy the Auth Token
+![Authorize Request](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/ms-cache-with-Test-Tokens.jpg)
+
+### Step 2: Click on the Authorize Button (Top Left the Swagger UI)
+
+![Authorize Request](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/ms-cache-with-Test-Tokens-2.jpg)
+
+### Step 3: Enter the Token and Click Authorize
+
+![Authorize Request](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/ms-cache-with-Test-Tokens-2.jpg)
+
 ## Import Swagger API Docs Into Postman
 
 ### Step 1: Swagger Open API 3.0 Docs JSON Format
@@ -96,6 +111,7 @@ Without generated application.properties file the service will NOT be running.
 
 ### Step 3: Import Into Postman - Confirm
 ![Postman Import](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/Import-API-into-Postman-2.jpg)
+
 
 ## Docker Container Setup
 
