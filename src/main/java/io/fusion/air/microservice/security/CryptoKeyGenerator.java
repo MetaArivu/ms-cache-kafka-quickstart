@@ -172,7 +172,7 @@ public class CryptoKeyGenerator {
         PemObject pemObject = new PemObject(_description, _key.getEncoded());
         PemWriter pemWriter = null;
         try {
-            pemWriter = new PemWriter(new OutputStreamWriter(new FileOutputStream(_fileName+ ".pem")));
+            pemWriter = new PemWriter(new OutputStreamWriter(new FileOutputStream(_fileName)));
             pemWriter.writeObject(pemObject);
         } catch (Exception e) {
             e.printStackTrace();
