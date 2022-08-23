@@ -24,25 +24,24 @@ import io.fusion.air.microservice.utils.DateJsonSerializer;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
 
 /**
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
  */
-@JsonPropertyOrder({  "rt", "rs", "rc" , "rd", "payload"})
+@JsonPropertyOrder({  "time", "success", "code" , "msg", "payload"})
 public abstract class AbstractResponse implements Serializable {
 
-    @JsonProperty("rt")
+    @JsonProperty("time")
     @JsonSerialize(using = DateJsonSerializer.class)
     private LocalDateTime requestTime = LocalDateTime.now();
 
-    @JsonProperty("rs")
+    @JsonProperty("success")
     private boolean success = false;
-    @JsonProperty("rc")
+    @JsonProperty("code")
     private String code = "ERROR";
-    @JsonProperty("rd")
+    @JsonProperty("msg")
     private String description = "Default Error Message!";
 
    @JsonProperty("payload")
