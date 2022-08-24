@@ -15,7 +15,6 @@
  */
 package io.fusion.air.microservice.adapters.aop;
 
-import io.fusion.air.microservice.domain.exceptions.AbstractServiceException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;

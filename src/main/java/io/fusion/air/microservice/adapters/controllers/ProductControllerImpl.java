@@ -133,7 +133,7 @@ public class ProductControllerImpl extends AbstractController {
 		StandardResponse stdResponse = null;
 		if(productList == null || productList.isEmpty()) {
 			stdResponse = createSuccessResponse("201","Fallback Data!");
-			productList.add(new ProductEntity("iPhone 10", "iPhone 10, 664 GB", new BigDecimal(65000), "12345"));
+			productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB", new BigDecimal(60000), "12345"));
 		} else {
 			stdResponse = createSuccessResponse("Data Fetch Success!");
 		}
