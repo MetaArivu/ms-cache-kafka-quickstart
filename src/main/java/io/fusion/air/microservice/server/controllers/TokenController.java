@@ -86,13 +86,13 @@ public class TokenController extends AbstractController {
 	private long tokenRefreshExpiry;
 
 	@AuthorizationRequired(role = "User")
-	@Operation(summary = "Get the Key", security = { @SecurityRequirement(name = "bearer-key") })
+	@Operation(summary = "Get the Public Key", security = { @SecurityRequirement(name = "bearer-key") })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
-					description = "Key Retrieved",
+					description = "Public Key Retrieved",
 					content = {@Content(mediaType = "application/json")}),
 			@ApiResponse(responseCode = "404",
-					description = "Key Retrieval Failed!",
+					description = "Public Key Retrieval Failed!",
 					content = @Content)
 	})
 	@GetMapping("/publickey")
@@ -140,26 +140,26 @@ public class TokenController extends AbstractController {
 	 * @return
 	 */
 	@ValidateRefreshToken(role = "User")
-	@Operation(summary = "Generate Tokens", security = { @SecurityRequirement(name = "bearer-key") })
+	@Operation(summary = "Generate Refresh Tokens", security = { @SecurityRequirement(name = "bearer-key") })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Auth & Refresh Tokens Generated",
             content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "404",
-            description = "Token Generation Failed!",
+            description = "Auth & Refresh Token Generation Failed!",
             content = @Content)
     })
 	@GetMapping("/refresh")
 	@ResponseBody
 	public ResponseEntity<StandardResponse> generate(HttpServletRequest request) throws Exception {
-		log.debug(name()+"|Request to Generate Tokens... ");
+		log.debug(name()+"|Request to Generate Refresh Tokens... ");
 		//  final String authToken = getToken(request.getHeader(AuthorizeRequestAspect.AUTH_TOKEN));
 		final String refreshToken = getToken(request.getHeader(AuthorizeRequestAspect.REFRESH_TOKEN));
 		String subject = jsonWebToken.getSubjectFromToken(refreshToken);
 		// Claims authTokenClaims = jwtUtil.getAllClaims(authToken);
 		Claims refreshTokenClaims = jsonWebToken.getAllClaims(refreshToken);
 		HashMap<String, String> tokens = refreshTokens(subject, refreshTokenClaims, refreshTokenClaims);
-		StandardResponse stdResponse = createSuccessResponse("Tokens Generated!");
+		StandardResponse stdResponse = createSuccessResponse("Auth & Refresh Tokens Generated!");
 		// Send the Token in the Body (This is NOT Required and ONLY for Testing Purpose)
 		stdResponse.setPayload(tokens);
 		String authToken = tokens.get("token");

@@ -168,8 +168,8 @@ public class ProductControllerImpl extends AbstractController {
 			stdResponse.setPayload(ps);
 			return ResponseEntity.ok(stdResponse);
 		} else {
-			 throw new DuplicateDataException("Invalid Order Value");
-			// throw new InputDataException("Invalid Order Value");
+			 // throw new DuplicateDataException("Invalid Order Value");
+			throw new InputDataException("Invalid Order Value");
 			// throw new BusinessServiceException("Invalid Order Value");
 			// throw new ControllerException("Invalid Order Value");
 			// throw new ResourceNotFoundException("Invalid Order Value");
