@@ -43,6 +43,13 @@ public interface ProductService {
     public ProductEntity getProductById(UUID productId);
 
     /**
+     * Create Product (from DTO)
+     * @param product
+     * @return
+     */
+    public ProductEntity createProduct(Product product);
+
+    /**
      * Create Product
      * @param product
      * @return
@@ -50,11 +57,18 @@ public interface ProductService {
     public ProductEntity createProduct(ProductEntity product);
 
     /**
-     * Create Product (from DTO)
-     * @param product
+     * Create Products (from List of DTOs)
+     * @param products
      * @return
      */
-    public ProductEntity createProduct(Product product);
+    public List<ProductEntity> createProducts(List<Product> products);
+
+    /**
+     * Create Products (from List of ProductEntity)
+     * @param products
+     * @return
+     */
+    public List<ProductEntity> createProductsEntity(List<ProductEntity> products);
 
     /**
      * Update Product Name & Details

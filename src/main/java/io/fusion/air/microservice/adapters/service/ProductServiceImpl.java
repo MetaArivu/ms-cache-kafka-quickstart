@@ -27,11 +27,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
+ * An Example of Standard CRUD Operations in a Jpa Repository
+ *
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
@@ -87,8 +91,32 @@ public class ProductServiceImpl implements ProductService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = { SQLException.class })
     public ProductEntity createProduct(ProductEntity product) {
         return productRepository.save(product);
+    }
+
+    /**
+     * Create Products (from List of DTOs)
+     * @param products
+     * @return
+     */
+    public List<ProductEntity> createProducts(List<Product> products) {
+        List<ProductEntity> productList = new ArrayList<ProductEntity>();
+        for(Product p : products) {
+            productList.add(new ProductEntity(p));
+        }
+        return createProductsEntity(productList);
+    }
+
+    /**
+     * Create Products (from List of ProductEntity)
+     * @param products
+     * @return
+     */
+    @Transactional(rollbackFor = { SQLException.class })
+    public List<ProductEntity> createProductsEntity(List<ProductEntity> products) {
+        return productRepository.saveAll(products);
     }
 
     /**
@@ -98,6 +126,7 @@ public class ProductServiceImpl implements ProductService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = { SQLException.class })
     public ProductEntity updateProduct(ProductEntity product) {
         ProductEntity productUpdate = getProductById(product.getProductId()) ;
         productUpdate.setProductName(product.getProductName());
@@ -111,6 +140,7 @@ public class ProductServiceImpl implements ProductService {
      * @param product
      * @return
      */
+    @Transactional(rollbackFor = { SQLException.class })
     public ProductEntity updatePrice(ProductEntity product) {
         ProductEntity productUpdate = getProductById(product.getProductId()) ;
         productUpdate.setProductPrice(product.getProductPrice());
@@ -125,6 +155,7 @@ public class ProductServiceImpl implements ProductService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = { SQLException.class })
     public ProductEntity deActivateProduct(UUID _productId) {
         ProductEntity product = getProductById(_productId);
         product.deActivateProduct();
@@ -139,6 +170,7 @@ public class ProductServiceImpl implements ProductService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = { SQLException.class })
     public ProductEntity activateProduct(UUID _productId) {
         ProductEntity product = getProductById(_productId);
         product.activateProduct();
@@ -151,6 +183,7 @@ public class ProductServiceImpl implements ProductService {
      * @param _productId
      */
     @Override
+    @Transactional(rollbackFor = { SQLException.class })
     public void deleteProduct(UUID _productId) {
         ProductEntity product = getProductById(_productId);
         productRepository.delete(product);

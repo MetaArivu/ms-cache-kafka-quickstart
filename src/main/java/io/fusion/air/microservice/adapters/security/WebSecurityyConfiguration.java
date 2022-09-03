@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2022 Araf Karsh Hamid
+ * (C) Copyright 2021 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,11 +38,16 @@ class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         // Forces All Request to be Secured
         // http.requiresChannel().anyRequest().requiresSecure();
         String apiPath = serviceConfig.getApiDocPath();
-        http.authorizeRequests().antMatchers(apiPath + "/**").permitAll().and().exceptionHandling();
-        // Enable CRPF Protection
+        http.authorizeRequests()
+                .antMatchers(apiPath + "/**")
+                .permitAll()
+                .and()
+                .exceptionHandling();
+                 // Enable CRPF Protection
         // http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         // Disable for Local Testing
         http.csrf().disable();
+        http.headers().frameOptions().disable();
         String hostName = serviceConfig.getServerHost();
         // Content Security Policy
         http.headers()

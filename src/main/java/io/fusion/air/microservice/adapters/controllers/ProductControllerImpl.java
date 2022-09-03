@@ -274,14 +274,10 @@ public class ProductControllerImpl extends AbstractController {
 		List<ProductEntity> productList = new ArrayList<ProductEntity>();
 		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB", new BigDecimal(60000), "12345"));
 		productList.add(new ProductEntity("iPhone 11", "iPhone 11, 128 GB", new BigDecimal(70000), "12345"));
-		for(ProductEntity p : productList) {
-			try {
-				productServiceImpl.createProduct(p);
-			} catch (Exception ignored) { ignored.printStackTrace();}
-		}
 		try {
+			productServiceImpl.createProductsEntity(productList);
 			productList = productServiceImpl.getAllProduct();
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) { ignored.printStackTrace();}
 		return productList;
 	}
 
