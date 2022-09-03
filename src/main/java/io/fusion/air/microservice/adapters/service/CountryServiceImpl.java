@@ -1,8 +1,8 @@
 package io.fusion.air.microservice.adapters.service;
 
-import io.fusion.air.microservice.domain.entities.Country;
-import io.fusion.air.microservice.domain.ports.CountryRepository;
-import io.fusion.air.microservice.domain.ports.CountryService;
+import io.fusion.air.microservice.domain.entities.example.CountryEntity;
+import io.fusion.air.microservice.adapters.repository.CountryRepository;
+import io.fusion.air.microservice.domain.ports.services.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class CountryServiceImpl implements CountryService {
     CountryRepository countryRepositoryImpl;
 
     @Override
-    public List<Country> getAllCountries() {
-        return (List<Country>) countryRepositoryImpl.findAll();
+    public List<CountryEntity> getAllCountries() {
+        return (List<CountryEntity>) countryRepositoryImpl.findAll();
     }
 }

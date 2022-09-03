@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.entities;
+package io.fusion.air.microservice.domain.entities.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.fusion.air.microservice.domain.models.Product;
-import io.fusion.air.microservice.utils.Utils;
+import io.fusion.air.microservice.domain.entities.core.AuditLog;
+import io.fusion.air.microservice.domain.models.example.Product;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -45,26 +45,51 @@ public class ProductEntity {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "productId", columnDefinition = "char(36)", unique = true)
     @Type(type = "org.hibernate.type.UUIDCharType")
+    // @Size(min = 36, max = 36, message = "The length of Product ID Name must be 36 characters.")
+    // @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
     private UUID productId;
 
+    @NotBlank(message = "The Product Name is required.")
+    @Size(min = 3, max = 32, message = "The length of Product Name must be 3-32 characters.")
     @Column(name = "productName")
     private String productName;
 
+    @NotNull(message = "The Product Details is  required.")
+    @Size(min = 5, max = 64, message = "The length of Product Description must be 5-64 characters.")
     @Column(name = "productDetails")
     private String productDetails;
 
+    @NotNull(message = "The Price is required.")
     @Column(name = "price")
     private BigDecimal productPrice;
 
+    @NotBlank(message = "The Product ZipCode is required.")
     @Column(name = "productLocationZipCode")
+    @Pattern(regexp = "^[0-9]{5}\\b", message = "Zip Code Must be 5 Digits")
     private String productLocationZipCode;
 
+    @Column(name = "isActive")
     private boolean isActive;
+
+    @Column(name = "version")
+    private int version;
+
+    @Embedded
+    private AuditLog auditLog;
 
     /**
      * Empty Product Entity
      */
     public ProductEntity() {
+    }
+
+    /**
+     * Create Product from the Product DTO
+     * @param _product
+     */
+    public ProductEntity(Product _product) {
+        this(_product.getProductName(), _product.getProductDetails(),
+                _product.getProductPrice(), _product.getProductLocationZipCode());
     }
 
     /**
@@ -79,18 +104,8 @@ public class ProductEntity {
         this.productDetails         = _pDetails;
         this.productPrice           = _pPrice;
         this.productLocationZipCode = _pZipCode;
-    }
-
-    /**
-     * Create Product from the Product DTO
-     * @param _product
-     */
-    public ProductEntity(Product _product) {
-        // this.productId = Utils.getUUID(_product.getProductId());
-        this.productName            = _product.getProductName();
-        this.productDetails         = _product.getProductDetails();
-        this.productPrice           = _product.getProductPrice();
-        this.productLocationZipCode = _product.getProductLocationZipCode();
+        this.isActive               = true;
+        this.auditLog               = new AuditLog();
     }
 
     /**
@@ -166,5 +181,49 @@ public class ProductEntity {
      */
     public void setProductPrice(BigDecimal productPrice) {
         this.productPrice = productPrice;
+    }
+
+    /**
+     * Returns True if its an Active Record
+     * @return
+     */
+    public boolean isActive() {
+        return isActive;
+    }
+
+    /**
+     * De-Activate Product
+     */
+    @JsonIgnore
+    public void deActivateProduct() {
+        isActive = false;
+    }
+
+    /**
+     * Activate Product
+     */
+    @JsonIgnore
+    public void activateProduct() {
+        isActive = true;
+    }
+
+    /**
+     * Returns the Audit Log for the following fields
+     * 1. Created Time
+     * 2. Created By
+     * 3. Updated Time
+     * 4. Updated By
+     * @return
+     */
+    public AuditLog getAuditLog() {
+        return auditLog;
+    }
+
+    /**
+     * Returns the Version Number of the record
+     * @return
+     */
+    public int getVersion() {
+        return version;
     }
 }

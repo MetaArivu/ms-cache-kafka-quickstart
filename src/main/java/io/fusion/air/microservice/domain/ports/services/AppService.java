@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.ports;
+package io.fusion.air.microservice.domain.ports.services;
 
 /**
- * App Controller
+ * App Service
  *
  * @author arafkarsh
  */
-public interface ProductController {
+public interface AppService {
 }

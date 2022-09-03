@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2022 Araf Karsh Hamid
+ * (C) Copyright 2021 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 package io.fusion.air.microservice.adapters.service;
 
 import io.fusion.air.microservice.adapters.repository.ProductRepository;
-import io.fusion.air.microservice.domain.entities.ProductEntity;
+import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
-import io.fusion.air.microservice.domain.exceptions.ResourceNotFoundException;
-import io.fusion.air.microservice.domain.models.Product;
-import io.fusion.air.microservice.domain.ports.ProductService;
+
+import io.fusion.air.microservice.domain.models.example.Product;
+import io.fusion.air.microservice.domain.ports.services.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +42,34 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    /**
+     * WARNING:
+     * This Method is ONLY For Demo Purpose. In Real World Scenario there should NOT be any
+     * method which will return the whole data without any Conditions. Unless it's a very
+     * small data set.
+     *
+     * Get All the Products
+     * @return
+     */
+    @Override
+    public List<ProductEntity> getAllProduct() {
+        return this.productRepository.findAll();
+    }
+
+    /**
+     * Get Product By Product ID
+     * @param productId
+     * @return
+     */
+    @Override
+    public ProductEntity getProductById(UUID productId) {
+        Optional<ProductEntity> productDb = productRepository.findById(productId);
+        if(productDb.isPresent()) {
+            return productDb.get();
+        }
+        throw new DataNotFoundException("Data not found with id : " + productId);
+    }
 
     /**
      * Create Product (from the DTO)
@@ -71,49 +99,57 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public ProductEntity updateProduct(ProductEntity product) {
-        Optional<ProductEntity> productDb = this.productRepository.findById(product.getProductId());
-        if(!productDb.isPresent()) {
-            throw new DataNotFoundException("Data not found with id : " + product.getProductId());
-        }
-        ProductEntity productUpdate = productDb.get();
+        ProductEntity productUpdate = getProductById(product.getProductId()) ;
         productUpdate.setProductName(product.getProductName());
         productUpdate.setProductDetails(product.getProductDetails());
-        productRepository.save(productUpdate);
+        productRepository.saveAndFlush(productUpdate);
         return productUpdate;
     }
 
+    /**
+     * Update the Product Price
+     * @param product
+     * @return
+     */
     public ProductEntity updatePrice(ProductEntity product) {
-        Optional<ProductEntity> productDb = this.productRepository.findById(product.getProductId());
-        if(!productDb.isPresent()) {
-            throw new DataNotFoundException("Data not found with id : " + product.getProductId());
-        }
-        ProductEntity productUpdate = productDb.get();
+        ProductEntity productUpdate = getProductById(product.getProductId()) ;
         productUpdate.setProductPrice(product.getProductPrice());
-        productRepository.save(productUpdate);
+        productRepository.saveAndFlush(productUpdate);
         return productUpdate;
     }
 
     /**
-     * Get All the Products
+     * De Activate Product
+     *
+     * @param _productId
      * @return
      */
     @Override
-    public List<ProductEntity> getAllProduct() {
-        return this.productRepository.findAll();
+    public ProductEntity deActivateProduct(UUID _productId) {
+        ProductEntity product = getProductById(_productId) ;
+        if(product == null) {
+            throw new DataNotFoundException("No Data Available for "+_productId);
+        }
+        product.deActivateProduct();
+        productRepository.saveAndFlush(product);
+        return product;
     }
 
     /**
-     * Get Product By Product ID
-     * @param productId
+     * Activate Product
+     *
+     * @param _productId
      * @return
      */
     @Override
-    public ProductEntity getProductById(UUID productId) {
-        Optional<ProductEntity> productDb = this.productRepository.findById(productId);
-        if(!productDb.isPresent()) {
-            throw new DataNotFoundException("Data not found with id : " + productId);
+    public ProductEntity activateProduct(UUID _productId) {
+        ProductEntity product = getProductById(_productId);
+        if(product == null) {
+            throw new DataNotFoundException("No Data Available for "+_productId);
         }
-        return productDb.get();
+        product.activateProduct();
+        productRepository.saveAndFlush(product);
+        return product;
     }
 
     /**
@@ -123,9 +159,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(UUID productId) {
         Optional<ProductEntity> productDb = this.productRepository.findById(productId);
-        if(!productDb.isPresent()) {
-            throw new DataNotFoundException("Data not found with id : " + productId);
+        if(productDb.isPresent()) {
+            this.productRepository.delete(productDb.get());
         }
-        this.productRepository.delete(productDb.get());
+        throw new DataNotFoundException("Data not found with id : " + productId);
     }
 }

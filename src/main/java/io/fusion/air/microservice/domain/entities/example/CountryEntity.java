@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.entities;
+package io.fusion.air.microservice.domain.entities.example;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "country_m")
-public class Country implements Serializable {
+public class CountryEntity implements Serializable {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -55,7 +55,7 @@ public class Country implements Serializable {
     @Column(name = "countryOfficialName")
     private String countryOfficialName;
 
-    protected Country() {
+    protected CountryEntity() {
     }
 
     /**
@@ -65,7 +65,7 @@ public class Country implements Serializable {
      * @param _countryOnm
      * @param _countryCd
      */
-    public Country(int _pid, String _countryNm, String _countryOnm, String _countryCd)  {
+    public CountryEntity(int _pid, String _countryNm, String _countryOnm, String _countryCd)  {
         countryId   = _pid;
         countryName = _countryNm;
         countryOfficialName = _countryOnm;
@@ -105,6 +105,14 @@ public class Country implements Serializable {
     }
 
     /**
+     * Returns Country ID + Country Name
+     * @return
+     */
+    public String toString() {
+        return countryId + "|" + countryName;
+    }
+
+    /**
      * Returns the Hashcode
      * @return
      */
@@ -123,7 +131,7 @@ public class Country implements Serializable {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        Country country = (Country) o;
-        return countryId == country.countryId && countryName.equals(country.countryName);
+        CountryEntity countryEntity = (CountryEntity) o;
+        return countryId == countryEntity.countryId && countryName.equals(countryEntity.countryName);
     }
 }

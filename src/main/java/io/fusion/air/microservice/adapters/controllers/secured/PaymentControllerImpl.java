@@ -15,10 +15,12 @@
  */
 package io.fusion.air.microservice.adapters.controllers.secured;
 
-import io.fusion.air.microservice.domain.models.PaymentDetails;
-import io.fusion.air.microservice.domain.models.PaymentStatus;
-import io.fusion.air.microservice.domain.models.PaymentType;
-import io.fusion.air.microservice.domain.models.StandardResponse;
+
+import io.fusion.air.microservice.domain.models.core.StandardResponse;
+import io.fusion.air.microservice.domain.models.example.PaymentDetails;
+import io.fusion.air.microservice.domain.models.example.PaymentStatus;
+import io.fusion.air.microservice.domain.models.example.PaymentType;
+
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;

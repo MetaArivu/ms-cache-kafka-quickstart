@@ -15,7 +15,7 @@
  */
 package io.fusion.air.microservice.server.controllers;
 
-import io.fusion.air.microservice.domain.models.StandardResponse;
+import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
 import org.slf4j.Logger;

@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.exceptions.InputDataException;
-import io.fusion.air.microservice.domain.models.StandardResponse;
+import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
 import io.fusion.air.microservice.server.models.EchoResponseData;

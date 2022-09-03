@@ -19,6 +19,7 @@ service.license=Apache 2 License
 server.port=9090
 server.version=0.4.0
 server.restart=false
+server.resources.url=${service.url}${service.api.path}
 # ------------------------------------------------------------------------
 # Security & JWT Token  (Type 1 = secret key, 2 = public / private key)
 # ------------------------------------------------------------------------
@@ -52,7 +53,8 @@ app.property.map={key1:'val1', key2 : 'val2', key3 : 'val3'}
 # =======================================================================
 db.server=mem
 db.port=5432
-db.name=demo
+db.name=ms-cache
+db.schema=ms-schema
 db.vendor=H2
 # To Store the Data in File
 #spring.datasource.url=jdbc:h2:file:/data/demo
@@ -66,13 +68,14 @@ spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 # To USE THIS COMMENT OUT H2 DB Properties & Un Comment Below Properties
 # =======================================================================
 #db.server=localhost
-#db.port=5432
-#db.name=demo
+#db.port=5433
+#db.name=ms-cache
+#db.schema=ms-schema
 #db.vendor=PostgreSQL
 #spring.datasource.url=jdbc:postgresql://${db.server}:${db.port}/${db.name}
 #spring.datasource.driverClassName=org.postgresql.ds.PGSimpleDataSource
 #spring.datasource.username=postgres
-#spring.datasource.password=root
+#spring.datasource.password=
 #spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
 # =======================================================================
 # JPA / Hibernate Properties

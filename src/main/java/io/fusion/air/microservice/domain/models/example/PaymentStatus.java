@@ -14,69 +14,59 @@
  * limitations under the License.
  */
 
-package io.fusion.air.microservice.domain.models;
+package io.fusion.air.microservice.domain.models.example;
 
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import io.fusion.air.microservice.utils.DateJsonSerializer;
-import io.fusion.air.microservice.utils.Utils;
 
 /**
- * Payment Details
+ * Payment Status
  * 
  * @author arafkarsh
  *
  */
-public class PaymentDetails {
-
+public class PaymentStatus {
+	
 	private String transactionId;
 	
 	@JsonSerialize(using = DateJsonSerializer.class)
 	private LocalDateTime transactionDate;
 	
-	private double orderValue;
+	private String paymentStatus;
+	private String paymentReference;
+	
+	@JsonSerialize(using = DateJsonSerializer.class)
+	private LocalDateTime paymentDate;
 	private PaymentType paymentType;
 	
-	private CardDetails cardDetails;
-	
 	/**
 	 * 
 	 */
-	public PaymentDetails() {
+	public PaymentStatus() {
 	}
-	
 	/**
-	 * Payment Details
+	 * Payment Status
 	 * 
 	 * @param _txId
 	 * @param _txDate
-	 * @param _orderValue
+	 * @param _payStatus
+	 * @param _payRef
+	 * @param _payDate
 	 * @param _payType
 	 */
-	public PaymentDetails(String _txId, LocalDateTime _txDate,
-			double _orderValue, PaymentType _payType) {
-		this( _txId,  _txDate, _orderValue,  _payType,  null); 
-	}
-	
-	/**
-	 * Payment Details with Card Details
-	 * 
-	 * @param _txId
-	 * @param _txDate
-	 * @param _orderValue
-	 * @param _payType
-	 * @param _card
-	 */
-	public PaymentDetails(String _txId, LocalDateTime _txDate,
-			double _orderValue, PaymentType _payType, CardDetails _card) {
+	public PaymentStatus(String _txId, LocalDateTime _txDate, String _payStatus,
+			String _payRef, LocalDateTime _payDate, PaymentType _payType) {
 		
 		transactionId		= _txId;
 		transactionDate		= _txDate;
-		orderValue			= _orderValue;
+		paymentStatus		= _payStatus;
+		
+		paymentReference	= _payRef;
+		paymentDate			= _payDate;
 		paymentType			= _payType;
-		cardDetails			= _card;
 	}
 	
 	/**
@@ -85,21 +75,30 @@ public class PaymentDetails {
 	public String getTransactionId() {
 		return transactionId;
 	}
-	
 	/**
 	 * @return the transactionDate
 	 */
 	public LocalDateTime getTransactionDate() {
 		return transactionDate;
 	}
-	
 	/**
-	 * @return the orderValue
+	 * @return the paymentStatus
 	 */
-	public double getOrderValue() {
-		return orderValue;
+	public String getPaymentStatus() {
+		return paymentStatus;
 	}
-	
+	/**
+	 * @return the paymentReference
+	 */
+	public String getPaymentReference() {
+		return paymentReference;
+	}
+	/**
+	 * @return the paymentDate
+	 */
+	public LocalDateTime getPaymentDate() {
+		return paymentDate;
+	}
 	/**
 	 * @return the paymentType
 	 */
@@ -107,14 +106,17 @@ public class PaymentDetails {
 		return paymentType;
 	}
 	
+	/**
+	 * Returns Transaction ID | Payment Status | Payment Reference
+	 */
 	public String toString() {
-		return Utils.toJsonString(this);
+		return transactionId + "|" + paymentStatus + "|" + paymentReference;
 	}
 	
 	/**
-	 * @return the cardDetails
+	 * Returns the HashCode of the Tx ID
 	 */
-	public CardDetails getCardDetails() {
-		return cardDetails;
+	public int hashCode() {
+		return transactionId.hashCode();
 	}
 }

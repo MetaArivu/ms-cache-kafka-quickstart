@@ -74,8 +74,6 @@ public class ServiceConfiguration implements Serializable {
 		sb.append("\"serverVersion\": \"").append(serverVersion).append("\",");
 		sb.append("\"server.port\": ").append(serverPort).append(",");
 		sb.append("\"server.restart\": ").append(serverRestart).append(",");
-		sb.append("\"spring.codec.max-in-memory-size\": \"").append(springCodecMaxMemory).append("\",");
-		sb.append("\"token.key\": \"").append(tokenKey).append("\",");
 		sb.append("\"app.property.list\": ").append(Utils.toJsonString(appPropertyList)).append(",");
 		sb.append("\"app.property.map\": ").append(Utils.toJsonString(appPropertyMap));
 		sb.append("}");
@@ -129,6 +127,10 @@ public class ServiceConfiguration implements Serializable {
 
 	@Value("${server.host:localhost}")
 	private String serverHost;
+
+	// server.resources.url=${service.url}${service.api.path}
+	@Value("${server.resources.url}")
+	private String serverResourceUrl;
 
 	@Value("${server.host.dev:localhost:9090}")
 	private String serverHostDev;
@@ -205,6 +207,9 @@ public class ServiceConfiguration implements Serializable {
 
 	@Value("${db.name:demo}")
 	private String dataSourceName;
+
+	@Value("${db.schema:demo}")
+	private String dataSourceSchema;
 
 	@Value("${db.vendor:H2}")
 	private String dataSourceVendor;
@@ -588,11 +593,11 @@ public class ServiceConfiguration implements Serializable {
 	}
 
 	/**
-	 * Returns System Properties
+	 * Returns DB Schema Name
 	 * @return
 	 */
-	public HashMap<String, String> getSystemProperties() {
-		return systemProperties;
+	public String getDataSourceSchema() {
+		return dataSourceSchema;
 	}
 
 	/**
@@ -601,6 +606,14 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public String getDataSourceVendor() {
 		return dataSourceVendor;
+	}
+
+	/**
+	 * Returns System Properties
+	 * @return
+	 */
+	public HashMap<String, String> getSystemProperties() {
+		return systemProperties;
 	}
 
 	/**
@@ -666,5 +679,13 @@ public class ServiceConfiguration implements Serializable {
 	 */
 	public String getTokenIssuer() {
 		return tokenIssuer;
+	}
+
+	/**
+	 * Returns Server Resource URL
+	 * @return
+	 */
+	public String getServerResourceUrl() {
+		return serverResourceUrl;
 	}
 }

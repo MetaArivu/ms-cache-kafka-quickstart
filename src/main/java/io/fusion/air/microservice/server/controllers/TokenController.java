@@ -17,9 +17,9 @@ package io.fusion.air.microservice.server.controllers;
 
 import io.fusion.air.microservice.adapters.security.AuthorizationRequired;
 import io.fusion.air.microservice.domain.exceptions.*;
+import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.adapters.security.AuthorizeRequestAspect;
 import io.fusion.air.microservice.adapters.security.ValidateRefreshToken;
-import io.fusion.air.microservice.domain.models.StandardResponse;
 import io.fusion.air.microservice.security.CryptoKeyGenerator;
 import io.fusion.air.microservice.security.JsonWebToken;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;

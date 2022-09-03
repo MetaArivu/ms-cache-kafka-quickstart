@@ -2,7 +2,7 @@
 # MS-Cache Service Properties
 # =======================================================================
 build.number=103
-build.date=Sat Sep 3 17:41:41 IST 2022
+build.date=Sat Sep 3 17:35:35 IST 2022
 # =======================================================================
 # Service Name & API Details -  Version, Path
 # =======================================================================
@@ -58,8 +58,8 @@ app.property.map={key1:'val1', key2 : 'val2', key3 : 'val3'}
 # =======================================================================
 db.server=mem
 db.port=5432
-db.name=ms-cache
-db.schema=ms-schema
+db.name=demo
+db.schema=demo
 db.vendor=H2
 # To Store the Data in File
 #spring.datasource.url=jdbc:h2:file:/data/demo
@@ -74,13 +74,13 @@ spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 # =======================================================================
 #db.server=localhost
 #db.port=5433
-#db.name=ms-cache
-#db.schema=ms-schema
+#db.name=demo
+#db.schema=demo
 #db.vendor=PostgreSQL
 #spring.datasource.url=jdbc:postgresql://${db.server}:${db.port}/${db.name}
 #spring.datasource.driverClassName=org.postgresql.ds.PGSimpleDataSource
 #spring.datasource.username=postgres
-#spring.datasource.password=
+#spring.datasource.password=root
 #spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
 # =======================================================================
 # JPA / Hibernate Properties

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.models;
+package io.fusion.air.microservice.domain.models.example;
 
 
 import io.fusion.air.microservice.utils.Utils;
@@ -34,13 +34,15 @@ import java.math.BigDecimal;
 public class Product implements Serializable {
 
     @NotBlank(message = "The Product ID is  required.")
+    @Size(min = 36, max = 36, message = "The length of Product Name must be 36 characters.")
+    @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
     private String productId;
 
     @NotBlank(message = "The Product Name is  required.")
     @Size(min = 3, max = 32, message = "The length of Product Name must be between 3 and 32 characters.")
     private String productName;
 
-    @Size(min = 0, max = 128, message = "The length of Product Details must be between 0 and 128 characters.")
+    @Size(min = 5, max = 64, message = "The length of Product Details must be between 0 and 64 characters.")
     private String productDetails;
 
     @NotNull(message = "The Price is required.")

@@ -1,6 +1,6 @@
-package io.fusion.air.microservice.domain.ports;
+package io.fusion.air.microservice.domain.ports.services;
 
-import io.fusion.air.microservice.domain.entities.Country;
+import io.fusion.air.microservice.domain.entities.example.CountryEntity;
 import java.util.List;
 
 /**
@@ -14,5 +14,5 @@ public interface CountryService {
      * Returns all the Countryy
      * @return
      */
-    public List<Country> getAllCountries();
+    public List<CountryEntity> getAllCountries();
 }

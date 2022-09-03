@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.ports;
+package io.fusion.air.microservice.domain.ports.services;
 
-import io.fusion.air.microservice.domain.entities.ProductEntity;
-import io.fusion.air.microservice.domain.models.Product;
+import io.fusion.air.microservice.domain.entities.example.ProductEntity;
+import io.fusion.air.microservice.domain.models.example.Product;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +28,19 @@ import java.util.UUID;
  * @date:
  */
 public interface ProductService {
+
+    /**
+     * Get All the Products
+     * @return
+     */
+    public List<ProductEntity> getAllProduct();
+
+    /**
+     * Get Product By Product ID
+     * @param productId
+     * @return
+     */
+    public ProductEntity getProductById(UUID productId);
 
     /**
      * Create Product
@@ -58,17 +71,18 @@ public interface ProductService {
     public ProductEntity updatePrice(ProductEntity product);
 
     /**
-     * Get All the Products
+     * De Activate Product
+     * @param _productId
      * @return
      */
-    public List<ProductEntity> getAllProduct();
+    public ProductEntity deActivateProduct(UUID _productId);
 
     /**
-     * Get Product By Product ID
-     * @param productId
+     * Activate Product
+     * @param _productId
      * @return
      */
-    public ProductEntity getProductById(UUID productId);
+    public ProductEntity activateProduct(UUID _productId);
 
     /**
      * Delete the product

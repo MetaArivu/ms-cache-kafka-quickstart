@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2021 Araf Karsh Hamid 
+ * (C) Copyright 2022 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,37 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.fusion.air.microservice.domain.models;
+package io.fusion.air.microservice.domain.ports.controllers;
 
 /**
- * 
- * @author arafkarsh
+ * App Controller
  *
+ * @author arafkarsh
  */
-public enum PaymentType {
-	
-	/**
-	 * Credit Card Payment
-	 */
-	CREDIT_CARD,
-	/**
-	 * Debit Card Payment
-	 */
-	DEBIT_CARD,
-	/**
-	 * NetBanking Payment
-	 */
-	NET_BANKING,
-	/**
-	 * UPI Payment
-	 */
-	UPI,
-	/**
-	 * Paytm Payment
-	 */
-	PAYTM,
-	/**
-	 * Google Pay
-	 */
-	GOOGLE_PAY;
+public interface ProductController {
 }

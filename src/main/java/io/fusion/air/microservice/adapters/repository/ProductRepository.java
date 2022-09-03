@@ -15,12 +15,10 @@
  */
 package io.fusion.air.microservice.adapters.repository;
 
-import io.fusion.air.microservice.domain.entities.ProductEntity;
+import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.UUID;
 
 /**

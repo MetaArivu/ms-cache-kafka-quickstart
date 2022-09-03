@@ -68,6 +68,7 @@ public class JpaConfig {
                 config.addDataSourceProperty("databaseName", serviceConfig.getDataSourceName());
                 config.addDataSourceProperty("user", serviceConfig.getDataSourceUserName());
                 config.addDataSourceProperty("password", serviceConfig.getDataSourcePassword());
+                config.setSchema(serviceConfig.getDataSourceSchema());
 
                 // postgress configuration for Hikari
                 return new HikariDataSource(config);

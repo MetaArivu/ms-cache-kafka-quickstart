@@ -17,7 +17,7 @@ package io.fusion.air.microservice.adapters.aop;
 
 import io.fusion.air.microservice.domain.exceptions.*;
 import io.fusion.air.microservice.domain.exceptions.SecurityException;
-import io.fusion.air.microservice.domain.models.StandardResponse;
+import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.utils.Utils;
 import org.slf4j.Logger;
