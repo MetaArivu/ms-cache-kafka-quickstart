@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2022 Araf Karsh Hamid
+ * (C) Copyright 2021 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -130,6 +129,38 @@ public class ProductControllerImpl extends AbstractController {
 	}
 
 	/**
+	 * GET Method Call to Get All the Products
+	 *
+	 * @return
+	 */
+	@Operation(summary = "Get All the Products")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "List All the Product",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Invalid Product Reference No.",
+					content = @Content)
+	})
+	@GetMapping("/all/")
+	@ResponseBody
+	public ResponseEntity<StandardResponse> getAllProducts(HttpServletRequest request,
+														   HttpServletResponse response) throws Exception {
+		log.debug("|"+name()+"|Request to Product Status of Service... ");
+		List<ProductEntity> productList = productServiceImpl.getAllProduct();
+		StandardResponse stdResponse = null;
+		log.info("Products List = "+productList.size());
+		if(productList == null || productList.isEmpty()) {
+			productList = createFallBackProducts();
+			stdResponse = createSuccessResponse("201","Fallback Data!");
+		} else {
+			stdResponse = createSuccessResponse("Data Fetch Success!");
+		}
+		stdResponse.setPayload(productList);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
 	 * De-Activate the Product
 	 */
 	@Operation(summary = "De-Activate Product")
@@ -141,7 +172,7 @@ public class ProductControllerImpl extends AbstractController {
 					description = "Unable to De-Activate the Product",
 					content = @Content)
 	})
-	@DeleteMapping("/deactivate/{productId}")
+	@PutMapping("/deactivate/{productId}")
 	public ResponseEntity<StandardResponse> deActivateProduct(@PathVariable("productId") UUID _productId) {
 		log.debug("|"+name()+"|Request to De-Activate the Product... "+_productId);
 		ProductEntity product = productServiceImpl.deActivateProduct(_productId);
@@ -162,7 +193,7 @@ public class ProductControllerImpl extends AbstractController {
 					description = "Unable to Activate the Product",
 					content = @Content)
 	})
-	@DeleteMapping("/activate/{productId}")
+	@PutMapping("/activate/{productId}")
 	public ResponseEntity<StandardResponse> activateProduct(@PathVariable("productId") UUID _productId) {
 		log.debug("|"+name()+"|Request to Activate the Product... "+_productId);
 		ProductEntity product = productServiceImpl.activateProduct(_productId);
@@ -172,36 +203,68 @@ public class ProductControllerImpl extends AbstractController {
 	}
 
 	/**
-	 * GET Method Call to Get All the Products
-	 *
-	 * @return
+	 * Update the Product Price
 	 */
-	@Operation(summary = "Get All the Products")
+	@Operation(summary = "Update the Product Price")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
-					description = "List All the Product",
+					description = "Product Price Updated",
 					content = {@Content(mediaType = "application/json")}),
 			@ApiResponse(responseCode = "404",
-					description = "Invalid Product Reference No.",
+					description = "Unable to Update the Product Price",
 					content = @Content)
 	})
-	@GetMapping("/all/")
-	@ResponseBody
-	public ResponseEntity<StandardResponse> getAllProducts(HttpServletRequest request,
-													  HttpServletResponse response) throws Exception {
-		log.debug("|"+name()+"|Request to Product Status of Service... ");
-		List<ProductEntity> productList = productServiceImpl.getAllProduct();
-		StandardResponse stdResponse = null;
-		log.info("Products List = "+productList.size());
-		if(productList == null || productList.isEmpty()) {
-			productList = createFallBackProducts();
-			stdResponse = createSuccessResponse("201","Fallback Data!");
-		} else {
-			stdResponse = createSuccessResponse("Data Fetch Success!");
-		}
-		stdResponse.setPayload(productList);
+	@PutMapping("/update/price")
+	public ResponseEntity<StandardResponse> updatePrice(@Valid @RequestBody ProductEntity _product) {
+		log.debug("|"+name()+"|Request to Update Product Price... "+_product);
+		ProductEntity prodEntity = productServiceImpl.updatePrice(_product);
+		StandardResponse stdResponse = createSuccessResponse("Product Price Updated");
+		stdResponse.setPayload(prodEntity);
 		return ResponseEntity.ok(stdResponse);
 	}
+
+	/**
+	 * Update the Product Details
+	 */
+	@Operation(summary = "Update the Product Details")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Product Details Updated",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Unable to Update the Product Details",
+					content = @Content)
+	})
+	@PutMapping("/update/details")
+	public ResponseEntity<StandardResponse> updateProduct(@Valid @RequestBody ProductEntity _product) {
+		log.debug("|"+name()+"|Request to Update Product Details... "+_product);
+		ProductEntity prodEntity = productServiceImpl.updateProduct(_product);
+		StandardResponse stdResponse = createSuccessResponse("Product Details Updated");
+		stdResponse.setPayload(prodEntity);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Delete the Product
+	 */
+	@AuthorizationRequired(role = "User")
+	@Operation(summary = "Delete Product", security = { @SecurityRequirement(name = "bearer-key") })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Product Deleted",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Unable to Delete the Product",
+					content = @Content)
+	})
+	@DeleteMapping("/{productId}")
+	public ResponseEntity<StandardResponse> updatePayment(@PathVariable("productId") UUID _productId) {
+		log.debug("|"+name()+"|Request to Update Product... "+_productId);
+		productServiceImpl.deleteProduct(_productId);
+		StandardResponse stdResponse = createSuccessResponse("Product Deleted!");
+		return ResponseEntity.ok(stdResponse);
+	}
+
 
 	/**
 	 * Create Fall Back Product for Testing Purpose ONLY
@@ -224,6 +287,9 @@ public class ProductControllerImpl extends AbstractController {
 
 	/**
 	 * Process the Product
+	 * To Demonstrate Exception Handling.
+	 * The Error Code for the Exceptions will be automatically determined by the Framework.
+	 * Error Code will be Different for Each Microservice.
 	 */
     @Operation(summary = "Process Product")
     @ApiResponses(value = {
@@ -259,27 +325,4 @@ public class ProductControllerImpl extends AbstractController {
 		}
     }
 
-	/**
-	 * Update the Product
-	 */
-	@AuthorizationRequired(role = "User")
-	@Operation(summary = "Update Product", security = { @SecurityRequirement(name = "bearer-key") })
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200",
-					description = "Update the Product",
-					content = {@Content(mediaType = "application/json")}),
-			@ApiResponse(responseCode = "404",
-					description = "Unable to Update the Product",
-					content = @Content)
-	})
-	@PutMapping("/update/{referenceNo}")
-	public ResponseEntity<StandardResponse> updatePayment(@PathVariable("referenceNo") String _referenceNo) {
-		log.debug("|"+name()+"|Request to Update Product... "+_referenceNo);
-		StandardResponse stdResponse = createSuccessResponse("Product Updated");
-		HashMap<String,Object> status = new HashMap<String,Object>();
-		status.put("ReferenceNo", _referenceNo);
-		status.put("Message","Product updated!");
-		stdResponse.setPayload(status);
-		return ResponseEntity.ok(stdResponse);
-	}
  }

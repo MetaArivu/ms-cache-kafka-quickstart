@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2022 Araf Karsh Hamid
+ * (C) Copyright 2021 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 // "/ms-cache/api/v1"
 @RequestMapping("${service.api.path}/payment")
 @RequestScope
-@Tag(name = "Payments API", description = "Ex. io.f.a.m.adapters.controllers.secured.PaymentControllerImpl")
+@Tag(name = "Secured Payments API", description = "Ex. io.f.a.m.adapters.controllers.secured.PaymentControllerImpl")
 public class PaymentControllerImpl extends AbstractController {
 
 	// Set Logger -> Lookup will automatically determine the class name.

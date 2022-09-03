@@ -126,10 +126,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public ProductEntity deActivateProduct(UUID _productId) {
-        ProductEntity product = getProductById(_productId) ;
-        if(product == null) {
-            throw new DataNotFoundException("No Data Available for "+_productId);
-        }
+        ProductEntity product = getProductById(_productId);
         product.deActivateProduct();
         productRepository.saveAndFlush(product);
         return product;
@@ -144,9 +141,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductEntity activateProduct(UUID _productId) {
         ProductEntity product = getProductById(_productId);
-        if(product == null) {
-            throw new DataNotFoundException("No Data Available for "+_productId);
-        }
         product.activateProduct();
         productRepository.saveAndFlush(product);
         return product;
@@ -154,14 +148,11 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * Delete the product
-     * @param productId
+     * @param _productId
      */
     @Override
-    public void deleteProduct(UUID productId) {
-        Optional<ProductEntity> productDb = this.productRepository.findById(productId);
-        if(productDb.isPresent()) {
-            this.productRepository.delete(productDb.get());
-        }
-        throw new DataNotFoundException("Data not found with id : " + productId);
+    public void deleteProduct(UUID _productId) {
+        ProductEntity product = getProductById(_productId);
+        productRepository.delete(product);
     }
 }

@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2022 Araf Karsh Hamid
+ * (C) Copyright 2021 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package io.fusion.air.microservice.adapters.repository;
 
 import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -44,6 +45,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
      * @return
      */
     // @Query("SELECT ProductEntity FROM ProductEntity p WHERE p.productName like ?1")
-    // public List<ProductEntity> fetchProductsdByName(String _name);
+    // public ProductEntity fetchProductsdByName(String _name);
 
 }

@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2022 Araf Karsh Hamid
+ * (C) Copyright 2021 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public interface ProductService {
     public ProductEntity activateProduct(UUID _productId);
 
     /**
-     * Delete the product
+     * Delete the product (Permanently Deletes the Product)
      * @param id
      */
     public void deleteProduct(UUID id);
