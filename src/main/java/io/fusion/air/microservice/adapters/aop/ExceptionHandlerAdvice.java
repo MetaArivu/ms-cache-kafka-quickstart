@@ -521,7 +521,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @param e
      */
     private void logException(String _status, Throwable e) {
-        log.error(getStackTraceAsString(e));
+        log.trace(getStackTraceAsString(e));
         log.info("2|EH|TIME=00|STATUS=Error: {}|CLASS={}|",_status, e.toString());
     }
 

@@ -15,15 +15,16 @@
  */
 package io.fusion.air.microservice.domain.models.core;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.fusion.air.microservice.utils.DateJsonSerializer;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Araf Karsh Hamid
@@ -72,9 +73,10 @@ public abstract class AbstractResponse implements Serializable {
      * @param _desc
      */
     public AbstractResponse init(boolean _status, String _code, String _desc) {
-        success = _status;
-        code = _code;
+        success     = _status;
+        code        = _code;
         description = _desc;
+        payload     = new ArrayList<Object>();
         return this;
     }
 
@@ -83,7 +85,16 @@ public abstract class AbstractResponse implements Serializable {
      * @param _payload
      */
     public AbstractResponse setPayload(Object _payload) {
-        this.payload = _payload;
+        ArrayList<Object> data = new ArrayList<Object>();
+        if(_payload != null) {
+            if(_payload instanceof List) {
+                this.payload = _payload;
+                return this;
+            } else {
+                data.add(_payload);
+            }
+        }
+        this.payload = data;
         return this;
     }
 
