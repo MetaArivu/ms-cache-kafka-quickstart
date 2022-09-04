@@ -2,7 +2,7 @@
 # MS-Cache Service Properties
 # =======================================================================
 build.number=115
-build.date=Sun Sep 4 15:56:25 IST 2022
+build.date=Sun Sep 4 15:17:44 IST 2022
 # =======================================================================
 # Service Name & API Details -  Version, Path
 # =======================================================================
@@ -57,32 +57,32 @@ app.property.map={key1:'val1', key2 : 'val2', key3 : 'val3'}
 # =======================================================================
 # H2 DB Properties
 # =======================================================================
-db.server=mem
-db.port=5432
-db.name=ms_cache
-db.schema=ms_schema
-db.vendor=H2
+#db.server=mem
+#db.port=5432
+#db.name=ms_cache
+#db.schema=ms_schema
+#db.vendor=H2
 # To Store the Data in File
 #spring.datasource.url=jdbc:h2:file:/data/demo
-spring.datasource.url=jdbc:h2:${db.server}:${db.name};DB_CLOSE_ON_EXIT=FALSE
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+#spring.datasource.url=jdbc:h2:${db.server}:${db.name};DB_CLOSE_ON_EXIT=FALSE
+#spring.datasource.driverClassName=org.h2.Driver
+#spring.datasource.username=sa
+#spring.datasource.password=password
+#spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 # =======================================================================
 # PostgreSQL DB Properties -
 # To USE THIS COMMENT OUT H2 DB Properties & Un Comment Below Properties
 # =======================================================================
-#db.server=localhost
-#db.port=5433
-#db.name=ms_cache
-#db.schema=ms_schema
-#db.vendor=PostgreSQL
-#spring.datasource.url=jdbc:postgresql://${db.server}:${db.port}/${db.name}
-#spring.datasource.driverClassName=org.postgresql.ds.PGSimpleDataSource
-#spring.datasource.username=postgres
-#spring.datasource.password=
-#spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
+db.server=localhost
+db.port=5433
+db.name=ms_cache
+db.schema=ms_schema
+db.vendor=PostgreSQL
+spring.datasource.url=jdbc:postgresql://${db.server}:${db.port}/${db.name}
+spring.datasource.driverClassName=org.postgresql.ds.PGSimpleDataSource
+spring.datasource.username=postgres
+spring.datasource.password=
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
 # =======================================================================
 # JPA / Hibernate Properties
 # ------------------------------------------------------------------------

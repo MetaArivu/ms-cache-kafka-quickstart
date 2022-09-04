@@ -125,7 +125,19 @@ production environment.
 ![Crud Post-4](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-4-post-prod-3.jpg)
 
 #### 2.1.6 GET All the Data (Created in Steps 2.2 - 2.5)
-![Crud Get-5](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-5-get-from-db.jpg)
+![Crud Get-6](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-5-get-from-db.jpg)
+
+#### 2.1.7 GET Single Record
+![Crud Get-7](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-6-get-from-db.jpg)
+
+#### 2.1.8 PUT Update the Product Price
+![Crud Get-8](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-7-put-update-price.jpg)
+
+#### 2.1.9 PUT Update the Product - DeActivate the Product > Set isActive Flag = False
+![Crud Get-9](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-8-put-deactivate.jpg)
+
+#### 2.1.10 State of the Records after Inserts and Updates
+![Crud Get-10](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-9-db-records.jpg)
 
 ### 2.2 Error Handling
 
@@ -140,6 +152,10 @@ production environment.
 
 #### 2.2.4 Error Handling - Invalid Input - Field Validations - Result
 ![Error-4](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-error-2-post-invalid-input-B.jpg)
+
+#### 2.2.5 Error Handling - Version Mismatch based o JPA @Version Annotation
+![Error-5](https://raw.githubusercontent.com/MetaArivu/ms-cache-kafka-quickstart/master/diagrams/crud/crud-error-3-post-Version-Mismatch-B.jpg)
+
 
 ### 2.3 Log Management 
 
