@@ -95,9 +95,6 @@ public class ProductEntity extends AbstractBaseEntity {
         this.productDetails         = _pDetails;
         this.productPrice           = _pPrice;
         this.productLocationZipCode = _pZipCode;
-        // this.isActive               = true;
-        // this.auditLog               = new AuditLog();
-        initAudit();
     }
 
     /**

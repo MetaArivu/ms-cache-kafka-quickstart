@@ -52,7 +52,7 @@ public class AuditLog  {
      * Record Audit log will always have the original data.
      * Record Created By User 
      */
-    @Column(name = "createdBy", updatable=false)
+    @Column(name = "createdBy", updatable=false, nullable = false)
     private String createdBy;
 
     /**
@@ -60,19 +60,19 @@ public class AuditLog  {
      * Record Audit log will always have the original data.
      * Record Created Time
      */
-    @Column(name = "createdTime", updatable=false)
+    @Column(name = "createdTime", updatable=false, nullable = false)
     private java.sql.Timestamp createdTime;
 
     /**
      * Set the updated by user.
      */
-    @Column(name = "updatedBy")
+    @Column(name = "updatedBy", nullable = false)
     private String updatedBy;
 
     /**
      * Set the Updated By Time by the user.
      */
-    @Column(name = "updatedTime")
+    @Column(name = "updatedTime", nullable = false)
     private java.sql.Timestamp updatedTime;
 
     /**
