@@ -26,6 +26,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import io.fusion.air.microservice.server.config.ConfigMap;
+
 /**
  * Service Configuration
  *
@@ -53,6 +55,34 @@ public class ServiceConfiguration implements Serializable {
 	public static final String DB_POSTGRESQL = "PostgreSQL";
 	public static final String DB_MYSQL 		= "MySQL";
 	public static final String DB_ORACLE 	= "Oracle";
+
+	@JsonIgnore
+	private ConfigMap configMap = new ConfigMap();
+
+	/**
+	 * Returns the ConfigMap
+	 * @return
+	 */
+	public ConfigMap getConfigMap() {
+		configMap.setServiceOrg(serviceOrg);
+		configMap.setServiceName( serviceName);
+		configMap.setServiceApiPrefix( serviceApiPrefix);
+		configMap.setServiceApiVersion( serviceApiVersion);
+		configMap.setServiceApiName( serviceApiName);
+		configMap.setServiceApiPath( serviceApiPath);
+		configMap.setServiceApiErrorPrefix( serviceApiErrorPrefix);
+		configMap.setServiceContainer( serviceContainer);
+		configMap.setServiceUrl( serviceUrl);
+		configMap.setApiDocPath( apiDocPath) ;
+		configMap.setBuildNumber( buildNumber);
+		configMap.setBuildDate( buildDate) ;
+		configMap.setServerVersion( serverVersion);
+		configMap.setServerHost( serverHost) ;
+		configMap.setAppPropertyList( appPropertyList);
+		configMap.setAppPropertyMap( appPropertyMap);
+		return configMap;
+	}
+
 
 	/**
 	 * Return the JSON String

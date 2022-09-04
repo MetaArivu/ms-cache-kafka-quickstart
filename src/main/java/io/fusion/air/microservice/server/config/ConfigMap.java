@@ -15,6 +15,7 @@
  */
 package io.fusion.air.microservice.server.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -25,46 +26,94 @@ import java.util.Objects;
  * @author arafkarsh
  *
  */
-public class ConfigMap {
+public class ConfigMap  implements Serializable {
 
-    private String apiDocPath;
+    private String serviceOrg;
     private String serviceName;
+    private String serviceApiPrefix;
+    private String serviceApiVersion;
+    private String serviceApiName;
+    private String serviceApiPath;
+    private String serviceApiErrorPrefix;
+    private String serviceContainer;
+    private String serviceUrl;
+    private String apiDocPath;
     private int buildNumber;
     private String buildDate;
     private String serverVersion;
-    private int serverPort;
-    private String remoteHost;
-    private int remotePort;
-    private String springCodecMaxMemory;
+    private String serverHost;
     private ArrayList<String> appPropertyList;
     private HashMap<String, String> appPropertyMap;
 
     public ConfigMap() {
     }
 
-    public ConfigMap(String apiDocPath, String serviceName, int buildNumber, String buildDate,
-                     String serverVersion, int serverPort, String remoteHost, int remotePort,
-                     String springCodecMaxMemory, ArrayList<String> appPropertyList,
-                     HashMap<String, String> appPropertyMap) {
-        this.apiDocPath = apiDocPath;
-        this.serviceName = serviceName;
-        this.buildNumber = buildNumber;
-        this.buildDate = buildDate;
-        this.serverVersion = serverVersion;
-        this.serverPort = serverPort;
-        this.remoteHost = remoteHost;
-        this.remotePort = remotePort;
-        this.springCodecMaxMemory = springCodecMaxMemory;
-        this.appPropertyList = appPropertyList;
-        this.appPropertyMap = appPropertyMap;
+    public ArrayList<String> getAppPropertyList() {
+        return appPropertyList;
     }
 
-    public String getApiDocPath() {
-        return apiDocPath;
+    public HashMap<String, String> getAppPropertyMap() {
+        return appPropertyMap;
+    }
+
+    @Override
+    public String toString() {
+        return "ConfigMap{" +
+                "serviceName='" + getServiceName() + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConfigMap configMap = (ConfigMap) o;
+        return getServiceName().equals(configMap.getServiceName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getServiceName());
+    }
+
+    public String getServiceOrg() {
+        return serviceOrg;
     }
 
     public String getServiceName() {
         return serviceName;
+    }
+
+    public String getServiceApiPrefix() {
+        return serviceApiPrefix;
+    }
+
+    public String getServiceApiVersion() {
+        return serviceApiVersion;
+    }
+
+    public String getServiceApiName() {
+        return serviceApiName;
+    }
+
+    public String getServiceApiPath() {
+        return serviceApiPath;
+    }
+
+    public String getServiceApiErrorPrefix() {
+        return serviceApiErrorPrefix;
+    }
+
+    public String getServiceContainer() {
+        return serviceContainer;
+    }
+
+    public String getServiceUrl() {
+        return serviceUrl;
+    }
+
+    public String getApiDocPath() {
+        return apiDocPath;
     }
 
     public int getBuildNumber() {
@@ -79,47 +128,78 @@ public class ConfigMap {
         return serverVersion;
     }
 
-    public int getServerPort() {
-        return serverPort;
+    public String getServerHost() {
+        return serverHost;
     }
 
-    public String getRemoteHost() {
-        return remoteHost;
+    // =======================================================================================================
+    // Package Local Methods
+    // =======================================================================================================
+    /**
+     *
+     * @param serviceOrg
+     */
+    void setServiceOrg(String serviceOrg) {
+        this.serviceOrg = serviceOrg;
     }
 
-    public int getRemotePort() {
-        return remotePort;
+    void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
-    public String getSpringCodecMaxMemory() {
-        return springCodecMaxMemory;
+    void setServiceApiPrefix(String serviceApiPrefix) {
+        this.serviceApiPrefix = serviceApiPrefix;
     }
 
-    public ArrayList<String> getAppPropertyList() {
-        return appPropertyList;
+    void setServiceApiVersion(String serviceApiVersion) {
+        this.serviceApiVersion = serviceApiVersion;
     }
 
-    public HashMap<String, String> getAppPropertyMap() {
-        return appPropertyMap;
+    void setServiceApiName(String serviceApiName) {
+        this.serviceApiName = serviceApiName;
     }
 
-    @Override
-    public String toString() {
-        return "ConfigMap{" +
-                "serviceName='" + serviceName + '\'' +
-                '}';
+    void setServiceApiPath(String serviceApiPath) {
+        this.serviceApiPath = serviceApiPath;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ConfigMap configMap = (ConfigMap) o;
-        return serviceName.equals(configMap.serviceName);
+    void setServiceApiErrorPrefix(String serviceApiErrorPrefix) {
+        this.serviceApiErrorPrefix = serviceApiErrorPrefix;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(serviceName);
+    void setServiceContainer(String serviceContainer) {
+        this.serviceContainer = serviceContainer;
+    }
+
+    void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+    }
+
+    void setApiDocPath(String apiDocPath) {
+        this.apiDocPath = apiDocPath;
+    }
+
+    void setBuildNumber(int buildNumber) {
+        this.buildNumber = buildNumber;
+    }
+
+    void setBuildDate(String buildDate) {
+        this.buildDate = buildDate;
+    }
+
+    void setServerVersion(String serverVersion) {
+        this.serverVersion = serverVersion;
+    }
+
+    void setServerHost(String serverHost) {
+        this.serverHost = serverHost;
+    }
+
+    void setAppPropertyList(ArrayList<String> appPropertyList) {
+        this.appPropertyList = appPropertyList;
+    }
+
+    void setAppPropertyMap(HashMap<String, String> appPropertyMap) {
+        this.appPropertyMap = appPropertyMap;
     }
 }

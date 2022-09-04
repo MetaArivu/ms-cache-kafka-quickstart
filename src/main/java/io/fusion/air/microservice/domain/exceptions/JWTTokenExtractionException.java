@@ -30,7 +30,7 @@ public class JWTTokenExtractionException extends SecurityException {
      * @param _msg
      */
     public JWTTokenExtractionException(String _msg) {
-        super(_msg);
+        this(_msg, null);
     }
 
     /**

@@ -30,7 +30,7 @@ public class JWTTokenExpiredException extends SecurityException {
      * @param _msg
      */
     public JWTTokenExpiredException(String _msg) {
-        super(_msg);
+        this(_msg, null);
     }
 
     /**

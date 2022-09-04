@@ -119,12 +119,7 @@ public class ConfigController extends AbstractController {
 				.findAndRegisterModules();
 		String json = serviceConfig.toJSONString();
 		log.debug(name()+"|Request to Get ServiceConfiguration .1. "+json);
-		ConfigMap cm = new ConfigMap(serviceConfig.getApiDocPath(),serviceConfig.getServiceName(),
-				serviceConfig.getBuildNumber(), serviceConfig.getBuildDate(), serviceConfig.getServerVersion(),
-				serviceConfig.getServerPort(), serviceConfig.getRemoteHost(), serviceConfig.getRemotePort(),
-				serviceConfig.getSpringCodecMaxMemory(), serviceConfig.getAppPropertyList(), serviceConfig.getAppPropertyMap()
-				);
-		stdResponse.setPayload(cm);
+		stdResponse.setPayload(serviceConfig.getConfigMap());
 		return ResponseEntity.ok(stdResponse);
 	}
 
@@ -144,7 +139,7 @@ public class ConfigController extends AbstractController {
     })
 	@GetMapping("/log")
     public ResponseEntity<StandardResponse> log() {
-		log.info(name()+"|Request to Log Level.. ");
+		log.debug(name()+"|Request to Log Level.. ");
     	log.trace(name()+"|This is TRACE level message");
         log.debug(name()+"|This is a DEBUG level message");
         log.info(name()+"|This is an INFO level message");

@@ -110,16 +110,16 @@ public class ProductControllerImpl extends AbstractController {
             @ApiResponse(responseCode = "200",
             description = "Product Retrieved for status check",
             content = {@Content(mediaType = "application/json")}),
-            @ApiResponse(responseCode = "404",
+            @ApiResponse(responseCode = "400",
             description = "Invalid Product ID.",
             content = @Content)
     })
 	@GetMapping("/status/{productId}")
 	@ResponseBody
-	public ResponseEntity<StandardResponse> getStatus(@PathVariable("productId") UUID _productId,
+	public ResponseEntity<StandardResponse> getProductStatus(@PathVariable("productId") UUID _productId,
 														HttpServletRequest request,
 														HttpServletResponse response) throws Exception {
-		log.debug("|"+name()+"|Request to Product Status of Service... "+_productId);
+		log.debug("|"+name()+"|Request to Get Product Status.. "+_productId);
 		//  response.setHeader("Cache-Control", "no-cache");
 		// response.addCookie(new Cookie("SameSite", "Strict"));
 		ProductEntity product = productServiceImpl.getProductById(_productId);
@@ -138,7 +138,7 @@ public class ProductControllerImpl extends AbstractController {
 			@ApiResponse(responseCode = "200",
 					description = "List All the Product",
 					content = {@Content(mediaType = "application/json")}),
-			@ApiResponse(responseCode = "404",
+			@ApiResponse(responseCode = "400",
 					description = "Invalid Product Reference No.",
 					content = @Content)
 	})
@@ -146,7 +146,7 @@ public class ProductControllerImpl extends AbstractController {
 	@ResponseBody
 	public ResponseEntity<StandardResponse> getAllProducts(HttpServletRequest request,
 														   HttpServletResponse response) throws Exception {
-		log.debug("|"+name()+"|Request to Product Status of Service... ");
+		log.debug("|"+name()+"|Request to get All Products ... ");
 		List<ProductEntity> productList = productServiceImpl.getAllProduct();
 		StandardResponse stdResponse = null;
 		log.info("Products List = "+productList.size());
@@ -168,7 +168,7 @@ public class ProductControllerImpl extends AbstractController {
 			@ApiResponse(responseCode = "200",
 					description = "Product De-Activated",
 					content = {@Content(mediaType = "application/json")}),
-			@ApiResponse(responseCode = "404",
+			@ApiResponse(responseCode = "400",
 					description = "Unable to De-Activate the Product",
 					content = @Content)
 	})
@@ -189,7 +189,7 @@ public class ProductControllerImpl extends AbstractController {
 			@ApiResponse(responseCode = "200",
 					description = "Product Activated",
 					content = {@Content(mediaType = "application/json")}),
-			@ApiResponse(responseCode = "404",
+			@ApiResponse(responseCode = "400",
 					description = "Unable to Activate the Product",
 					content = @Content)
 	})
@@ -210,7 +210,7 @@ public class ProductControllerImpl extends AbstractController {
 			@ApiResponse(responseCode = "200",
 					description = "Product Price Updated",
 					content = {@Content(mediaType = "application/json")}),
-			@ApiResponse(responseCode = "404",
+			@ApiResponse(responseCode = "400",
 					description = "Unable to Update the Product Price",
 					content = @Content)
 	})
@@ -231,7 +231,7 @@ public class ProductControllerImpl extends AbstractController {
 			@ApiResponse(responseCode = "200",
 					description = "Product Details Updated",
 					content = {@Content(mediaType = "application/json")}),
-			@ApiResponse(responseCode = "404",
+			@ApiResponse(responseCode = "400",
 					description = "Unable to Update the Product Details",
 					content = @Content)
 	})
@@ -253,13 +253,13 @@ public class ProductControllerImpl extends AbstractController {
 			@ApiResponse(responseCode = "200",
 					description = "Product Deleted",
 					content = {@Content(mediaType = "application/json")}),
-			@ApiResponse(responseCode = "404",
+			@ApiResponse(responseCode = "400",
 					description = "Unable to Delete the Product",
 					content = @Content)
 	})
 	@DeleteMapping("/{productId}")
-	public ResponseEntity<StandardResponse> updatePayment(@PathVariable("productId") UUID _productId) {
-		log.debug("|"+name()+"|Request to Update Product... "+_productId);
+	public ResponseEntity<StandardResponse> deleteProduct(@PathVariable("productId") UUID _productId) {
+		log.debug("|"+name()+"|Request to Delete Product... "+_productId);
 		productServiceImpl.deleteProduct(_productId);
 		StandardResponse stdResponse = createSuccessResponse("Product Deleted!");
 		return ResponseEntity.ok(stdResponse);

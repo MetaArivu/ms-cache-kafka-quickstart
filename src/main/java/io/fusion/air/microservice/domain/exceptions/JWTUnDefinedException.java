@@ -30,7 +30,7 @@ public class JWTUnDefinedException extends SecurityException {
      * @param _msg
      */
     public JWTUnDefinedException(String _msg) {
-        super(_msg);
+        this(_msg, null);
     }
 
     /**

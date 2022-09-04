@@ -30,7 +30,7 @@ public class JWTTokenSubjectException extends SecurityException {
      * @param _msg
      */
     public JWTTokenSubjectException(String _msg) {
-        super(_msg);
+        this(_msg, null);
     }
 
     /**
