@@ -26,6 +26,7 @@ import io.fusion.air.microservice.domain.models.example.Product;
 import io.fusion.air.microservice.domain.ports.services.ProductService;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
+import io.fusion.air.microservice.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -216,7 +217,7 @@ public class ProductControllerImpl extends AbstractController {
 	})
 	@PutMapping("/update/price")
 	public ResponseEntity<StandardResponse> updatePrice(@Valid @RequestBody ProductEntity _product) {
-		log.debug("|"+name()+"|Request to Update Product Price... "+_product);
+		log.debug("|"+name()+"|Request to Update Product Price... ["+_product);
 		ProductEntity prodEntity = productServiceImpl.updatePrice(_product);
 		StandardResponse stdResponse = createSuccessResponse("Product Price Updated");
 		stdResponse.setPayload(prodEntity);

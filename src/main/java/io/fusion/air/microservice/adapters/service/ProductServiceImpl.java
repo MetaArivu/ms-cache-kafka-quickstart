@@ -22,6 +22,7 @@ import io.fusion.air.microservice.domain.exceptions.DataNotFoundException;
 import io.fusion.air.microservice.domain.models.example.Product;
 import io.fusion.air.microservice.domain.ports.services.ProductService;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * An Example of Standard CRUD Operations in a Jpa Repository
  *
@@ -43,6 +47,9 @@ import java.util.UUID;
 @Service
 @Transactional
 public class ProductServiceImpl implements ProductService {
+
+    // Set Logger -> Lookup will automatically determine the class name.
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     @Autowired
     private ProductRepository productRepository;
@@ -128,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(rollbackFor = { SQLException.class })
     public ProductEntity updateProduct(ProductEntity product) {
-        ProductEntity productUpdate = getProductById(product.getProductId()) ;
+        ProductEntity productUpdate = getProductById(product.getUuid()) ;
         productUpdate.setProductName(product.getProductName());
         productUpdate.setProductDetails(product.getProductDetails());
         productRepository.saveAndFlush(productUpdate);
@@ -142,7 +149,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Transactional(rollbackFor = { SQLException.class })
     public ProductEntity updatePrice(ProductEntity product) {
-        ProductEntity productUpdate = getProductById(product.getProductId()) ;
+        ProductEntity productUpdate = getProductById(product.getUuid()) ;
         productUpdate.setProductPrice(product.getProductPrice());
         productRepository.saveAndFlush(productUpdate);
         return productUpdate;

@@ -33,19 +33,18 @@ public class AbstractBaseEntityWithUUID extends AbstractBaseEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "productId", columnDefinition = "char(36)", unique = true)
+    @Column(name = "uuid", columnDefinition = "char(36)", unique = true)
     @Type(type = "org.hibernate.type.UUIDCharType")
     // @Size(min = 36, max = 36, message = "The length of Product ID Name must be 36 characters.")
     // @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
-    private UUID productId;
+    private UUID uuid;
 
     /**
      * Returns the UUID
      * @return
      */
-    @JsonIgnore
-    public UUID getId() {
-        return productId;
+    public UUID getUuid() {
+        return uuid;
     }
 
     /**
@@ -54,6 +53,14 @@ public class AbstractBaseEntityWithUUID extends AbstractBaseEntity {
      */
     @JsonIgnore
     public String getIdAsString() {
-        return productId.toString();
+        return uuid.toString();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String toString() {
+        return uuid != null ? uuid.toString() : "UUID Not Initialized!";
     }
 }

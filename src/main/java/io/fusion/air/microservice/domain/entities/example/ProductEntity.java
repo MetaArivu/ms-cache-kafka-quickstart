@@ -16,11 +16,8 @@
 package io.fusion.air.microservice.domain.entities.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.fusion.air.microservice.domain.entities.core.AbstractBaseEntity;
 import io.fusion.air.microservice.domain.entities.core.AbstractBaseEntityWithUUID;
 import io.fusion.air.microservice.domain.models.example.Product;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -40,15 +37,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "products_m")
 public class ProductEntity extends AbstractBaseEntityWithUUID {
-
-    // @Id
-    // @GeneratedValue(generator = "UUID")
-    // @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    // @Column(name = "productId", columnDefinition = "char(36)", unique = true)
-    // @Type(type = "org.hibernate.type.UUIDCharType")
-    // @Size(min = 36, max = 36, message = "The length of Product ID Name must be 36 characters.")
-    // @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
-    // private UUID productId;
 
     @NotBlank(message = "The Product Name is required.")
     @Size(min = 3, max = 32, message = "The length of Product Name must be 3-32 characters.")
@@ -102,8 +90,9 @@ public class ProductEntity extends AbstractBaseEntityWithUUID {
      * Get Product ID
      * @return
      */
+    @JsonIgnore
     public UUID getProductId() {
-        return getId();
+        return getUuid();
     }
 
     /**
@@ -112,7 +101,7 @@ public class ProductEntity extends AbstractBaseEntityWithUUID {
      */
     @JsonIgnore
     public String getProductIdAsString() {
-        return getId().toString();
+        return getUuid().toString();
     }
 
     /**
@@ -187,5 +176,13 @@ public class ProductEntity extends AbstractBaseEntityWithUUID {
     @JsonIgnore
     public void activateProduct() {
         activate();
+    }
+
+    /**
+     * Return This Product ID / Name
+     * @return
+     */
+    public String toString() {
+        return super.toString() + "|" + productName;
     }
 }

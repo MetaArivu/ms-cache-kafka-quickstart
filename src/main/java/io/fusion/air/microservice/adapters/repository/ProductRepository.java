@@ -17,9 +17,9 @@ package io.fusion.air.microservice.adapters.repository;
 
 import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -37,7 +37,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
      * @param productId
      * @return
      */
-    public ProductEntity findByProductId(UUID productId);
+    public Optional<ProductEntity> findById(UUID productId);
 
     /**
      * Return Product By Product Name
