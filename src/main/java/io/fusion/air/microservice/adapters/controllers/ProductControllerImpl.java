@@ -204,6 +204,28 @@ public class ProductControllerImpl extends AbstractController {
 	}
 
 	/**
+	 * Update the Product Details
+	 * This API Can be tested for Optimistic Lock Exceptions as the Entity is a Versioned Entity
+	 */
+	@Operation(summary = "Update the Product")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Product Updated",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Unable to Update the Product",
+					content = @Content)
+	})
+	@PutMapping("/update/")
+	public ResponseEntity<StandardResponse> updateProduct(@Valid @RequestBody ProductEntity _product) {
+		log.debug("|"+name()+"|Request to Update Product Details... "+_product);
+		ProductEntity prodEntity = productServiceImpl.updateProduct(_product);
+		StandardResponse stdResponse = createSuccessResponse("Product Updated!");
+		stdResponse.setPayload(prodEntity);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
 	 * Update the Product Price
 	 */
 	@Operation(summary = "Update the Product Price")
@@ -237,9 +259,9 @@ public class ProductControllerImpl extends AbstractController {
 					content = @Content)
 	})
 	@PutMapping("/update/details")
-	public ResponseEntity<StandardResponse> updateProduct(@Valid @RequestBody ProductEntity _product) {
+	public ResponseEntity<StandardResponse> updateProductDetails(@Valid @RequestBody ProductEntity _product) {
 		log.debug("|"+name()+"|Request to Update Product Details... "+_product);
-		ProductEntity prodEntity = productServiceImpl.updateProduct(_product);
+		ProductEntity prodEntity = productServiceImpl.updateProductDetails(_product);
 		StandardResponse stdResponse = createSuccessResponse("Product Details Updated");
 		stdResponse.setPayload(prodEntity);
 		return ResponseEntity.ok(stdResponse);

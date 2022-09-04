@@ -1,5 +1,5 @@
 /**
- * (C) Copyright 2022 Araf Karsh Hamid
+ * (C) Copyright 2021 Araf Karsh Hamid
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.SQLException;
+import javax.persistence.*;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -118,6 +122,17 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> createErrorResponse(AbstractServiceException _ase, String _errorCode,
                                                        HttpHeaders _headers, WebRequest _request) {
         return createErrorResponse(_ase, _ase.getMessage(), _errorCode, _headers, _ase.getHttpStatus(), _request);
+    }
+
+    /**
+     * Unable to Save Persistence Exceptions
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    private ResponseEntity<Object> createErrorResponse(PersistenceException _pEx, String _message,
+                                                      String _errorCode, WebRequest _request) {
+        return createErrorResponse(_pEx, _message, _errorCode, null, HttpStatus.BAD_REQUEST, _request);
     }
 
     /**
@@ -292,6 +307,28 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * Unable to Query Due to Persistence Exception
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = NoResultException.class)
+    public ResponseEntity<Object> handlePersistenceException(NoResultException _pEx, WebRequest _request) {
+        return createErrorResponse(_pEx,  "No Result Found!", "441", _request);
+    }
+
+    /**
+     * Unable to Query Due to Persistence Exception
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = NonUniqueResultException.class)
+    public ResponseEntity<Object> handlePersistenceException(NonUniqueResultException _pEx, WebRequest _request) {
+        return createErrorResponse(_pEx, "Duplicate Data!", "442", _request);
+    }
+
+    /**
      * Data Not Found Exception
      * @param _dnfEx
      * @param _request
@@ -299,7 +336,29 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = DataNotFoundException.class)
     public ResponseEntity<Object> handleDataNotFoundException(DataNotFoundException _dnfEx,  WebRequest _request) {
-        return createErrorResponse(_dnfEx,  "441", _request);
+        return createErrorResponse(_dnfEx,  "444", _request);
+    }
+
+    /**
+     * Unable to Query Due to Persistence Exception
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = EntityNotFoundException.class)
+    public ResponseEntity<Object> handlePersistenceException(EntityNotFoundException _pEx, WebRequest _request) {
+        return createErrorResponse(_pEx,  "Entity Not Found!", "446", _request);
+    }
+
+    /**
+     * Unable to Query Due to Persistence Exception
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = EntityExistsException.class)
+    public ResponseEntity<Object> handlePersistenceException(EntityExistsException _pEx, WebRequest _request) {
+        return createErrorResponse(_pEx,  "Duplicate Entity Found!","447", _request);
     }
 
     /**
@@ -310,7 +369,18 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = DuplicateDataException.class)
     public ResponseEntity<Object> handleDuplicateDataException(DuplicateDataException _ddEx,  WebRequest _request) {
-        return createErrorResponse(_ddEx,  "442", _request);
+        return createErrorResponse(_ddEx,  "448", _request);
+    }
+
+    /**
+     * Unable to Query Due to Persistence Exception
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = QueryTimeoutException.class)
+    public ResponseEntity<Object> handlePersistenceException(QueryTimeoutException _pEx, WebRequest _request) {
+        return createErrorResponse(_pEx,  "Query Timed out!", "449", _request);
     }
 
     /**
@@ -321,7 +391,84 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = UnableToSaveException.class)
     public ResponseEntity<Object> handleUnableToSaveException(UnableToSaveException _utEx,  WebRequest _request) {
-        return createErrorResponse(_utEx,  "443", _request);
+        return createErrorResponse(_utEx,  "452", _request);
+    }
+
+    /**
+     * Unable to Save Due to Persistence Exception
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = TransactionRequiredException.class)
+    public ResponseEntity<Object> handlePersistenceException(TransactionRequiredException _pEx, WebRequest _request) {
+        return createErrorResponse(_pEx,  "Tx Required", "453", _request);
+    }
+
+    /**
+     * Unable to Save Due to Persistence Exception
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = RollbackException.class)
+    public ResponseEntity<Object> handlePersistenceException(RollbackException _pEx, WebRequest _request) {
+        return createErrorResponse(_pEx,  "Rollback Error!", "454", _request);
+    }
+
+    /**
+     * Unable to Save Due to Persistence Exception
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = LockTimeoutException.class)
+    public ResponseEntity<Object> handlePersistenceException(LockTimeoutException _pEx, WebRequest _request) {
+        return createErrorResponse(_pEx, "Lock Timed out!", "455", _request);
+    }
+
+    /**
+     * Unable to Save Due to Dirty Read/Write
+     * @param _utEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = OptimisticLockException.class)
+    public ResponseEntity<Object> handleOptimisticLockException(OptimisticLockException _utEx,  WebRequest _request) {
+        return createErrorResponse(_utEx,  "Version Mismatch (Optimistic Lock)!", "456", _request);
+    }
+
+    /**
+     * Unable to Save Due to Dirty Read/Write
+     * @param _utEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = PessimisticLockException.class)
+    public ResponseEntity<Object> handleOptimisticLockException(PessimisticLockException _utEx,  WebRequest _request) {
+        return createErrorResponse(_utEx, "Version Mismatch (Pessimistic Lock)!", "457", _request);
+    }
+
+    /**
+     * Unable to Save Due to  Persistence Exception
+     * @param _pEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = PersistenceException.class)
+    public ResponseEntity<Object> handlePersistenceException(PersistenceException _pEx, WebRequest _request) {
+        return createErrorResponse(_pEx,  "Unable to Save Data!", "458", _request);
+    }
+
+    /**
+     * Unable to Save Exception to SQL Exception
+     * @param _sqlEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = SQLException.class)
+    public ResponseEntity<Object> handleSQLException(SQLException _sqlEx,  WebRequest _request) {
+        return createErrorResponse(_sqlEx, _sqlEx.getMessage(), "459", null, HttpStatus.BAD_REQUEST, _request);
     }
 
     /**
@@ -374,6 +521,18 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @param e
      */
     private void logException(String _status, Throwable e) {
+        log.error(getStackTraceAsString(e));
         log.info("2|EH|TIME=00|STATUS=Error: {}|CLASS={}|",_status, e.toString());
+    }
+
+    /**
+     * Get the Stack Trace
+     * @param e
+     * @return
+     */
+    private String getStackTraceAsString(Throwable e) {
+        StringWriter stringWriter = new StringWriter();
+        e.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
     }
 }

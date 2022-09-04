@@ -71,7 +71,7 @@ public interface ProductService {
     public List<ProductEntity> createProductsEntity(List<ProductEntity> products);
 
     /**
-     * Update Product Name & Details
+     * Update Product
      * @param product
      * @return
      */
@@ -83,6 +83,13 @@ public interface ProductService {
      * @return
      */
     public ProductEntity updatePrice(ProductEntity product);
+
+    /**
+     * Update Product Name & Details
+     * @param product
+     * @return
+     */
+    public ProductEntity updateProductDetails(ProductEntity product);
 
     /**
      * De Activate Product

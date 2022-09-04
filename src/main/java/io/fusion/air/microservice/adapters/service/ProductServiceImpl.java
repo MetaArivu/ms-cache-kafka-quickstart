@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import javax.persistence.PersistenceException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +128,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * Update Product (Name & Details)
+     * Update Product
      *
      * @param product
      * @return
@@ -135,11 +136,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(rollbackFor = { SQLException.class })
     public ProductEntity updateProduct(ProductEntity product) {
-        ProductEntity productUpdate = getProductById(product.getUuid()) ;
-        productUpdate.setProductName(product.getProductName());
-        productUpdate.setProductDetails(product.getProductDetails());
-        productRepository.saveAndFlush(productUpdate);
-        return productUpdate;
+        productRepository.saveAndFlush(product);
+        return product;
     }
 
     /**
@@ -151,6 +149,22 @@ public class ProductServiceImpl implements ProductService {
     public ProductEntity updatePrice(ProductEntity product) {
         ProductEntity productUpdate = getProductById(product.getUuid()) ;
         productUpdate.setProductPrice(product.getProductPrice());
+        productRepository.saveAndFlush(productUpdate);
+        return productUpdate;
+    }
+
+    /**
+     * Update Product (Name & Details)
+     *
+     * @param product
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = { SQLException.class })
+    public ProductEntity updateProductDetails(ProductEntity product) {
+        ProductEntity productUpdate = getProductById(product.getUuid()) ;
+        productUpdate.setProductName(product.getProductName());
+        productUpdate.setProductDetails(product.getProductDetails());
         productRepository.saveAndFlush(productUpdate);
         return productUpdate;
     }
