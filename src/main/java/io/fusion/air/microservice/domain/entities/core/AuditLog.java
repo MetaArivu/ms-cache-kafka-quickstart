@@ -20,13 +20,13 @@
  */
 package io.fusion.air.microservice.domain.entities.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.slf4j.MDC;
 
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
 
 /**
@@ -79,32 +79,27 @@ public class AuditLog  {
      * Default System Audit Log
      */
     public AuditLog() {
+    }
+
+    /**
+     * Init Audit Log At the time of Record Insert
+     */
+    @JsonIgnore
+    // @PrePersist()
+    public void initAudit() {
         createdTime 	= new Timestamp(new Date().getTime());
-        createdBy       = MDC.get("user") == null ? "admin" : MDC.get("user");
+        createdBy       = MDC.get("user") == null ? "Admin" : MDC.get("user");
         updatedBy       = createdBy;
         updatedTime		= new Timestamp(new Date().getTime());
     }
-
     /**
-     * Record Audit Log created by the logged in User.
-     *
-     * @param _userId
+     * Set the Updated By from the Session User
      */
-    public AuditLog(String _userId) {
-        createdBy		= _userId;
-        createdTime 	= new Timestamp(new Date().getTime());
-        updatedBy		= _userId;
-        updatedTime		= new Timestamp(new Date().getTime());
-    }
-
-    /**
-     * Set Updated By user for  the record with the current time.
-     *
-     * @param _userId
-     */
-    public void setUpdatedBy(String _userId) {
+    @JsonIgnore
+    // @PreUpdate()
+    public void setUpdatedBy() {
         updatedTime	= new Timestamp(new Date().getTime());
-        updatedBy		= _userId;
+        updatedBy	= MDC.get("user") == null ? "User" : MDC.get("user");
     }
 
     /**

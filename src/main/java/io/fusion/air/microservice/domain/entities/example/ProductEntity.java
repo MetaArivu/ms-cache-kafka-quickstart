@@ -16,7 +16,7 @@
 package io.fusion.air.microservice.domain.entities.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.fusion.air.microservice.domain.entities.core.AuditLog;
+import io.fusion.air.microservice.domain.entities.core.AbstractBaseEntity;
 import io.fusion.air.microservice.domain.models.example.Product;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -38,7 +38,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "products_m")
-public class ProductEntity {
+public class ProductEntity extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -68,15 +68,6 @@ public class ProductEntity {
     @Pattern(regexp = "^[0-9]{5}\\b", message = "Zip Code Must be 5 Digits")
     private String productLocationZipCode;
 
-    @Column(name = "isActive")
-    private boolean isActive;
-
-    @Column(name = "version")
-    private int version;
-
-    @Embedded
-    private AuditLog auditLog;
-
     /**
      * Empty Product Entity
      */
@@ -104,8 +95,9 @@ public class ProductEntity {
         this.productDetails         = _pDetails;
         this.productPrice           = _pPrice;
         this.productLocationZipCode = _pZipCode;
-        this.isActive               = true;
-        this.auditLog               = new AuditLog();
+        // this.isActive               = true;
+        // this.auditLog               = new AuditLog();
+        initAudit();
     }
 
     /**
@@ -184,19 +176,11 @@ public class ProductEntity {
     }
 
     /**
-     * Returns True if its an Active Record
-     * @return
-     */
-    public boolean isActive() {
-        return isActive;
-    }
-
-    /**
      * De-Activate Product
      */
     @JsonIgnore
     public void deActivateProduct() {
-        isActive = false;
+        deActivate();
     }
 
     /**
@@ -204,26 +188,6 @@ public class ProductEntity {
      */
     @JsonIgnore
     public void activateProduct() {
-        isActive = true;
-    }
-
-    /**
-     * Returns the Audit Log for the following fields
-     * 1. Created Time
-     * 2. Created By
-     * 3. Updated Time
-     * 4. Updated By
-     * @return
-     */
-    public AuditLog getAuditLog() {
-        return auditLog;
-    }
-
-    /**
-     * Returns the Version Number of the record
-     * @return
-     */
-    public int getVersion() {
-        return version;
+        activate();
     }
 }
