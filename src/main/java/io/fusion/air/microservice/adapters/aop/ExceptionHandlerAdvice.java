@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -193,6 +194,17 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = AccessDeniedException.class)
     public ResponseEntity<Object> accessDeniedException(AccessDeniedException _adEx,  WebRequest _request) {
+        return createErrorResponse(_adEx, _adEx.getMessage(), "403", null, HttpStatus.FORBIDDEN, _request);
+    }
+
+    /**
+     * Request Rejected Exception
+     * @param _adEx
+     * @param _request
+     * @return
+     */
+    @ExceptionHandler(value = RequestRejectedException.class)
+    public ResponseEntity<Object> requestRejectedException(RequestRejectedException _adEx, WebRequest _request) {
         return createErrorResponse(_adEx, _adEx.getMessage(), "403", null, HttpStatus.FORBIDDEN, _request);
     }
 

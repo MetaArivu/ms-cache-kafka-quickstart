@@ -17,8 +17,12 @@ package io.fusion.air.microservice.adapters.repository;
 
 import io.fusion.air.microservice.domain.entities.example.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,11 +44,18 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
     public Optional<ProductEntity> findById(UUID productId);
 
     /**
-     * Return Product By Product Name
-     * @param _name
+     * Return Product By Price Greater Than or Equal To
+     * @param price
      * @return
      */
-    // @Query("SELECT ProductEntity FROM ProductEntity p WHERE p.productName like ?1")
-    // public ProductEntity fetchProductsdByName(String _name);
+    @Query("SELECT product FROM ProductEntity product WHERE product.productPrice >= :price ")
+    public List<ProductEntity> fetchProductsByPriceGreaterThan(@Param("price") BigDecimal price);
+
+    /**
+     * Same as the above @Query
+     * @param name
+     * @return
+     */
+    public List<ProductEntity> findByProductNameContains(String name);
 
 }

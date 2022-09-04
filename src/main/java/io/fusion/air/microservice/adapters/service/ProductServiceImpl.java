@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.persistence.PersistenceException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,33 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductEntity> getAllProduct() {
         return this.productRepository.findAll();
+    }
+
+    /**
+     * Fetch Products By Product Name
+     * @param _name
+     * @return
+     */
+    public List<ProductEntity> fetchProductsByName(String _name) {
+        String name = _name != null ? _name.trim() : "%";
+        List<ProductEntity> products = productRepository.findByProductNameContains(name);
+        if(products == null || products.size() == 0) {
+            throw new DataNotFoundException("No Data Found for the Search Query = ["+name+"]");
+        }
+        return products;
+    }
+
+    /**
+     * Return Product By Price Greater Than or Equal To
+     * @param price
+     * @return
+     */
+    public List<ProductEntity> fetchProductsByPriceGreaterThan(BigDecimal price) {
+        List<ProductEntity> products = productRepository.fetchProductsByPriceGreaterThan(price);
+        if(products == null || products.size() == 0) {
+            throw new DataNotFoundException("No Data Found for the Search Query = ["+price+"]");
+        }
+        return products;
     }
 
     /**

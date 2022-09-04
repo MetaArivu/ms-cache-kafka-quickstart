@@ -162,6 +162,48 @@ public class ProductControllerImpl extends AbstractController {
 	}
 
 	/**
+	 * Search the Product by Product Name
+	 */
+	@Operation(summary = "Search Product By Product Name")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Product(s) Found!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Unable to Find the Product(s)!",
+					content = @Content)
+	})
+	@GetMapping("/search/product/{productName}")
+	public ResponseEntity<StandardResponse> getAllProductsByName(@PathVariable("productName") String _productName) {
+		log.debug("|"+name()+"|Request to Search the Product By Name ... "+_productName);
+		List<ProductEntity> products = productServiceImpl.fetchProductsByName(_productName);
+		StandardResponse stdResponse = createSuccessResponse("Products Found!");
+		stdResponse.setPayload(products);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Search the Product by Product price
+	 */
+	@Operation(summary = "Search Product By Product Price Greater Than or Equal To")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Product(s) Found!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Unable to Find the Product(s)!",
+					content = @Content)
+	})
+	@GetMapping("/search/price/{price}")
+	public ResponseEntity<StandardResponse> getAllProductsByName(@PathVariable("price") BigDecimal _price) {
+		log.debug("|"+name()+"|Request to Search the Product By Price... "+_price);
+		List<ProductEntity> products = productServiceImpl.fetchProductsByPriceGreaterThan(_price);
+		StandardResponse stdResponse = createSuccessResponse("Products Found!");
+		stdResponse.setPayload(products);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
 	 * De-Activate the Product
 	 */
 	@Operation(summary = "De-Activate Product")
@@ -297,6 +339,8 @@ public class ProductControllerImpl extends AbstractController {
 		List<ProductEntity> productList = new ArrayList<ProductEntity>();
 		productList.add(new ProductEntity("iPhone 10", "iPhone 10, 64 GB", new BigDecimal(60000), "12345"));
 		productList.add(new ProductEntity("iPhone 11", "iPhone 11, 128 GB", new BigDecimal(70000), "12345"));
+		productList.add(new ProductEntity("Samsung Galaxy s20", "Samsung Galaxy s20, 256 GB", new BigDecimal(80000), "12345"));
+
 		try {
 			productServiceImpl.createProductsEntity(productList);
 			productList = productServiceImpl.getAllProduct();

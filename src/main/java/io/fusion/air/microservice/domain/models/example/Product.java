@@ -33,6 +33,7 @@ import java.math.BigDecimal;
  */
 public class Product implements Serializable {
 
+    // This Field is ONLY to Show the Regex patterns and other Validations Features
     @NotBlank(message = "The Product ID is  required.")
     @Size(min = 36, max = 36, message = "The length of Product Name must be 36 characters.")
     @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
