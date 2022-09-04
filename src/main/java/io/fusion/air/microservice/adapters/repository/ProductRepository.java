@@ -44,7 +44,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
     public Optional<ProductEntity> findById(UUID productId);
 
     /**
-     * Return Product By Price Greater Than or Equal To
+     * Search for the Product By Price Greater Than or Equal To
      * @param price
      * @return
      */
@@ -52,7 +52,14 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
     public List<ProductEntity> fetchProductsByPriceGreaterThan(@Param("price") BigDecimal price);
 
     /**
-     * Same as the above @Query
+     * Returns Active Products Only
+     * @return
+     */
+    @Query("SELECT product FROM ProductEntity product WHERE product.isActive = true")
+    public List<ProductEntity> fetchActiveProducts();
+
+    /**
+     * Search for the Product By the Product Names Like 'name'
      * @param name
      * @return
      */

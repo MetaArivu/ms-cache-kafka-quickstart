@@ -174,10 +174,10 @@ public class ProductControllerImpl extends AbstractController {
 					content = @Content)
 	})
 	@GetMapping("/search/product/{productName}")
-	public ResponseEntity<StandardResponse> getAllProductsByName(@PathVariable("productName") String _productName) {
+	public ResponseEntity<StandardResponse> searchProductsByName(@PathVariable("productName") String _productName) {
 		log.debug("|"+name()+"|Request to Search the Product By Name ... "+_productName);
 		List<ProductEntity> products = productServiceImpl.fetchProductsByName(_productName);
-		StandardResponse stdResponse = createSuccessResponse("Products Found!");
+		StandardResponse stdResponse = createSuccessResponse("Products Found For Search Term = "+_productName);
 		stdResponse.setPayload(products);
 		return ResponseEntity.ok(stdResponse);
 	}
@@ -195,10 +195,31 @@ public class ProductControllerImpl extends AbstractController {
 					content = @Content)
 	})
 	@GetMapping("/search/price/{price}")
-	public ResponseEntity<StandardResponse> getAllProductsByName(@PathVariable("price") BigDecimal _price) {
+	public ResponseEntity<StandardResponse> searchProductsByPrice(@PathVariable("price") BigDecimal _price) {
 		log.debug("|"+name()+"|Request to Search the Product By Price... "+_price);
 		List<ProductEntity> products = productServiceImpl.fetchProductsByPriceGreaterThan(_price);
-		StandardResponse stdResponse = createSuccessResponse("Products Found!");
+		StandardResponse stdResponse = createSuccessResponse("Products Found for Price >= "+_price);
+		stdResponse.setPayload(products);
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	/**
+	 * Search Active Products
+	 */
+	@Operation(summary = "Search Active Products")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "Product(s) Found!",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "400",
+					description = "Unable to Find the Product(s)!",
+					content = @Content)
+	})
+	@GetMapping("/search/active/")
+	public ResponseEntity<StandardResponse> searchActiveProducts() {
+		log.debug("|"+name()+"|Request to Search the Active Products ... ");
+		List<ProductEntity> products = productServiceImpl.fetchActiveProducts();
+		StandardResponse stdResponse = createSuccessResponse("Active Products Found = "+products.size());
 		stdResponse.setPayload(products);
 		return ResponseEntity.ok(stdResponse);
 	}

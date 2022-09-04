@@ -71,28 +71,43 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * Fetch Products By Product Name
+     * Search for the Product By the Product Names Like 'name'
      * @param _name
      * @return
      */
     public List<ProductEntity> fetchProductsByName(String _name) {
         String name = _name != null ? _name.trim() : "%";
         List<ProductEntity> products = productRepository.findByProductNameContains(name);
-        if(products == null || products.size() == 0) {
-            throw new DataNotFoundException("No Data Found for the Search Query = ["+name+"]");
-        }
-        return products;
+        return checkProducts(products, name);
     }
 
     /**
-     * Return Product By Price Greater Than or Equal To
+     * Search for the Product By Price Greater Than or Equal To
      * @param price
      * @return
      */
     public List<ProductEntity> fetchProductsByPriceGreaterThan(BigDecimal price) {
         List<ProductEntity> products = productRepository.fetchProductsByPriceGreaterThan(price);
+        return checkProducts(products, price);
+    }
+
+    /**
+     * Returns Active Products Only
+     * @return
+     */
+    public List<ProductEntity> fetchActiveProducts() {
+        List<ProductEntity> products = productRepository.fetchActiveProducts();
+        return checkProducts(products, "isActive");
+    }
+
+    /**
+     * Checks if the Products List Contains Data
+     * @param products
+     * @return
+     */
+    private List<ProductEntity> checkProducts(List<ProductEntity> products, Object search) {
         if(products == null || products.size() == 0) {
-            throw new DataNotFoundException("No Data Found for the Search Query = ["+price+"]");
+            throw new DataNotFoundException("No Data Found for the Search Query = ["+search+"]");
         }
         return products;
     }

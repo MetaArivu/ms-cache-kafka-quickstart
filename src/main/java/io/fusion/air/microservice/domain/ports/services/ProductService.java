@@ -46,18 +46,24 @@ public interface ProductService {
     public ProductEntity getProductById(UUID productId);
 
     /**
-     * Fetch Products By Product Name
+     * Search for the Product By the Product Names Like 'name'
      * @param _name
      * @return
      */
     public List<ProductEntity> fetchProductsByName(String _name);
 
     /**
-     * Return Product By Price Greater Than or Equal To
+     * Search for the Product By Price Greater Than or Equal To
      * @param price
      * @return
      */
     public List<ProductEntity> fetchProductsByPriceGreaterThan(BigDecimal price);
+
+    /**
+     * Returns Active Products Only
+     * @return
+     */
+    public List<ProductEntity> fetchActiveProducts();
 
     /**
      * Create Product (from DTO)
