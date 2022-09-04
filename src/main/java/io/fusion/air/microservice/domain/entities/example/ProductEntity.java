@@ -17,6 +17,7 @@ package io.fusion.air.microservice.domain.entities.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.fusion.air.microservice.domain.entities.core.AbstractBaseEntity;
+import io.fusion.air.microservice.domain.entities.core.AbstractBaseEntityWithUUID;
 import io.fusion.air.microservice.domain.models.example.Product;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -38,16 +39,16 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "products_m")
-public class ProductEntity extends AbstractBaseEntity {
+public class ProductEntity extends AbstractBaseEntityWithUUID {
 
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "productId", columnDefinition = "char(36)", unique = true)
-    @Type(type = "org.hibernate.type.UUIDCharType")
+    // @Id
+    // @GeneratedValue(generator = "UUID")
+    // @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    // @Column(name = "productId", columnDefinition = "char(36)", unique = true)
+    // @Type(type = "org.hibernate.type.UUIDCharType")
     // @Size(min = 36, max = 36, message = "The length of Product ID Name must be 36 characters.")
     // @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
-    private UUID productId;
+    // private UUID productId;
 
     @NotBlank(message = "The Product Name is required.")
     @Size(min = 3, max = 32, message = "The length of Product Name must be 3-32 characters.")
@@ -102,7 +103,7 @@ public class ProductEntity extends AbstractBaseEntity {
      * @return
      */
     public UUID getProductId() {
-        return productId;
+        return getId();
     }
 
     /**
@@ -111,7 +112,7 @@ public class ProductEntity extends AbstractBaseEntity {
      */
     @JsonIgnore
     public String getProductIdAsString() {
-        return productId.toString();
+        return getId().toString();
     }
 
     /**
