@@ -22,7 +22,6 @@ package io.fusion.air.microservice.security;
  */
 public final class Algorithms {
 
-
     // Message Digest Algorithms Definitions
     public final static String	MD2				= "MD2";
     public final static String	MD5				= "MD5";
@@ -61,8 +60,7 @@ public final class Algorithms {
     public static final String DiffieHellman = "DiffieHellman";
     public static final String DSA          = "DSA";
 
-
-    private String DEFAULT_MD_ALGO            = SHA_256;
+    private String DEFAULT_MD_ALGO            = SHA_512;
     private String CURRENT_MD_ALGO            = DEFAULT_MD_ALGO;
 
     /**
@@ -72,6 +70,10 @@ public final class Algorithms {
         try {
             CURRENT_MD_ALGO = (String) System.getProperty("HASHALGO");
         } catch (Exception ignored) {}
+        if(CURRENT_MD_ALGO == null) {
+            CURRENT_MD_ALGO = DEFAULT_MD_ALGO;
+            System.out.println("CURRENT_ALGO = "+CURRENT_MD_ALGO);
+        }
     }
 
     /**

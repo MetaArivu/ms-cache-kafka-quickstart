@@ -105,33 +105,65 @@ public class ServiceEventListener {
 		String subject	 = "jane.doe";
 		String issuer    = serviceConfig.getServiceOrg();
 
-		Map<String, Object> claims = new HashMap<>();
-		claims.put("aud", serviceConfig.getServiceName());
-		claims.put("jti", UUID.randomUUID().toString());
-		claims.put("rol", "User");
-		claims.put("did", "Device ID");
-		claims.put("iss", issuer);
-		claims.put("sub", subject);
+		Map<String, Object> claims = getClaims( subject,  issuer);
 
 		HashMap<String,String> tokens = jsonWebToken
-										.init(serviceConfig.getTokenType())
-										.setSubject(subject)
-										.setIssuer(issuer)
-										.setTokenAuthExpiry(tokenAuthExpiry)
-										.setTokenRefreshExpiry(tokenRefreshExpiry)
-										.addAllTokenClaims(claims)
-										.addAllRefreshTokenClaims(claims)
-										.generateTokens();
+				.init(serviceConfig.getTokenType())
+				.setSubject(subject)
+				.setIssuer(issuer)
+				.setTokenAuthExpiry(tokenAuthExpiry)
+				.setTokenRefreshExpiry(tokenRefreshExpiry)
+				.addAllTokenClaims(claims)
+				.addAllRefreshTokenClaims(claims)
+				.generateTokens();
 
 		String token = tokens.get("token");
 		String refresh = tokens.get("refresh");
-		log.info("Token Expiry in Days:Hours:Mins  {} ", JsonWebToken.printExpiryTime(tokenAuthExpiry));
+		log.info("\nToken Expiry in Days:Hours:Mins  {} ", JsonWebToken.printExpiryTime(tokenAuthExpiry));
 		jsonWebToken.tokenStats(token, false, false);
 
-		log.info("Refresh Token Expiry in Days:Hours:Mins  {}", JsonWebToken.printExpiryTime(tokenRefreshExpiry));
+		log.info("\nRefresh Token Expiry in Days:Hours:Mins  {}", JsonWebToken.printExpiryTime(tokenRefreshExpiry));
 		jsonWebToken.tokenStats(refresh, false, false);
+
+		String admToken = adminToken(subject);
+		jsonWebToken.tokenStats(admToken, false, false);
 	}
-	
+
+	/**
+	 * Create Admin Token
+	 * @param subject
+	 * @return
+	 */
+	private String adminToken(String subject) {
+		String issuer    = serviceConfig.getServiceOrg();
+		Map<String, Object> claims = getClaims( subject,  issuer);
+		claims.put("rol", "Admin");
+
+		long txTokenExpiry = (tokenRefreshExpiry < 50) ? JsonWebToken.EXPIRE_IN_ONE_HOUR : tokenRefreshExpiry;;
+		log.info("\nAdmin Token Expiry in Days:Hours:Mins  {}", JsonWebToken.printExpiryTime(txTokenExpiry));
+		return jsonWebToken
+				.init(serviceConfig.getTokenType())
+				.setSubject(subject)
+				.setIssuer(serviceConfig.getServiceOrg())
+				.generateToken( subject,  serviceConfig.getServiceOrg(),  txTokenExpiry,  claims);
+	}
+
+	/**
+	 * Create Claims
+	 * @param subject
+	 * @param issuer
+	 * @return
+	 */
+	private Map<String, Object> getClaims(String subject, String issuer) {
+		Map<String, Object> claims = new HashMap<>();
+		claims.put("aud", serviceConfig.getServiceName());
+		claims.put("jti", UUID.randomUUID().toString());
+		claims.put("sub", subject);
+		claims.put("iss", issuer);
+		claims.put("rol", "User");
+		return claims;
+	}
+
 	/**
 	 * Shows the Service Logo and Version Details. 
 	 */

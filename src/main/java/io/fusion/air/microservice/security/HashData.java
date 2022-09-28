@@ -227,6 +227,7 @@ public final class HashData {
 
     public static void main(String[] args) throws Exception {
 
+        System.out.println("12345 = "+HashData.createHash("12345"));
         // Usage
         if(args.length == 0) {
             System.out.println("\n0 - Print all the Algorithms to create Hash.\n");

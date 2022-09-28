@@ -17,7 +17,6 @@
 package io.fusion.air.microservice.security;
 
 import java.security.*;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -25,14 +24,11 @@ import java.util.function.Function;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.jsonwebtoken.*;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import static java.lang.invoke.MethodHandles.lookup;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * 
@@ -482,7 +478,7 @@ public final class JsonWebToken {
 	 */
 	public String getUserRoleFromToken(String token) {
 		Claims claims = getAllClaims(token);
-		String role = (String) claims.get("role");
+		String role = (String) claims.get("rol");
 		return (role == null) ? "Public" : role;
 	}
     
