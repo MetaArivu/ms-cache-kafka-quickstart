@@ -141,34 +141,6 @@ public class HealthController extends AbstractController {
     		ServiceBootStrap.restart();
     	}
     }
-
-    /**
-     * Remote Echo Test
-     * @param echoData
-     * @return
-     */
-    @Operation(summary = "Service Echo")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
-            		description = "Service Echo",
-            		content = {@Content(mediaType = "application/json")}),
-			@ApiResponse(responseCode = "400",
-					description = "Service unable to deserialize!",
-					content = @Content),
-			@ApiResponse(responseCode = "404",
-            		description = "Service unable to do Echo!",
-            		content = @Content)
-    })
-    @PostMapping("/echo")
-    public ResponseEntity<StandardResponse> remoteEcho(@RequestBody EchoData echoData) {
-		log.debug(name()+"|Request for Echo ... "+echoData);
-    	if(echoData == null) {
-			throw new InputDataException("Empty EchoData");
-		}
-		StandardResponse stdResponse = createSuccessResponse("Echo is Good!");
-    	stdResponse.setPayload(new EchoResponseData(echoData.getWord()));
-		return ResponseEntity.ok(stdResponse);
-    }
     
 	/**
 	 * Basic Testing

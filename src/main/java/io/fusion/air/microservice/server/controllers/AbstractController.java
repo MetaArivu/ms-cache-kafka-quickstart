@@ -15,6 +15,7 @@
  */
 package io.fusion.air.microservice.server.controllers;
 
+import io.fusion.air.microservice.adapters.security.ClaimsManager;
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
@@ -42,6 +43,17 @@ public abstract class AbstractController {
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 	private String serviceName;
+
+	@Autowired
+	private ClaimsManager claimsManager;
+
+	/**
+	 * Returns Claims Manager
+	 * @return
+	 */
+	public ClaimsManager getClaims() {
+		return claimsManager;
+	}
 
 	/**
 	 * Returns the Service Name

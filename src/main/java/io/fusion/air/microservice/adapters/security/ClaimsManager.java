@@ -19,6 +19,7 @@ import io.fusion.air.microservice.domain.exceptions.AuthorizationException;
 import io.fusion.air.microservice.utils.Utils;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.RequestScope;
 
 /**
  * @author: Araf Karsh Hamid
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
  * @date:
  */
 @Service
+@RequestScope
 public class ClaimsManager {
 
     private Claims claims;
@@ -63,6 +65,15 @@ public class ClaimsManager {
             throw new AuthorizationException("Tx-Token: Un-Authorized Access by user - Subject Not Found!");
         }
         return claimsInitialized;
+    }
+
+    /**
+     * Returns true if the App Specific value is there
+     * @return
+     */
+    public boolean validate() {
+        // Custom Implementation
+        return true;
     }
 
     /**

@@ -217,6 +217,7 @@ public class AuthorizeRequestAspect {
                 // Set the Claims ONLY If it's a Single Token
                 if(singleToken) {
                     claimsManager.setClaims(jwtUtil.getAllClaims(token));
+                    claimsManager.isClaimsInitialized();
                 }
                 // Verify that the user role name matches the role name defined by the protected resource
                 MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -279,6 +280,7 @@ public class AuthorizeRequestAspect {
             if (jwtUtil.validateToken(user, token)) {
                 claimsManager.setClaims(jwtUtil.getAllClaims(token));
                 claimsManager.isClaimsInitialized();
+                claimsManager.validate();
                 logTime(startTime, "SUCCESS", "TX-Token: User TX Authorized for the request",  joinPoint);
             }  else {
                 msg = "TX-Token: Unauthorized Access: Token Validation Failed!";
