@@ -22,7 +22,9 @@ import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
 import io.fusion.air.microservice.server.models.EchoData;
 import io.fusion.air.microservice.server.models.EchoResponseData;
+import io.fusion.air.microservice.server.service.EchoAppService;
 import io.fusion.air.microservice.server.service.EchoService;
+import io.fusion.air.microservice.server.service.EchoSessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,6 +40,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -64,10 +67,10 @@ public class EchoController extends AbstractController {
 	private EchoService echoService;
 
 	@Autowired
-	private EchoService echoSessionService;
+	private EchoSessionService echoSessionService;
 
 	@Autowired
-	private EchoService echoAppService;
+	private EchoAppService echoAppService;
 	
 	private final String title = "<h1>Welcome to Health Service<h1/>"
 					+ ServiceHelp.NL
@@ -100,7 +103,7 @@ public class EchoController extends AbstractController {
 	public ResponseEntity<StandardResponse> getHealth(HttpServletRequest request) throws Exception {
 		log.debug(name()+"|Request to Health of Service... ");
 		StandardResponse stdResponse = createSuccessResponse("Service is OK!");
-		HashMap<String, Object> payload = new HashMap<String, Object>();
+		HashMap<String, Object> payload = new LinkedHashMap<String, Object>();
 		payload.put("requestScope", echoService.getEchoData());
 		payload.put("sessionScope", echoSessionService.getEchoData());
 		payload.put("appScope", echoAppService.getEchoData());
