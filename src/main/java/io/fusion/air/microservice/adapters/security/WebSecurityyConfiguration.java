@@ -17,10 +17,14 @@ package io.fusion.air.microservice.adapters.security;
 
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
+
+import java.util.Arrays;
 
 /**
  * @author: Araf Karsh Hamid
@@ -46,7 +50,7 @@ class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                  // Enable CRPF Protection
         // http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         // Disable for Local Testing
-        http.csrf().disable();
+        // http.csrf().disable();
         http.headers().frameOptions().disable();
         String hostName = serviceConfig.getServerHost();
         // Content Security Policy
@@ -54,6 +58,17 @@ class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .contentSecurityPolicy("script-src 'self' *."+hostName+"; " +
                         "object-src *."+hostName+"; ");
 
+    }
+
+    /**
+     * Handles Malicious URI Path (handles special characters and other things
+     * @return
+     */
+    @Bean
+    public StrictHttpFirewall httpFirewall() {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        firewall.setAllowedHttpMethods(Arrays.asList("GET","POST", "PUT", "DELETE"));
+        return firewall;
     }
 }
 

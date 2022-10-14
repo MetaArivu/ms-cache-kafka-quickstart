@@ -22,9 +22,7 @@ import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
 import io.fusion.air.microservice.server.models.EchoData;
 import io.fusion.air.microservice.server.models.EchoResponseData;
-import io.fusion.air.microservice.server.service.EchoAppService;
-import io.fusion.air.microservice.server.service.EchoService;
-import io.fusion.air.microservice.server.service.EchoSessionService;
+import io.fusion.air.microservice.server.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -71,6 +69,12 @@ public class EchoController extends AbstractController {
 
 	@Autowired
 	private EchoAppService echoAppService;
+
+	@Autowired
+	private MyService1 service1;
+
+	@Autowired
+	private MyService2 service2;
 	
 	private final String title = "<h1>Welcome to Health Service<h1/>"
 					+ ServiceHelp.NL
@@ -108,6 +112,9 @@ public class EchoController extends AbstractController {
 		payload.put("sessionScope", echoSessionService.getEchoData());
 		payload.put("appScope", echoAppService.getEchoData());
 
+		service1.printData();
+		service2.printData();
+
 		stdResponse.setPayload(payload);
 		return ResponseEntity.ok(stdResponse);
 	}
@@ -139,6 +146,10 @@ public class EchoController extends AbstractController {
     	echoService.setEchoData(erd);
     	echoSessionService.setEchoData(erd);
     	echoAppService.setEchoData(erd);
+
+    	service1.printData();
+		service2.printData();
+
 		StandardResponse stdResponse = createSuccessResponse("Echo is Good!");
     	stdResponse.setPayload(erd);
 		return ResponseEntity.ok(stdResponse);
@@ -171,6 +182,10 @@ public class EchoController extends AbstractController {
 		echoService.setEchoData(erd);
 		echoSessionService.setEchoData(erd);
 		echoAppService.setEchoData(erd);
+
+		service1.printData();
+		service2.printData();
+
 		StandardResponse stdResponse = createSuccessResponse("Echo is Good!");
 		stdResponse.setPayload(erd);
 		return ResponseEntity.ok(stdResponse);
