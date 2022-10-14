@@ -75,6 +75,9 @@ public class EchoController extends AbstractController {
 
 	@Autowired
 	private MyService2 service2;
+
+	@Autowired
+	private MyService3 service3;
 	
 	private final String title = "<h1>Welcome to Health Service<h1/>"
 					+ ServiceHelp.NL
@@ -114,6 +117,7 @@ public class EchoController extends AbstractController {
 
 		service1.printData();
 		service2.printData();
+		service3.printData();
 
 		stdResponse.setPayload(payload);
 		return ResponseEntity.ok(stdResponse);
@@ -149,6 +153,7 @@ public class EchoController extends AbstractController {
 
     	service1.printData();
 		service2.printData();
+		service3.printData();
 
 		StandardResponse stdResponse = createSuccessResponse("Echo is Good!");
     	stdResponse.setPayload(erd);
@@ -185,6 +190,7 @@ public class EchoController extends AbstractController {
 
 		service1.printData();
 		service2.printData();
+		service3.printData();
 
 		StandardResponse stdResponse = createSuccessResponse("Echo is Good!");
 		stdResponse.setPayload(erd);
