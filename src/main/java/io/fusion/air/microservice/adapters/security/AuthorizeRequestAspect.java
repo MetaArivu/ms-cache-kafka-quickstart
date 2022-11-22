@@ -17,6 +17,7 @@ package io.fusion.air.microservice.adapters.security;
 
 import io.fusion.air.microservice.domain.exceptions.*;
 import io.fusion.air.microservice.security.JsonWebToken;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -50,10 +51,20 @@ public class AuthorizeRequestAspect {
     // Set Logger -> Lookup will automatically determine the class name.
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    public final static String REFRESH_TOKEN = "Refresh-Token";
-    public final static String AUTH_TOKEN = "Authorization";
-    public final static String SINGLE_TOKEN = "Authorization";
-    public final static String TX_TOKEN = "TX-TOKEN";
+    public final static String AUTH             = "auth";
+    public final static String AUTH_REFRESH     = "refresh";
+    public final static String TX_USERS         = "tx-users";
+    public final static String TX_SERVICE       = "tx-internal";
+    public final static String TX_EXTERNAL      = "tx-external";
+
+    public final static String REFRESH_TOKEN    = "Refresh-Token";
+    public final static String AUTH_TOKEN       = "Authorization";
+    public final static String SINGLE_TOKEN     = "Authorization";
+    public final static String TX_TOKEN         = "TX-TOKEN";
+
+    public final static int CONSUMERS           = 1;
+    public final static int INTERNAL_SERVICES   = 2;
+    public final static int EXTERNAL_SERVICES   = 3;
 
     @Autowired
     private JsonWebToken jwtUtil;
@@ -66,55 +77,88 @@ public class AuthorizeRequestAspect {
 
     /**
      * Validate REST Endpoint Annotated with @validateRefreshToken Annotation
+     *
      * @param joinPoint
      * @return
      * @throws Throwable
      */
     @Around("@annotation(io.fusion.air.microservice.adapters.security.ValidateRefreshToken)")
     public Object validateRefreshRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-        return validateRequest(false, REFRESH_TOKEN, joinPoint);
+        return validateRequest(false, REFRESH_TOKEN, joinPoint, CONSUMERS);
     }
 
     /**
      * Validate REST Endpoints Annotated with @SingleTokenAuthorizationRequired Annotation
+     *
      * @param joinPoint
      * @return
      * @throws Throwable
      */
     @Around("@annotation(io.fusion.air.microservice.adapters.security.SingleTokenAuthorizationRequired)")
     public Object validateSingleTokenRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-        return validateRequest(true, SINGLE_TOKEN, joinPoint);
+        return validateRequest(true, SINGLE_TOKEN, joinPoint, CONSUMERS);
     }
 
     /**
      * Validate REST Endpoints Annotated with @AuthorizationRequired Annotation
+     *
      * @param joinPoint
      * @return
      * @throws Throwable
      */
     @Around("@annotation(io.fusion.air.microservice.adapters.security.AuthorizationRequired)")
     public Object validateAnnotatedRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-        return validateRequest(false, AUTH_TOKEN, joinPoint);
+        return validateRequest(false, AUTH_TOKEN, joinPoint, CONSUMERS);
     }
 
     /**
-     * Secure All the REST Endpoints in the Secured Packaged using JWT
+     * Secure All the Consumers REST Endpoints in the Secured Packaged using JWT
+     *
      * @param joinPoint
      * @return
      * @throws Throwable
      */
     @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.secured.*.*(..))")
     public Object validateAnyRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-        return validateRequest(false, AUTH_TOKEN,joinPoint);
+        return validateRequest(false, AUTH_TOKEN,joinPoint, CONSUMERS);
     }
 
     /**
-     * Validate the Request
+     * Secure All the Internal REST Endpoints in the Secured Packaged using JWT
+     *
      * @param joinPoint
      * @return
      * @throws Throwable
      */
-    private Object validateRequest(boolean singleToken, String tokenKey, ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.internal.*.*(..))")
+    public Object validateInternalRequest(ProceedingJoinPoint joinPoint) throws Throwable {
+        return validateRequest(false, AUTH_TOKEN,joinPoint, INTERNAL_SERVICES);
+    }
+
+    /**
+     * Secure All the External REST Endpoints in the Secured Packaged using JWT
+     *
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    @Around(value = "execution(* io.fusion.air.microservice.adapters.controllers.external.*.*(..))")
+    public Object validateExternalRequest(ProceedingJoinPoint joinPoint) throws Throwable {
+        return validateRequest(false, AUTH_TOKEN,joinPoint, EXTERNAL_SERVICES);
+    }
+
+    /**
+     * Validate the Request
+     *
+     * @param singleToken
+     * @param tokenKey
+     * @param joinPoint
+     * @param tokenCtg
+     * @return
+     * @throws Throwable
+     */
+    private Object validateRequest(boolean singleToken, String tokenKey, ProceedingJoinPoint joinPoint, int tokenCtg)
+            throws Throwable {
         // Get the request object
         long startTime = System.currentTimeMillis();
         ServletRequestAttributes attributes = (ServletRequestAttributes)
@@ -124,11 +168,13 @@ public class AuthorizeRequestAspect {
         final String token = getToken(startTime, request.getHeader(tokenKey), joinPoint);
         final String user = getUser(startTime, token, joinPoint);
         System.out.println("Step 0: User Extracted... "+user);
+        // System.out.println("Step 0: Security Context. "+SecurityContextHolder.getContext().getAuthentication());
+        // System.out.println("Step 0: Principal....... "+SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         // Validate the Token when User is NOT Null
         if (user != null) {
             // System.out.println("Step 1: Extract Tokens...");
             // Validate Token
-            UserDetails userDetails = validateToken(startTime, singleToken, user, tokenKey, token, joinPoint);
+            UserDetails userDetails = validateToken(startTime, singleToken, user, tokenKey, token, joinPoint, tokenCtg);
             // Create Authorize Token
             UsernamePasswordAuthenticationToken authorizeToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
@@ -141,8 +187,8 @@ public class AuthorizeRequestAspect {
         }
         // If the User == NULL then ERROR is thrown from getUser() method itself
         // Check the Tx Token if It's NOT a SINGLE_TOKEN Request
-        if(!singleToken) {
-            validateAndSetClaimsFromTxToken(startTime, user, request.getHeader(TX_TOKEN), joinPoint);
+        if(!singleToken ) {
+            validateAndSetClaimsFromTxToken(startTime, user, tokenKey, request.getHeader(TX_TOKEN), joinPoint);
         }
         return joinPoint.proceed();
     }
@@ -152,7 +198,10 @@ public class AuthorizeRequestAspect {
      * ------------------------------------------------------------------------------------------------------
      * Authorization: Bearer AAA.BBB.CCC
      * ------------------------------------------------------------------------------------------------------
+     *
+     * @param startTime
      * @param tokenKey
+     * @param joinPoint
      * @return
      */
     private String getToken(long startTime, String tokenKey, ProceedingJoinPoint joinPoint) {
@@ -166,7 +215,10 @@ public class AuthorizeRequestAspect {
 
     /**
      * Returns the user from the Token
+     *
+     * @param startTime
      * @param token
+     * @param joinPoint
      * @return
      */
     private String getUser(long startTime, String token, ProceedingJoinPoint joinPoint) {
@@ -200,13 +252,18 @@ public class AuthorizeRequestAspect {
      * Validate Token
      * - User
      * - Expiry Time
+     *
+     * @param startTime
+     * @param singleToken
      * @param user
+     * @param tokenKey
      * @param token
      * @param joinPoint
+     * @param tokenCtg
      * @return
      */
     private UserDetails validateToken(long startTime, boolean singleToken, String user, String tokenKey,
-                                      String token, ProceedingJoinPoint joinPoint) {
+                                      String token, ProceedingJoinPoint joinPoint, int tokenCtg) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user);
         String msg = null;
         try {
@@ -215,10 +272,13 @@ public class AuthorizeRequestAspect {
             if (jwtUtil.validateToken(userDetails.getUsername(), token)) {
                 String role = jwtUtil.getUserRoleFromToken(token);
                 // Set the Claims ONLY If it's a Single Token
+                Claims claims = jwtUtil.getAllClaims(token);
                 if(singleToken) {
-                    claimsManager.setClaims(jwtUtil.getAllClaims(token));
+                    claimsManager.setClaims(claims);
                     claimsManager.isClaimsInitialized();
                 }
+                // Validate the Token Type
+                validateTokenType( startTime,  user,  tokenKey, claims,  tokenCtg,  joinPoint);
                 // Verify that the user role name matches the role name defined by the protected resource
                 MethodSignature signature = (MethodSignature) joinPoint.getSignature();
                 AuthorizationRequired annotation = null;
@@ -227,12 +287,15 @@ public class AuthorizeRequestAspect {
                     if (tokenKey.equalsIgnoreCase(AUTH_TOKEN)) {
                         annotation = signature.getMethod().getAnnotation(AuthorizationRequired.class);
                         annotationRole = annotation.role();
+                        // } else {
+                        //    annotation = signature.getMethod().getAnnotation(ValidateRefreshToken.class);
                     }
                 } catch (Exception ignored) {
-                    System.out.println("ROLE NOT FOUND: "+ignored.getMessage());
+                    // System.out.println("ROLE NOT FOUND: "+ignored.getMessage());
                 }
                 System.out.println("Step 3: Role Check @Role = "+annotationRole+" Claims Role = "+role);
                 // If the Role in the Token is User and Required is Admin then Reject the request
+
                 if(role.trim().equalsIgnoreCase(UserRole.User.toString())
                         && annotationRole != null
                         && annotationRole.equals(UserRole.Admin.toString())) {
@@ -258,6 +321,62 @@ public class AuthorizeRequestAspect {
     }
 
     /**
+     * Validate the Token Type
+     *
+     * @param startTime
+     * @param user
+     * @param claims
+     * @param tokenCtg
+     * @param joinPoint
+     */
+    private void validateTokenType(long startTime, String user, String tokenKey, Claims claims, int tokenCtg, ProceedingJoinPoint joinPoint) {
+        String msg = null;
+        try {
+            if (claims == null) {
+                msg = "Invalid Token! No Claims available! " + user;
+                throw new AuthorizationException(msg);
+            }
+            String tokenType = null;
+            try {
+                tokenType = (String) claims.get("type");
+            } catch (Exception e) {
+            }
+            if (tokenType == null) {
+                msg = "Invalid Token Type from Claims! " + user;
+                throw new AuthorizationException(msg);
+            }
+            switch(tokenCtg) {
+                case CONSUMERS:
+                    if (tokenKey.equals(AUTH_TOKEN) && !tokenType.equals(AUTH)) {
+                        msg = "Invalid Auth Token! ("+tokenType+")  For " + user;
+                        throw new AuthorizationException(msg);
+                    } else if (tokenKey.equals(REFRESH_TOKEN) && !tokenType.equals(AUTH_REFRESH)) {
+                        msg = "Invalid Refresh Token! " + user;
+                        throw new AuthorizationException(msg);
+                    }
+                    break;
+                case INTERNAL_SERVICES:
+                    if (tokenKey.equals(AUTH_TOKEN) && !tokenType.equals(TX_SERVICE )) {
+                        msg = "Invalid Auth Token ("+tokenType+") For Internal Service! " + user;
+                        throw new AuthorizationException(msg);
+                    }
+                    break;
+                case EXTERNAL_SERVICES:
+                    if (tokenKey.equals(AUTH_TOKEN) && !tokenType.equals(TX_EXTERNAL )) {
+                        msg = "Invalid Auth Token ("+tokenType+") For External! " + user;
+                        throw new AuthorizationException(msg);
+                    }
+                    break;
+            }
+        } finally {
+            // Error is Logged ONLY if msg != NULL
+            if(msg != null) {
+                logTime(startTime, "ERROR", msg, joinPoint);
+            }
+        }
+    }
+
+    /**
      * Validate Tx Token and Set the Claims in the ClaimsManager
      *
      * @param startTime
@@ -266,21 +385,35 @@ public class AuthorizeRequestAspect {
      * @param joinPoint
      */
     private void validateAndSetClaimsFromTxToken(long startTime, String user, String tokenKey,
-                                                 ProceedingJoinPoint joinPoint) {
+                                                 String tokenData, ProceedingJoinPoint joinPoint) {
         String token = null;
-        if (tokenKey != null && tokenKey.startsWith("Bearer ")) {
-            token = tokenKey.substring(7);
+        if (tokenData != null && tokenData.startsWith("Bearer ")) {
+            token = tokenData.substring(7);
         } else {
-            String msg = "TX-Token: Access Denied: Unable to extract TX-Token from Header!";
+            String msg = "TX-Token: Access Denied: Unable to extract TX-Token from Header! "+user;
             logTime(startTime, "ERROR", msg, joinPoint);
             throw new JWTTokenExtractionException(msg);
         }
         String msg = null;
         try {
+            Claims claims = null;
             if (jwtUtil.validateToken(user, token)) {
-                claimsManager.setClaims(jwtUtil.getAllClaims(token));
+                claims = jwtUtil.getAllClaims(token);
+                String tokenType = null;
+                try {
+                    tokenType = (String) claims.get("type");
+                } catch (Exception e) {
+                }
+                if (tokenType == null) {
+                    msg = "Invalid Token Type from Claims! " + user;
+                    throw new AuthorizationException(msg);
+                }
+                if (!tokenType.equals(TX_USERS)) {
+                    msg = "Invalid TX Token Type ("+tokenType+") ! " + user;
+                    throw new AuthorizationException(msg);
+                }
+                claimsManager.setClaims(claims);
                 claimsManager.isClaimsInitialized();
-                claimsManager.validate();
                 logTime(startTime, "SUCCESS", "TX-Token: User TX Authorized for the request",  joinPoint);
             }  else {
                 msg = "TX-Token: Unauthorized Access: Token Validation Failed!";
@@ -309,5 +442,4 @@ public class AuthorizeRequestAspect {
         long timeTaken=System.currentTimeMillis() - _startTime;
         log.info("2|JA|TIME={} ms|STATUS={}|CLASS={}|Msg={}", timeTaken, _status,joinPoint, _msg);
     }
-
-}
+ }
