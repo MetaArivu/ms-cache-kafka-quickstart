@@ -28,7 +28,10 @@ import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.controllers.AbstractController;
 import io.fusion.air.microservice.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -375,7 +378,8 @@ public class ProductControllerImpl extends AbstractController {
 	 * The Error Code for the Exceptions will be automatically determined by the Framework.
 	 * Error Code will be Different for Each Microservice.
 	 */
-    @Operation(summary = "Process Product")
+    /**
+	@Operation(summary = "Process Product")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
             description = "Process the payment",
@@ -384,6 +388,45 @@ public class ProductControllerImpl extends AbstractController {
             description = "Unable to process the Product",
             content = @Content)
     })
+	 */
+	@Operation(
+			summary = "Process Product",
+			responses = {
+					@ApiResponse(
+							responseCode = "200",
+							description = "Process the payment",
+							content = @Content(
+									mediaType = "application/json",
+									schema = @Schema(implementation = ResponseEntity.class))
+					),
+					@ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+					@ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+					@ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+			},
+			parameters = {
+					@Parameter(
+							name = "x-csrf-header",
+							in = ParameterIn.HEADER,
+							description = "CSRF-HEADER",
+							required = false,
+							schema = @Schema(type = "string", defaultValue = "X-XSRF-TOKEN")
+					),
+					@Parameter(
+							name = "x-csrf-param",
+							in = ParameterIn.HEADER,
+							description = "CSRF-PARAM",
+							required = false,
+							schema = @Schema(type = "string", defaultValue = "_csrf")
+					),
+					@Parameter(
+							name = "x-csrf-token",
+							in = ParameterIn.HEADER,
+							description = "CSRF-TOKEN",
+							required = false,
+							schema = @Schema(type = "string", defaultValue = "2072dc75-d126-4442-a006-1f657c8973c2")
+					)
+			}
+	)
 	@PostMapping("/processProducts")
     public ResponseEntity<StandardResponse> processProduct(@RequestBody PaymentDetails _payDetails) {
 		log.debug("|"+name()+"|Request to process Product... "+_payDetails);
