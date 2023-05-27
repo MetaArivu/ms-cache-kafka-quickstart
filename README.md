@@ -4,7 +4,8 @@ Two versions are available for the template
 
 1. v0.5.x = SpringBoot 2.7.2 with Java 8 and Java EE
 2. v0.6.x = SpringBoot 3.1.0 with Java 17 and Jakarta EE
-3. v0.7.x > main with SpringBoot 3.1.0 with other features
+3. v0.7.1 = SpringBoot 3.1.0 with WebFlux, R2DBC and Reactive Framework
+4. v0.8.x > main with SpringBoot 3.1.0 with other features
 
 Checkout the respective branches for the Microservices template
 

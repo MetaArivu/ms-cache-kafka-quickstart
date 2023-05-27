@@ -1,8 +1,8 @@
 # =======================================================================
 # MS-Cache Service Properties
 # =======================================================================
-build.number=133
-build.date=Sun May 28 00:10:32 IST 2023
+build.number=132
+build.date=Sat May 27 23:57:05 IST 2023
 # =======================================================================
 # Service Name & API Details -  Version, Path
 # =======================================================================
@@ -83,12 +83,6 @@ spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 #spring.datasource.username=postgres
 #spring.datasource.password=
 #spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
-# =======================================================================
-# PostgreSQL DB Reactive Properties
-# =======================================================================
-spring.r2dbc.url=r2dbc:postgresql://localhost/test
-spring.r2dbc.username=postgres
-spring.r2dbc.password=secret
 # =======================================================================
 # JPA / Hibernate Properties
 # ------------------------------------------------------------------------
