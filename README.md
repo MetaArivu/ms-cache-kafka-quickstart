@@ -15,7 +15,7 @@ Checkout the respective branches for the Microservices template
 
 ### What the Template Provides out of the box
 
-1. Springboot App with Swagger Docs (...adapters.controllers)
+1. SpringBoot App with Swagger Docs (...adapters.controllers)
 2. Exception Handling with Exception Framework using AOP ( ..adapters.aop)
 3. Log Management using Logback  (...adapters.filters)
 4. Standardized REST Responses (...domain.models.StandardResponse) 
@@ -25,9 +25,9 @@ Checkout the respective branches for the Microservices template
 
 ### Pre-Requisites 
 
-1. Springboot 3.1
+1. SpringBoot 3.1
 2. Java 17 
-3. Jakarta EE (jakarta.servlet.*, jakarta.persistence.*, javax.validation.*)
+3. Jakarta EE (jakarta.servlet.*, jakarta.persistence.*, jakarta.validation.*)
 4. Maven 3.8.6
 5. Git 2.31
 
