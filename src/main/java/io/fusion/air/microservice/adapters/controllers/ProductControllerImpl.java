@@ -45,7 +45,7 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -96,7 +96,7 @@ public class ProductControllerImpl extends AbstractController {
 					content = @Content)
 	})
 	@PostMapping("/create")
-	public ResponseEntity<StandardResponse> createProduct(@Valid @RequestBody Product _product) {
+	public ResponseEntity<StandardResponse> createProduct( @RequestBody Product _product) {
 		log.debug("|"+name()+"|Request to Create Product... "+_product);
 		ProductEntity prodEntity = productServiceImpl.createProduct(_product);
 		StandardResponse stdResponse = createSuccessResponse("Product Created");
@@ -230,6 +230,7 @@ public class ProductControllerImpl extends AbstractController {
 	/**
 	 * De-Activate the Product
 	 */
+	@AuthorizationRequired(role = "user")
 	@Operation(summary = "De-Activate Product")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",

@@ -18,11 +18,11 @@ package io.fusion.air.microservice.domain.models.example;
 
 import io.fusion.air.microservice.utils.Utils;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Pattern.Flag;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern.Flag;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -35,8 +35,8 @@ public class Product implements Serializable {
 
     // This Field is ONLY to Show the Regex patterns and other Validations Features
     @NotBlank(message = "The Product ID is  required.")
-    @Size(min = 36, max = 36, message = "The length of Product Name must be 36 characters.")
-    @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
+    @Size(min = 36, max = 36, message = "The length of Product ID must be 36 characters.")
+    @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid Product UUID")
     private String productId;
 
     @NotBlank(message = "The Product Name is  required.")

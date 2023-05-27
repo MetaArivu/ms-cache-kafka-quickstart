@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.firewall.RequestRejectedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -164,6 +165,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(stdResponse, _httpStatus);
     }
 
+    // ================================================================================================================
+    // SERVER EXCEPTIONS: ERROR CODES 430 - 439
+    // ================================================================================================================
     /**
      * Handle Runtime Exception
      * @param _runEx
@@ -186,6 +190,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_runEx, _runEx.getMessage(), "599", null, HttpStatus.INTERNAL_SERVER_ERROR, _request);
     }
 
+    // ================================================================================================================
+    // STANDARD EXCEPTIONS: ERROR CODES 400 - 409
+    // ================================================================================================================
     /**
      * Access Denied Exception
      * @param _adEx
@@ -207,6 +214,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> requestRejectedException(RequestRejectedException _adEx, WebRequest _request) {
         return createErrorResponse(_adEx, _adEx.getMessage(), "403", null, HttpStatus.FORBIDDEN, _request);
     }
+
 
     /**v
      * Exception if the Resource NOT Available!
@@ -230,6 +238,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_rnfEx,  "404", _request);
     }
 
+    // ================================================================================================================
+    // SECURITY EXCEPTIONS: ERROR CODES 410 - 429
+    // ================================================================================================================
     /**
      * Authorization Exception
      * @param _adEx
@@ -296,6 +307,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_adEx,  "417",  _request);
     }
 
+    // ================================================================================================================
+    // DATABASE EXCEPTIONS: ERROR CODES 430 - 439
+    // ================================================================================================================
     /**
      * Messaging Exception
      * @param _msgEx
@@ -307,6 +321,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_msgEx,  "430", _request);
     }
 
+    // ================================================================================================================
+    // DATABASE EXCEPTIONS: ERROR CODES 440 - 459
+    // ================================================================================================================
     /**
      * Database Exception
      * @param _dbEx
@@ -483,6 +500,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_sqlEx, _sqlEx.getMessage(), "459", null, HttpStatus.BAD_REQUEST, _request);
     }
 
+    // ================================================================================================================
+    // BUSINESS EXCEPTIONS: ERROR CODES 460 - 489
+    // ================================================================================================================
     /**
      * Business Exception
      * @param _buEx
@@ -517,6 +537,22 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * Method Argument Not Valid Exception
+     * @param _mANVEx
+     * @param _request
+     * @return
+     */
+    /**
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException _mANVEx,  WebRequest _request) {
+        return createErrorResponse(_mANVEx, _mANVEx.getMessage(), "463", null, HttpStatus.BAD_REQUEST, _request);
+    }
+    */
+
+    // ================================================================================================================
+    // CONTROLLER EXCEPTIONS: ERROR CODES 490 - 499
+    // ================================================================================================================
+    /**
      * Controller Exception
      * @param _coEx
      * @param _request
@@ -527,6 +563,9 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         return createErrorResponse(_coEx,  "490", _request);
     }
 
+    // ================================================================================================================
+    // LOG EXCEPTIONS
+    // ================================================================================================================
     /**
      *
      * @param _status

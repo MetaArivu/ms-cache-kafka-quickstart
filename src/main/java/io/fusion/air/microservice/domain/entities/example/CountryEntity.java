@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 import jakarta.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * @author: Araf Karsh Hamid
