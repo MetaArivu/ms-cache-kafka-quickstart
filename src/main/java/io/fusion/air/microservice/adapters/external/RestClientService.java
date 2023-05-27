@@ -49,13 +49,10 @@ public class RestClientService  extends RestTemplate {
 
     public RestClientService() {
         // Set Object Mapper For Serialization
+        log.debug("Initialized RestClientService.... 1");
         setMessageConverters(getDataConverters1());
-        // setMessageConverters(getDataConverters2());
-        // Set Factory to RestTemplate
-        // log.debug("Initialized RestClientService.... setRequestFactory()... 1");
-        // Spring throws Error with the Following method saying Apache HttpClient Not Found
-        // super.setRequestFactory(getHttpFactory());
-        log.debug("Initialized RestClientService....");
+
+        log.debug("Initialized RestClientService.... 2");
     }
 
     /**
@@ -105,7 +102,7 @@ public class RestClientService  extends RestTemplate {
                 = new HttpComponentsClientHttpRequestFactory();
         log.debug("Initialized RestClientService.... setRequestFactory()... 3");
         factory.setConnectTimeout(10000);
-        factory.setReadTimeout(10000);
+        // factory.setReadTimeout(10000);
         log.debug("Initialized RestClientService.... setRequestFactory()... 4");
         return factory;
     }

@@ -26,9 +26,10 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.annotation.RequestScope;
 
 
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @date:
  */
 @Service
+@RequestScope
 @Transactional
 public class ProductServiceImpl implements ProductService {
 

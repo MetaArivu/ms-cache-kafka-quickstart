@@ -17,11 +17,8 @@ package io.fusion.air.microservice.adapters.aop;
 
 import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
-import io.fusion.air.microservice.utils.CPU;
 import io.fusion.air.microservice.utils.Utils;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -65,7 +62,7 @@ public class InputValidatorAdvice extends ResponseEntityExceptionHandler {
      * @param _request
      * @return
      */
-    @Override
+    // @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException _manvEx,
                                       HttpHeaders _headers, HttpStatus _status, WebRequest _request) {
 

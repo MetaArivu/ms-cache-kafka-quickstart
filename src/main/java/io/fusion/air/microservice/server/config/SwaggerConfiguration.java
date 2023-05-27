@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.HandlerMethod;
 
 /**
+ * Swagger Configuration to support token headers
  * @author: Araf Karsh Hamid
  * @version:
  * @date:
@@ -34,22 +35,31 @@ public class SwaggerConfiguration {
     @Bean
     public OperationCustomizer customGlobalHeaders() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-            Parameter missingParam1 = new Parameter()
+            Parameter authToken = new Parameter()
                     .in(ParameterIn.HEADER.toString())
                     .schema(new StringSchema())
                     .name("Authorization")
                     .description("Authorization Bearer Token")
-                    .required(true);
+                    .required(false);
 
-            Parameter missingParam2 = new Parameter()
+            Parameter refreshToken = new Parameter()
                     .in(ParameterIn.HEADER.toString())
                     .schema(new StringSchema())
                     .name("Refresh-Token")
                     .description("Authorization Refresh Token")
-                    .required(true);
+                    .required(false);
 
-            operation.addParametersItem(missingParam1);
-            operation.addParametersItem(missingParam2);
+            Parameter txToken = new Parameter()
+                    .in(ParameterIn.HEADER.toString())
+                    .schema(new StringSchema())
+                    .name("TX-Token")
+                    .description("Transaction Token")
+                    .required(false);
+
+            operation.addParametersItem(authToken);
+            operation.addParametersItem(refreshToken);
+            operation.addParametersItem(txToken);
+
             return operation;
         };
     }

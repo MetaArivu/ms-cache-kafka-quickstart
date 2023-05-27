@@ -37,7 +37,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -67,7 +67,7 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
      * @param request
      * @return
      */
-    @Override
+    // @Override
     protected ResponseEntity<Object> handleExceptionInternal(
                 Exception ex, @Nullable Object body,
                 HttpHeaders headers, HttpStatus status, WebRequest request) {

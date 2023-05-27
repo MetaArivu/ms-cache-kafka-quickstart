@@ -34,8 +34,8 @@ import io.fusion.air.microservice.domain.models.core.StandardResponse;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import org.slf4j.MDC;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 

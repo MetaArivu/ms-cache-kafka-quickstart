@@ -21,7 +21,7 @@ import org.hibernate.annotations.Type;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -37,7 +37,7 @@ public class CountryEntity implements Serializable {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "countryUUID", columnDefinition = "char(36)", unique = true)
-    @Type(type = "org.hibernate.type.UUIDCharType")
+    // @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID countryUUID;
 
     @NotNull

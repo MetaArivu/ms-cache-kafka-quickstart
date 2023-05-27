@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.UUID;
 
 /**
@@ -34,7 +34,7 @@ public class AbstractBaseEntityWithUUID extends AbstractBaseEntity {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "uuid", columnDefinition = "char(36)", unique = true)
-    @Type(type = "org.hibernate.type.UUIDCharType")
+    // @Type(type = "uuid")
     // @Size(min = 36, max = 36, message = "The length of Product ID Name must be 36 characters.")
     // @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
     private UUID uuid;

@@ -16,9 +16,11 @@
 
 ### Pre-Requisites 
 
-1. Java 17 (17.0.3.1)
-2. Maven 3.8.6
-3. Git 2.31
+1. Springboot 3.1
+2. Java 17 
+3. Jakarta EE (jakarta.servlet.*, jakarta.persistence.*, javax.validation.*)
+4. Maven 3.8.6
+5. Git 2.31
 
 ### Microservice Cache / Kafka Template gives you a 
 

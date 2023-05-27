@@ -17,7 +17,7 @@ package io.fusion.air.microservice.domain.entities.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
 

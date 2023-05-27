@@ -15,9 +15,10 @@
  */
 package io.fusion.air.microservice;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+// import javax.servlet.MultipartConfigElement;
+// import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.http.HttpServletRequest;
 
 import io.fusion.air.microservice.adapters.aop.ExceptionHandlerAdvice;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
@@ -351,12 +352,15 @@ public class ServiceBootStrap {
 	 * returns MultipartConfigElement
 	 * @return
 	 */
+	/**
+	 * Deprecated from SpringBoot 3.1
 	@Bean
 	public MultipartConfigElement multipartConfigElement() {
 		MultipartConfigFactory factory = new MultipartConfigFactory();
 		factory.setMaxFileSize(DataSize.ofBytes(500000000L));
 		return factory.createMultipartConfig();
 	}
+	 */
 
 	@Primary
 	@Bean

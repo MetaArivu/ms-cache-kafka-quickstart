@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.fusion.air.microservice.domain.entities.core.AbstractBaseEntityWithUUID;
 import io.fusion.air.microservice.domain.models.example.Product;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;

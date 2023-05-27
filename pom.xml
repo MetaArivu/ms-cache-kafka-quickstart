@@ -4,25 +4,22 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fusion.air</groupId>
 	<artifactId>ms-cache-service</artifactId>
-	<version>0.5.1</version>
+	<version>0.6.0</version>
 	<packaging>jar</packaging>
 	<name>msCacheService</name>
 	<description>Microservice Cache Kafka Template</description>
 
-	<!-- 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.3</version>
-		<relativePath/> 
+		<version>3.1.0</version>
 	</parent>
-	 -->
 	<!-- =================================================================== -->
 	<!-- Properties / Versions -->
 	<!-- =================================================================== -->
 	<properties>
 		<!-- Java Version ================================================== -->
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 
 		<!-- Maven ========================================================= -->
 		<maven.compiler.target>${java.version}</maven.compiler.target>
@@ -38,28 +35,36 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Utilities ===================================================== -->
-		<slf4j.version>1.7.36</slf4j.version>
-		<logback.version>1.2.11</logback.version>
+		<slf4j.version>2.0.7</slf4j.version>
+		<logback.version>1.4.7</logback.version>
 		<google.guava.version>31.1-jre</google.guava.version>
 		<apache.httpcore>4.5.13</apache.httpcore>
+		<apache.httpclient>5.2.1</apache.httpclient>
 		<apache.commons.version>3.12.0</apache.commons.version>
-		<fasterxml.version>2.13.3</fasterxml.version>
-		<javax.bean.validation.version>2.0.1.Final</javax.bean.validation.version>
+		<fasterxml.version>2.15.1</fasterxml.version>
 		<jwt.api.version>0.11.5</jwt.api.version>
 		<google.gson.version>2.9.0</google.gson.version>
 		<bouncycastle.version>1.46</bouncycastle.version>
 
+		<!-- Java EE / Jakarta EE ========================================== -->
+		<javax.bean.validation.version>2.0.1.Final</javax.bean.validation.version>
+		<jakarta.bean.validation.version>3.0.2</jakarta.bean.validation.version>
+		<jakarta.ee.version>10.0.0</jakarta.ee.version>
+		<jakarta.servlet.version>6.0.0</jakarta.servlet.version>
+		<jakarta.persistence.version>3.1.0</jakarta.persistence.version>
+
+
 		<!-- Spring Libraries ============================================== -->
-		<spring.boot.version>2.7.2</spring.boot.version>
-		<spring.cloud.version>2021.0.3</spring.cloud.version>
-		<spring.cloud.sleuth.version>3.1.3</spring.cloud.sleuth.version>
-		<spring.security.version>5.7.2</spring.security.version>
+		<spring.boot.version>3.1.0</spring.boot.version>
+		<spring.cloud.version>2022.0.2</spring.cloud.version>
+		<spring.cloud.sleuth.version>3.1.8</spring.cloud.sleuth.version>
+		<spring.security.version>6.1.0</spring.security.version>
 
 		<!-- Spring Kafka ================================================= -->
-		<spring.kafka.version>2.9.0</spring.kafka.version>
+		<spring.kafka.version>3.0.7</spring.kafka.version>
 
 		<!-- Open API v3 - Swagger UI ===================================== -->
-		<openapi.version>1.6.9</openapi.version>
+		<openapi.version>1.7.0</openapi.version>
 
 	</properties>
 
@@ -88,6 +93,77 @@
 	</repositories>
 
 	<dependencies>
+
+		<!-- ================================================================= -->
+		<!-- Java Servlet Framework (Required  from Java 9 onwards) -->
+		<!-- ================================================================= -->
+		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+		<!--
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		-->
+		<!-- https://mvnrepository.com/artifact/javax.persistence/javax.persistence-api -->
+		<!--
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>${javax.bean.validation.version}</version>
+		</dependency>
+		-->
+		<!-- ================================================================= -->
+		<!-- Jakarta EE Frameworks (Required  from Java 17 onwards) -->
+		<!-- ================================================================= -->
+		<!-- https://mvnrepository.com/artifact/jakarta.platform/jakarta.jakartaee-api -->
+		<dependency>
+			<groupId>jakarta.platform</groupId>
+			<artifactId>jakarta.jakartaee-api</artifactId>
+			<version>${jakarta.ee.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>${jakarta.servlet.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<version>${jakarta.persistence.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>${javax.bean.validation.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
+		<!-- Some issues downloading Jakarta EE Bean Validation API
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>{jakarta.bean.validation.version}</version>
+		</dependency>
+		-->
+
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
+
 		<!-- ================================================================= -->
 		<!-- Log Framework -->
 		<!-- ================================================================= -->
@@ -116,7 +192,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
-			<version>5.2-beta1</version>
+			<version>${apache.httpclient}</version>
 		</dependency>
 
 		<!-- Used for StringUtils helper -->
@@ -157,13 +233,6 @@
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
 			<artifactId>jackson-jaxrs-json-provider</artifactId>
 			<version>${fasterxml.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>${javax.bean.validation.version}</version>
 		</dependency>
 
 		<!-- ================================================================= -->
@@ -246,11 +315,20 @@
 		</dependency>	
 		
 		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-sleuth -->
+		<!--
 		<dependency>
 		    <groupId>org.springframework.cloud</groupId>
 		    <artifactId>spring-cloud-starter-sleuth</artifactId>
 			<version>${spring.cloud.sleuth.version}</version>
 		</dependency>
+		-->
+		<!-- https://mvnrepository.com/artifact/io.micrometer/micrometer-tracing -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-tracing</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop -->
 		<dependency>
@@ -299,13 +377,13 @@
 		<dependency>
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>6.1.1.Final</version>
+			<version>6.2.3.Final</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.14</version>
+			<version>42.6.0</version>
 		</dependency>
 
 
@@ -413,11 +491,10 @@
 		<!-- API Docs - Open API v3.0 (Swagger 3) -->
 		<!-- ================================================================= -->
 
-		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 		<dependency>
-		    <groupId>org.springdoc</groupId>
-		    <artifactId>springdoc-openapi-ui</artifactId>
-			<version>${openapi.version}</version>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.1.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-webflux-ui -->
@@ -433,6 +510,9 @@
 			<artifactId>springdoc-openapi-data-rest</artifactId>
 			<version>${openapi.version}</version>
 		</dependency>
+
+
+
 
 		<!-- End of Dependency Definitions -->
 	</dependencies>
