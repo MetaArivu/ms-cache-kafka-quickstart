@@ -17,7 +17,7 @@
 ### Pre-Requisites 
 
 1. Springboot 2.7.2
-2. Java 17 (17.0.3.1)
+2. Java 8, Java 17 (To run)
 3. Java EE (javax.servlet.*, javax.persistence.*)
 4. Maven 3.8.6
 5. Git 2.31
