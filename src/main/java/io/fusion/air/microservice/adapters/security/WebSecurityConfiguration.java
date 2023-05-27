@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 import java.util.Arrays;
@@ -32,7 +31,7 @@ import java.util.Arrays;
  * @date:
  */
 @EnableWebSecurity
-class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private ServiceConfiguration serviceConfig;
@@ -49,8 +48,8 @@ class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .exceptionHandling();
                  // Enable CRPF Protection
         // http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-        // Disable for Local Testing
-        // http.csrf().disable();
+        // Disabled for Local Testing
+        http.csrf().disable();
         http.headers().frameOptions().disable();
         String hostName = serviceConfig.getServerHost();
         // Content Security Policy

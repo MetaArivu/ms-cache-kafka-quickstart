@@ -18,7 +18,7 @@
 
 1. Springboot 2.7.2
 2. Java 8, Java 17 (To run)
-3. Java EE (javax.servlet.*, javax.persistence.*)
+3. Java EE (javax.servlet.*, javax.persistence.*, javax.validation.*)
 4. Maven 3.8.6
 5. Git 2.31
 
