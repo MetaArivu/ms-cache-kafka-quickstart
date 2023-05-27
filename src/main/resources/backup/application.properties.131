@@ -2,7 +2,7 @@
 # MS-Cache Service Properties
 # =======================================================================
 build.number=132
-build.date=Sat May 27 23:57:05 IST 2023
+build.date=Sat May 27 23:50:59 IST 2023
 # =======================================================================
 # Service Name & API Details -  Version, Path
 # =======================================================================
@@ -22,7 +22,7 @@ service.license=Apache 2 License
 # Microservice Server Properties
 # =======================================================================
 server.port=9091
-server.version=0.7.1
+server.version=0.7.0
 server.restart=false
 server.resources.url=${service.url}${service.api.path}
 # ------------------------------------------------------------------------

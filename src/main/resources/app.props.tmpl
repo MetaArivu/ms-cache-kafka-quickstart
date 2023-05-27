@@ -17,7 +17,7 @@ service.license=Apache 2 License
 # Microservice Server Properties
 # =======================================================================
 server.port=9091
-server.version=0.6.0
+server.version=0.7.1
 server.restart=false
 server.resources.url=${service.url}${service.api.path}
 # ------------------------------------------------------------------------
@@ -78,6 +78,12 @@ spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 #spring.datasource.username=postgres
 #spring.datasource.password=
 #spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
+# =======================================================================
+# PostgreSQL DB Reactive Properties
+# =======================================================================
+spring.r2dbc.url=r2dbc:postgresql://localhost/test
+spring.r2dbc.username=postgres
+spring.r2dbc.password=secret
 # =======================================================================
 # JPA / Hibernate Properties
 # ------------------------------------------------------------------------

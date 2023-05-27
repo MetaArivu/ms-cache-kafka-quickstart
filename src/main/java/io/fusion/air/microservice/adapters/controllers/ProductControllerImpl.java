@@ -231,7 +231,7 @@ public class ProductControllerImpl extends AbstractController {
 	 * De-Activate the Product
 	 */
 	@AuthorizationRequired(role = "user")
-	@Operation(summary = "De-Activate Product")
+	@Operation(summary = "De-Activate Product", security = { @SecurityRequirement(name = "bearer-key") })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Product De-Activated",
@@ -253,7 +253,7 @@ public class ProductControllerImpl extends AbstractController {
 	 * Activate the Product
 	 */
 	@AuthorizationRequired(role = "user")
-	@Operation(summary = "Activate Product")
+	@Operation(summary = "Activate Product", security = { @SecurityRequirement(name = "bearer-key") })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200",
 					description = "Product Activated",
