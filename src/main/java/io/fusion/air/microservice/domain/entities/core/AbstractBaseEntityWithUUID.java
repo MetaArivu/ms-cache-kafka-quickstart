@@ -33,7 +33,7 @@ public class AbstractBaseEntityWithUUID extends AbstractBaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "uuid", unique = true)
-    // @Size(min = 36, max = 36, message = "The length of Product ID Name must be 36 characters.")
+    // @Size(min = 36, max = 36, message = "The length of UUID Name must be 36 characters.")
     // @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$", message = "Invalid UUID")
     private UUID uuid;
 
