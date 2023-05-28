@@ -49,7 +49,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 @Service
 @RequestScope
-@Transactional
+@Transactional("transactionManager")
 public class ProductServiceImpl implements ProductService {
 
     // Set Logger -> Lookup will automatically determine the class name.

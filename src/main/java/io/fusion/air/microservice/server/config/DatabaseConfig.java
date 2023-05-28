@@ -31,6 +31,17 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+// REACTIVE IMPORTS
+
+import io.r2dbc.spi.ConnectionFactories;
+import io.r2dbc.spi.ConnectionFactory;
+import io.r2dbc.spi.ConnectionFactoryOptions;
+import io.r2dbc.spi.Option;
+import static io.r2dbc.spi.ConnectionFactoryOptions.*;
+import org.springframework.r2dbc.connection.R2dbcTransactionManager;
+import org.springframework.transaction.ReactiveTransactionManager;
+
+
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -41,13 +52,19 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EntityScan("io.fusion.air.microservice.domain.*")
-@EnableJpaRepositories(basePackages = { "io.fusion.air.microservice.domain.ports", "io.fusion.air.microservice.adapters.repository" })
+@EnableJpaRepositories(basePackages = {
+        "io.fusion.air.microservice.domain.ports",
+        "io.fusion.air.microservice.adapters.repository"
+})
 @EnableTransactionManagement
-public class JpaConfig {
+public class DatabaseConfig {
 
     @Autowired
     private ServiceConfiguration serviceConfig;
 
+    // =================================================================================================================
+    // JDBC / JPA Database
+    // =================================================================================================================
     /**
      * Create the DataSource for H2 Database
      * @return
@@ -111,6 +128,27 @@ public class JpaConfig {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(entityManagerFactory());
         return txManager;
+    }
+
+    // =================================================================================================================
+    // REACTIVE Database
+    // =================================================================================================================
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        return ConnectionFactories.get(ConnectionFactoryOptions.builder()
+                .option(DRIVER, "postgresql")
+                .option(HOST, "localhost")
+                .option(PORT, 5433)
+                .option(USER, "postgresql")
+                .option(PASSWORD, "")
+                .option(DATABASE, "ms-cache")
+                .build());
+    }
+
+    @Bean
+    @Qualifier("reactiveTransactionManager")
+    public ReactiveTransactionManager reactiveTransactionManager(ConnectionFactory connectionFactory) {
+        return new R2dbcTransactionManager(connectionFactory);
     }
 
 }
