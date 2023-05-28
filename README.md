@@ -36,7 +36,7 @@ Checkout the respective branches for the Microservices template
 1. SpringBoot App template with 
 2. Open API 3 Ex, 
 3. Spring Actuator, 
-4. Spring Sleuth and 
+4. Micrometer and 
 5. Redis Cache Implementation with 
 6. H2 In Memory Database
 7. POM File with (SpringBoot) Fat and Thin (Maven) jar file creation and 

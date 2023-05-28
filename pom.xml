@@ -134,19 +134,23 @@
 		<!-- ================================================================= -->
 		<!-- Reactive Framework /  Spring WebFlux / Database R2DB -->
 		<!-- ================================================================= -->
+
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-r2dbc -->
+		<!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-r2dbc</artifactId>
 			<version>${spring.boot.version}</version>
 		</dependency>
+		-->
 		<!-- https://mvnrepository.com/artifact/org.postgresql/r2dbc-postgresql -->
+		<!--
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>r2dbc-postgresql</artifactId>
 			<version>1.0.1.RELEASE</version>
 		</dependency>
-
+		-->
 		<!-- ================================================================= -->
 		<!-- Log Framework -->
 		<!-- ================================================================= -->
@@ -324,6 +328,17 @@
 		<!-- ================================================================= -->
 		<!-- Spring Cache - Redis / H2 DB / JPA -->
 		<!-- ================================================================= -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jdbc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-cache -->
 		<dependency>
