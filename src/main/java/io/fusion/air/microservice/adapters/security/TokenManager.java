@@ -226,7 +226,7 @@ public class TokenManager {
         authClaims.put("jti", UUID.randomUUID().toString());
 
         Map<String, Object> refreshClaims = new LinkedHashMap<>();
-        refreshClaims.put("aud", "aaa");
+        refreshClaims.put("aud", "generic");
         refreshClaims.put("sub", subject);
         refreshClaims.put("type",AUTH_REFRESH);
         refreshClaims.put("iss", serviceConfig.getServiceOrg());
