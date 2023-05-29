@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 
 import org.springframework.http.HttpHeaders;
@@ -117,7 +118,7 @@ public class PaymentControllerImpl extends AbstractController {
             content = @Content)
     })
     @PostMapping("/processPayments")
-    public ResponseEntity<StandardResponse> processPayments(@RequestBody PaymentDetails _payDetails) {
+    public ResponseEntity<StandardResponse> processPayments(@Valid @RequestBody PaymentDetails _payDetails) {
 		log.debug("|"+name()+"|Request to process payments... ");
 		StandardResponse stdResponse = createSuccessResponse("Processing Success!");
 		PaymentStatus ps = new PaymentStatus(

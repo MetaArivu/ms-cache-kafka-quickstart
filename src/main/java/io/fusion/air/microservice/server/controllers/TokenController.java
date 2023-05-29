@@ -22,6 +22,7 @@ import io.fusion.air.microservice.adapters.security.AuthorizeRequestAspect;
 import io.fusion.air.microservice.adapters.security.ValidateRefreshToken;
 import io.fusion.air.microservice.security.CryptoKeyGenerator;
 import io.fusion.air.microservice.security.JsonWebToken;
+import io.fusion.air.microservice.security.TokenManager;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,12 +77,12 @@ public class TokenController extends AbstractController {
 
 	@Autowired
 	private CryptoKeyGenerator cryptoKeys;
+	@Autowired
+	private TokenManager tokenManager;
 
-	// server.token.auth.expiry=300000
 	@Value("${server.token.auth.expiry:300000}")
 	private long tokenAuthExpiry;
 
-	// server.token.refresh.expiry=1800000
 	@Value("${server.token.refresh.expiry:1800000}")
 	private long tokenRefreshExpiry;
 
@@ -153,20 +154,24 @@ public class TokenController extends AbstractController {
 	@ResponseBody
 	public ResponseEntity<StandardResponse> generate(HttpServletRequest request) throws Exception {
 		log.debug(name()+"|Request to Generate Refresh Tokens... ");
+
+		// Step 1:
 		//  final String authToken = getToken(request.getHeader(AuthorizeRequestAspect.AUTH_TOKEN));
 		final String refreshToken = getToken(request.getHeader(AuthorizeRequestAspect.REFRESH_TOKEN));
 		String subject = jsonWebToken.getSubjectFromToken(refreshToken);
+
 		// Claims authTokenClaims = jwtUtil.getAllClaims(authToken);
 		Claims refreshTokenClaims = jsonWebToken.getAllClaims(refreshToken);
 		HashMap<String, String> tokens = refreshTokens(subject, refreshTokenClaims, refreshTokenClaims);
-		StandardResponse stdResponse = createSuccessResponse("Auth & Refresh Tokens Generated!");
-		// Send the Token in the Body (This is NOT Required and ONLY for Testing Purpose)
-		stdResponse.setPayload(tokens);
-		String authToken = tokens.get("token");
-		String refreshTkn = tokens.get("refresh");
+
+		// Step 2: Generate Authorize Tokens
 		HttpHeaders headers = new HttpHeaders();
-		headers.add(AuthorizeRequestAspect.AUTH_TOKEN, "Bearer "+authToken);
-		headers.add(AuthorizeRequestAspect.REFRESH_TOKEN, "Bearer "+refreshTkn);
+		HashMap<String, String> allTokens = tokenManager.createAuthorizationToken(subject, headers);
+		String txToken = tokenManager.createTXToken(subject, TokenManager.TX_USERS, headers);
+		allTokens.putIfAbsent("TX-Token", txToken);
+		StandardResponse stdResponse = createSuccessResponse("Auth & Refresh Tokens Generated!!!");
+		// Send the Token in the Body (This is NOT Required and ONLY for Testing Purpose)
+		stdResponse.setPayload(allTokens);
 		return new ResponseEntity<StandardResponse>(stdResponse, headers, HttpStatus.OK );
 	}
 

@@ -16,6 +16,7 @@
 package io.fusion.air.microservice.server.service;
  
 import io.fusion.air.microservice.security.JsonWebToken;
+import io.fusion.air.microservice.security.TokenManager;
 import io.fusion.air.microservice.server.config.ServiceConfiguration;
 import io.fusion.air.microservice.server.config.ServiceHelp;
 
@@ -50,7 +51,7 @@ public class ServiceEventListener {
 
 	// Set Logger -> Lookup will automatically determine the class name.
 	private static final Logger log = getLogger(lookup().lookupClass());
-	
+
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 
@@ -68,18 +69,21 @@ public class ServiceEventListener {
 	@Value("${server.token.refresh.expiry:1800000}")
 	private long tokenRefreshExpiry;
 
+	@Value("${server.dev.mode:true}")
+	private boolean devMode;
+
 	/**
 	 * Shows Logo and Generate Test Tokens
 	 */
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() {
 		log.info("Service is getting ready. Getting the CPU Stats ... ");
-	    log.info(CPU.printCpuStats());
-	    // System.out.println(LocalDateTime.now()+"|Service is getting ready...... ");
-	    // System.out.println(LocalDateTime.now()+"|"+CPU.printCpuStats());
+		log.info(CPU.printCpuStats());
 		showLogo();
-		log.info("Generate Test Tokens = {} ", serverTokenTest);
-		if(serverTokenTest) {
+		// Initialize the Token
+		jsonWebToken.init(serviceConfig.getTokenType());
+		if(serverTokenTest && devMode) {
+			log.debug("Generate Test Tokens = {} ", serverTokenTest);
 			generateTestToken();
 		}
 	}
@@ -104,26 +108,24 @@ public class ServiceEventListener {
 
 		String subject	 = "jane.doe";
 		String issuer    = serviceConfig.getServiceOrg();
+		String type 	 = TokenManager.TX_USERS;
 
-		Map<String, Object> claims = getClaims( subject,  issuer);
+		TokenManager tokenManager = new TokenManager(serviceConfig, tokenAuthExpiry, tokenRefreshExpiry);
 
-		HashMap<String,String> tokens = jsonWebToken
-				.init(serviceConfig.getTokenType())
-				.setSubject(subject)
-				.setIssuer(issuer)
-				.setTokenAuthExpiry(tokenAuthExpiry)
-				.setTokenRefreshExpiry(tokenRefreshExpiry)
-				.addAllTokenClaims(claims)
-				.addAllRefreshTokenClaims(claims)
-				.generateTokens();
+		// Step 4: Generate Authorize Tokens
+		HashMap<String, String> tokens = tokenManager.createAuthorizationToken(subject, null);
 
 		String token = tokens.get("token");
 		String refresh = tokens.get("refresh");
-		log.info("\nToken Expiry in Days:Hours:Mins  {} ", JsonWebToken.printExpiryTime(tokenAuthExpiry));
+		log.debug("\nToken Expiry in Days:Hours:Mins  {} ", JsonWebToken.printExpiryTime(tokenAuthExpiry));
 		jsonWebToken.tokenStats(token, false, false);
 
-		log.info("\nRefresh Token Expiry in Days:Hours:Mins  {}", JsonWebToken.printExpiryTime(tokenRefreshExpiry));
+		log.debug("\nRefresh Token Expiry in Days:Hours:Mins  {}", JsonWebToken.printExpiryTime(tokenRefreshExpiry));
 		jsonWebToken.tokenStats(refresh, false, false);
+
+		log.debug("\nTx-Token Expiry in Days:Hours:Mins  {}", JsonWebToken.printExpiryTime(tokenRefreshExpiry));
+		String txToken = tokenManager.createTXToken(subject, type, null);
+		jsonWebToken.tokenStats(txToken, false, false);
 
 		String admToken = adminToken(subject);
 		jsonWebToken.tokenStats(admToken, false, false);
@@ -160,12 +162,13 @@ public class ServiceEventListener {
 		claims.put("jti", UUID.randomUUID().toString());
 		claims.put("sub", subject);
 		claims.put("iss", issuer);
+		claims.put("type",TokenManager.TX_USERS);
 		claims.put("rol", "User");
 		return claims;
 	}
 
 	/**
-	 * Shows the Service Logo and Version Details. 
+	 * Shows the Service Logo and Version Details.
 	 */
 	public void showLogo() {
 		String version="v0.1.0", name="NoName";
@@ -179,10 +182,16 @@ public class ServiceEventListener {
 				+ logo
 				+ "Build No. = "+serviceConfig.getBuildNumber()
 				+ " :: Build Date = "+serviceConfig.getBuildDate()
-				+ " :: Restart = "+ServiceHelp.getCounter() 
-				+ ServiceHelp.NL + ServiceHelp.DL
-				+ ServiceHelp.NL + "API URL : " + serviceConfig.apiURL()
-				+ ServiceHelp.NL + ServiceHelp.DL
-				);
+				+ " :: Mode = "+geDeploymentMode()
+				+ " :: Restart = "+ServiceHelp.getCounter()
+				+ ServiceHelp.NL + ServiceHelp.DL);
+		if(devMode) {
+			log.info(ServiceHelp.NL + "API URL : " + serviceConfig.apiURL()
+					+ ServiceHelp.NL + ServiceHelp.DL
+			);
+		}
+	}
+	private String geDeploymentMode() {
+		return (devMode) ? "Staging" : "Production";
 	}
 }

@@ -35,13 +35,6 @@ public class SwaggerConfiguration {
     @Bean
     public OperationCustomizer customGlobalHeaders() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
-            Parameter authToken = new Parameter()
-                    .in(ParameterIn.HEADER.toString())
-                    .schema(new StringSchema())
-                    .name("Authorization")
-                    .description("Authorization Bearer Token")
-                    .required(false);
-
             Parameter refreshToken = new Parameter()
                     .in(ParameterIn.HEADER.toString())
                     .schema(new StringSchema())
@@ -56,7 +49,6 @@ public class SwaggerConfiguration {
                     .description("Transaction Token")
                     .required(false);
 
-            operation.addParametersItem(authToken);
             operation.addParametersItem(refreshToken);
             operation.addParametersItem(txToken);
 
