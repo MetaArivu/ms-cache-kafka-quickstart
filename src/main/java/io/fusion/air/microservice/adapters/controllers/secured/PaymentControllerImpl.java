@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.UUID;
@@ -117,7 +118,7 @@ public class PaymentControllerImpl extends AbstractController {
             content = @Content)
     })
     @PostMapping("/processPayments")
-    public ResponseEntity<StandardResponse> processPayments(@RequestBody PaymentDetails _payDetails) {
+    public ResponseEntity<StandardResponse> processPayments(@Valid @RequestBody PaymentDetails _payDetails) {
 		log.debug("|"+name()+"|Request to process payments... ");
 		StandardResponse stdResponse = createSuccessResponse("Processing Success!");
 		PaymentStatus ps = new PaymentStatus(
