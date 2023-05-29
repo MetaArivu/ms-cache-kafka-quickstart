@@ -244,6 +244,19 @@ public final class JsonWebToken {
 	}
 
 	/**
+	 * Add Default Claims
+	 * @param _claims
+	 * @return
+	 */
+	private Map<String, Object>  addDefaultClaims(Map<String, Object> _claims) {
+		String aud = (serviceConfig != null) ? serviceConfig.getServiceName() : "general";
+		_claims.putIfAbsent("aud", aud);
+		_claims.putIfAbsent("jti", UUID.randomUUID().toString());
+		_claims.putIfAbsent("rol", "User");
+		return _claims;
+	}
+
+	/**
 	 * Clear & Add All Claims for Token
 	 * @param _claims
 	 * @return
@@ -291,6 +304,32 @@ public final class JsonWebToken {
 	 * @return
 	 */
 	public HashMap<String,String>  generateTokens() {
+		HashMap<String, String> tokens  = new HashMap<String, String>();
+		String tokenAuth 	= generateToken(subject, issuer, tokenAuthExpiry, claimsToken);
+		String tokenRefresh = generateToken(subject, issuer, tokenRefreshExpiry, claimsRefreshToken);
+		tokens.put("token", tokenAuth);
+		tokens.put("refresh", tokenRefresh);
+		return tokens;
+	}
+
+	/**
+	 * Generate Authorize Bearer Token and Refresh Token
+	 * Returns in a HashMap
+	 * token = Authorization Token
+	 * refresh = Refresh token to re-generate the Authorize Token
+	 * API Usage
+	 * HashMap<String,String> tokens = new JsonWebToken()
+	 * 									.init()
+	 * 									.setTokenExpiry(JsonWebToken.EXPIRE_IN_FIVE_MINS)
+	 * 									.setTokenRefreshExpiry(JsonWebToken.EXPIRE_IN_THIRTY_MINS)
+	 * 									generateTokens(Map<String,Object> claimsToken, Map<String,Object> claimsRefreshToken)
+	 * @param claimsToken
+	 * @param claimsRefreshToken
+	 * @return
+	 */
+	public HashMap<String,String>  generateTokens(String subject, String issuer, Map<String,Object> claimsToken, Map<String,Object> claimsRefreshToken) {
+		claimsToken = addDefaultClaims(claimsToken);
+		claimsRefreshToken = addDefaultClaims(claimsRefreshToken);
 		HashMap<String, String> tokens  = new HashMap<String, String>();
 		String tokenAuth 	= generateToken(subject, issuer, tokenAuthExpiry, claimsToken);
 		String tokenRefresh = generateToken(subject, issuer, tokenRefreshExpiry, claimsRefreshToken);
@@ -693,7 +732,6 @@ public final class JsonWebToken {
 		claims.put("aud", "generic");
 		claims.put("jti", UUID.randomUUID().toString());
 		claims.put("rol", "User");
-		claims.put("did", "Device ID");
 		claims.put("iss", issuer);
 		claims.put("sub", subject);
 

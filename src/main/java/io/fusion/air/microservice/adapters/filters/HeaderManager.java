@@ -3,8 +3,11 @@ package io.fusion.air.microservice.adapters.filters;
 
 import io.fusion.air.microservice.adapters.security.AuthorizeRequestAspect;
 import io.fusion.air.microservice.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +19,65 @@ import java.util.UUID;
  * @version:
  * @date:
  */
+@Component
+@RequestScope
 public class HeaderManager {
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private HttpServletResponse response;
+
+    /**
+     * Adds Response Header
+     * @param key
+     * @param value
+     */
+    public void setResponseHeader(String key, String value) {
+        if(key != null && value != null) {
+            response.setHeader(key, value);
+        }
+    }
+
+    /**
+     * Returns HttpServletRequest
+     * @return
+     */
+    public HttpServletRequest getRequest() {
+        return request;
+    }
+
+    /**
+     * Returns HttpServletResponse
+     * @return
+     */
+    public HttpServletResponse getResponse() {
+        return response;
+    }
+
+    /**
+     * Transfers Headers from Request to Response
+     */
+    public void transferHeadersFromRequestToResponse() {
+        HeaderManager.returnHeaders(request, response);
+    }
+
+    /**
+     * Extract All Headers from Request
+     * @return
+     */
+    public  HttpHeaders extractHeaders() {
+        return HeaderManager.extractHeaders(request);
+    }
+
+    /**
+     * Extract All the Tokens
+     * @return
+     */
+    public HttpHeaders extractTokens()  {
+        return HeaderManager.extractTokens(request);
+    }
 
     /**
      * Returns Headers and Cookies
@@ -25,21 +86,57 @@ public class HeaderManager {
      * @param response
      */
     public static void returnHeaders(HttpServletRequest request, HttpServletResponse response) {
-        response.addCookie(Utils.createCookie(request, "SameSite", "Strict"));
-        response.addCookie(Utils.createCookie(request, "JSESSIONID", UUID.randomUUID().toString()));
-
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
         if(token != null) {
-            response.addHeader(HttpHeaders.AUTHORIZATION, token);
+            response.setHeader(HttpHeaders.AUTHORIZATION, token);
         }
         String refresh = request.getHeader(AuthorizeRequestAspect.REFRESH_TOKEN);
         if(refresh != null) {
-            response.addHeader(AuthorizeRequestAspect.REFRESH_TOKEN, refresh);
+            response.setHeader(AuthorizeRequestAspect.REFRESH_TOKEN, refresh);
         }
-        String txToken = request.getHeader("TX-TOKEN");
+        String txToken = request.getHeader(AuthorizeRequestAspect.TX_TOKEN);
         if (txToken != null) {
-            response.addHeader("TX-TOKEN", txToken);
+            response.setHeader(AuthorizeRequestAspect.TX_TOKEN, txToken);
         }
+    }
+
+    /**
+     * Returns Auth Token
+     * @param request
+     * @return
+     */
+    public static String getAuthToken(HttpServletRequest request) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if(token != null) {
+            token = token.replaceAll("Bearer", "");
+        }
+        return token;
+    }
+
+    /**
+     * Returns Refresh Token
+     * @param request
+     * @return
+     */
+    public static String getRefreshToken(HttpServletRequest request) {
+        String token = request.getHeader(AuthorizeRequestAspect.REFRESH_TOKEN);
+        if(token != null) {
+            token = token.replaceAll("Bearer", "");
+        }
+        return token;
+    }
+
+    /**
+     * Returns Tx Token
+     * @param request
+     * @return
+     */
+    public static String getTxToken(HttpServletRequest request) {
+        String token = request.getHeader(AuthorizeRequestAspect.TX_TOKEN);
+        if(token != null) {
+            token = token.replaceAll("Bearer", "");
+        }
+        return token;
     }
 
     /**

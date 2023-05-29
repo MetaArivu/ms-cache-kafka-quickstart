@@ -25,6 +25,7 @@ import io.fusion.air.microservice.server.config.ServiceHelp;
 import io.fusion.air.microservice.server.models.EchoResponseData;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 
@@ -49,6 +50,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,6 +82,9 @@ public class HealthController extends AbstractController {
 	@Autowired
 	private ServiceConfiguration serviceConfig;
 	private String serviceName;
+
+	@Autowired
+	private ApplicationContext context;
 
 	/**
 	 * Get Method Call to Check the Health of the App
@@ -117,6 +122,24 @@ public class HealthController extends AbstractController {
 	public ResponseEntity<StandardResponse> isReady(HttpServletRequest request) throws Exception {
 		log.debug(name()+"|Request to Ready Check.. ");
 		StandardResponse stdResponse = createSuccessResponse("Service is Ready!");
+		return ResponseEntity.ok(stdResponse);
+	}
+
+	@Operation(summary = "Get All the Beans")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					description = "List All the Beans",
+					content = {@Content(mediaType = "application/json")}),
+			@ApiResponse(responseCode = "404",
+					description = "Unable to get the Beans",
+					content = @Content)
+	})
+	@GetMapping("/beans")
+	public ResponseEntity<StandardResponse> listBeans() {
+		log.debug(name()+"|Request to Ready Check.. ");
+		StandardResponse stdResponse = createSuccessResponse("Beans List!");
+		stdResponse.setPayload(Arrays.stream(context.getBeanDefinitionNames()).sorted());
+		// return Arrays.asList(context.getBeanDefinitionNames());
 		return ResponseEntity.ok(stdResponse);
 	}
 
